@@ -3,5 +3,10 @@ SpareTime
 
 COS 333 Final Project
 
-People: Satyajeet Pal
+People: 
+Mark Benjamin
+Sammy Jerome
+Satyajeet Pal
+Stefani Karp
+
 
