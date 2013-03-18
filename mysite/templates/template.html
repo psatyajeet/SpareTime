@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Bootstrap 101 Template</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="{{ STATIC_URL}}bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Hello, world!</h1>
+            <script src="http://code.jquery.com/jquery.js"></script>
+            <script src="{{ STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
+            <div class="btn-group" data-toggle="buttons-radio">
+
+
+                <div class="row">
+                    <div class="span3"><button type="button" class="btn btn-block btn-primary">Time Block</button></div>
+                    <div class="span3"><button type="button" class="btn btn-block btn-primary">Private</button></div>
+                    <div class="span3"><button type="button" class="btn btn-block btn-primary">Public</button></div>
+                    <div class="span3"><button type="button" class="btn btn-block btn-primary">Friends</button></div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="span12"><p></p></div>
+            </div>
+
+            <div class="alert alert-info">
+                <p>You have a new event request from:</p>
+                <div class="row">
+                    <div class="span4"></div>
+                    <div class="span2">
+                        <button class="btn btn-block btn-success" type="button">Accept</button>
+                    </div>
+                    <div class="span2">
+                        <button class="btn btn-block btn-danger" type="button">Reject</button>     
+                    </div>
+                    <div class="span4"></div>
+                </div>
+
+            </div>
+            <div class="alert alert-info">
+                <p>You have a new event request from:</p>
+                <div class="row">
+                    <div class="span4"></div>
+                    <div class="span2">
+                        <button class="btn btn-block btn-success" type="button">Accept</button>
+                    </div>
+                    <div class="span2">
+                        <button class="btn btn-block btn-danger" type="button">Reject</button>     
+                    </div>
+                    <div class="span4"></div>
+                </div>
+
+            </div>
+        </div>
+
+    </body>
+</html>
