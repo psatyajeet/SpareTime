@@ -1,5 +1,13 @@
 # Django settings for mysite project.
 
+import os
+import sys
+
+#dbpath = os.path.abspath(os.path.dirname(sys.argv[0])) + '/database/data'
+
+templatesdir = os.path.abspath(os.path.dirname(sys.argv[0])) + '/templates'
+staticsdir = os.path.abspath(os.path.dirname(sys.argv[0])) + '/static'
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -67,7 +75,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/Users/mdbenjam/Documents/College/Spring2013/cos333/project/SpareTime/mysite/static',
+    #'/Users/mdbenjam/Documents/College/Spring2013/cos333/project/SpareTime/mysite/static',
+    staticsdir,
 )
 
 # List of finder classes that know how to find static files in
@@ -107,7 +116,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/Users/mdbenjam/Documents/College/Spring2013/cos333/project/SpareTime/mysite/templates',
+    #'/Users/mdbenjam/Documents/College/Spring2013/cos333/project/SpareTime/mysite/templates',
+    templatesdir,
 )
 
 INSTALLED_APPS = (
