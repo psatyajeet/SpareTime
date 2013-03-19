@@ -4,13 +4,15 @@
     width: 100%;
     height: 50px;
     padding: 0;
-    background-color: #1971ab;  
+    /*background-color: #1971ab;  */
+    background-color: #000000;  
 }
 
 #header h1{
     margin: 0;
     padding: 0;
     color: white;
+    color: #009BFF;  
 }
 
 .scrollable {

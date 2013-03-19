@@ -1,6 +1,9 @@
 {% extends "template.html" %}
-
 {% block main %}
+
+<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.tinyscrollbar.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/tinyscrollbar.css" />
+
 
 <div class="row">
     <div class="span3"><button type="button" class="btn btn-block btn-primary">Back</button></div>
@@ -22,7 +25,10 @@
         </tr>
     </thead>
 </table>
-<div class="scrollContent">
+<div id="scrollbar1">
+    <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+    <div class="viewport">
+        <div class="overview">
     <table class="table table-bordered">
         <tbody>
             {% for hour in hours %}
@@ -35,6 +41,8 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
+</div>
 </div>
 
 <div class="row">
@@ -83,4 +91,13 @@
     </div>
 </div>
 
-{% endblock main %}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+            $('#scrollbar1').tinyscrollbar();
+
+            });
+        </script>
+
+        {% endblock main %}
