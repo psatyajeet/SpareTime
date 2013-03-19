@@ -1,36 +1,50 @@
 #header
 {
     position: fixed;
+    z-index: 100;
     width: 100%;
     height: 50px;
     padding: 0;
-    background-color: #1971ab;  
+    /*background-color: #1971ab;  */
+    background-color: #000000;  
 }
 
 #header h1{
     margin: 0;
     padding: 0;
     color: white;
+    color: #009BFF;  
 }
 
-.scrollable {
-        height: 100px;
-    overflow: auto;
-    display: block;
-}
-
-table {
+.calendarTable table{
     table-layout:fixed;
     width: 100%;
-
+    border-collapse: collapse;
 }
 
 
-.scrollContent {
-    height: 500px;
-    overflow: auto;
-    width: 100%;
+td.calendarEntry {
+    border: 1px solid #D8D8D8;
+    height: 30px;
 }
+
+tr:first-child.calendarEntry td{
+    border-top: 0;
+}
+
+tr:last-child.calendarEntry td{
+    border-bottom: 0;
+}
+
+tr.calendarEntry td:first-child {
+    border-left: 0;
+}
+
+tr.calendarEntry td:last-child {
+    border-right: 0;
+}
+
+
 
 #weekname {
     text-align: center;
