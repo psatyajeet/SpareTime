@@ -1,1 +1,86 @@
 {% extends "template.html" %}
+
+{% block main %}
+
+<div class="row">
+    <div class="span3"><button type="button" class="btn btn-block btn-primary">Back</button></div>
+    <div class="span6"><h4 id="weekname">Week of ...</h4></div>
+    <div class="span3"><button type="button" class="btn btn-block btn-primary">Forward</button></div>
+</div>
+
+<div class="row">
+    <div class="span12"><p></p></div>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th width="92px"></th>
+            {% for day in days %}
+            <th width="92px">{{day}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+</table>
+<div class="scrollContent">
+    <table class="table table-bordered">
+        <tbody>
+            {% for hour in hours %}
+            <tr>
+                <td width="92px">{{hour}}</td>
+                {% for day in days %}
+                <td width="92px"></td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="row">
+    <div class="span12"><p></p></div>
+</div>
+
+<div class="btn-group" data-toggle="buttons-radio">
+
+    <div class="row">
+        <div class="span3"><button type="button" class="btn btn-block btn-primary">Time Block</button></div>
+        <div class="span3"><button type="button" class="btn btn-block btn-primary">Private</button></div>
+        <div class="span3"><button type="button" class="btn btn-block btn-primary">Public</button></div>
+        <div class="span3"><button type="button" class="btn btn-block btn-primary">Friends</button></div>
+    </div>
+
+
+</div>
+<div class="row">
+    <div class="span12"><p></p></div>
+</div>
+
+<div class="alert alert-info">
+    <p>You have a new event request from:</p>
+    <div class="row">
+        <div class="span4"></div>
+        <div class="span2">
+            <button class="btn btn-block btn-success" type="button">Accept</button>
+        </div>
+        <div class="span2">
+            <button class="btn btn-block btn-danger" type="button">Reject</button>     
+        </div>
+        <div class="span4"></div>
+    </div>
+</div>
+<div class="alert alert-info">
+    <p>You have a new event request from:</p>
+    <div class="row">
+        <div class="span4"></div>
+        <div class="span2">
+            <button class="btn btn-block btn-success" type="button">Accept</button>
+        </div>
+        <div class="span2">
+            <button class="btn btn-block btn-danger" type="button">Reject</button>     
+        </div>
+        <div class="span4"></div>
+    </div>
+</div>
+
+{% endblock main %}
