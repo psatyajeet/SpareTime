@@ -18,9 +18,9 @@
 <table class="table table-bordered">
     <thead>
         <tr>
-            <th width="92px"></th>
+            <th width="9%"></th>
             {% for day in days %}
-            <th width="92px">{{day}}</th>
+            <th width="13%">{{day}}</th>
             {% endfor %}
         </tr>
     </thead>
@@ -29,20 +29,22 @@
     <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
     <div class="viewport">
         <div class="overview">
-    <table class="table table-bordered">
-        <tbody>
-            {% for hour in hours %}
-            <tr>
-                <td width="92px">{{hour}}</td>
-                {% for day in days %}
-                <td width="92px"></td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-</div>
+            <div class="calendarTable">
+                <table>
+                    <tbody>
+                        {% for hour in hours %}
+                        <tr class="calendarEntry">
+                            <td class="calendarEntry" width="9%">{{hour}}</td>
+                            {% for day in days %}
+                            <td class="calendarEntry" width="13%"></td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -98,6 +100,6 @@
             $('#scrollbar1').tinyscrollbar();
 
             });
-        </script>
+</script>
 
-        {% endblock main %}
+{% endblock main %}
