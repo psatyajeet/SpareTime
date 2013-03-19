@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spare Time</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="{{ STATIC_URL}}bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="{{ STATIC_URL}}css/custom.css" rel="stylesheet" media="screen">
+    </head>
+    <body>
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="{{ STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
+        <div id="header">
+            <div class="container">
+                <h1>Spare Time</h1>
+            </div>
+        </div>
+        <div class="container" id="mainContent">
+            <div class="row">
+                <div class="span12"><p></p></div>
+            </div>
+            {% block main %}
+
+            {% endblock main %}
+        </div>
+
+    </body>
+</html>
