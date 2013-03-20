@@ -22,25 +22,43 @@
     border-collapse: collapse;
 }
 
+td.hourEntry {
+    border: 1px solid #D8D8D8;
+    border-bottom: none;
+    height: 16px;
+}
 
 td.calendarEntry {
     border: 1px solid #D8D8D8;
-    height: 30px;
+    border-bottom: none;
+    height: 16px;
+    padding: 0px;
+    margin: 0px;
+    overflow: visible;
 }
 
-tr:first-child.calendarEntry td{
+td.calendarHalfHour {
+    border: 1px solid #D8D8D8;
+    border-top: 1px dashed #D8D8D8;
+    height: 16px;
+    padding: 0px;
+    margin: 0px;
+    overflow: visible;
+}
+
+tr:first-child.calendarRow td{
     border-top: 0;
 }
 
-tr:last-child.calendarEntry td{
+tr:last-child.calendarRow td{
     border-bottom: 0;
 }
 
-tr.calendarEntry td:first-child {
+tr.calendarRow td:first-child {
     border-left: 0;
 }
 
-tr.calendarEntry td:last-child {
+tr.calendarRow td:last-child {
     border-right: 0;
 }
 
@@ -52,4 +70,14 @@ tr.calendarEntry td:last-child {
 
 #mainContent {
     padding-top: 50px;
+}
+
+.dragged {
+    background-color: #009BFF;
+    height: 0px;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    position: absolute;
+    pointer-events: none;
+    display: hidden;
 }

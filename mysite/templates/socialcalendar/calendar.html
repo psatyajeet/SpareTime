@@ -4,6 +4,32 @@
 <script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.tinyscrollbar.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/tinyscrollbar.css" />
 
+<div class="alert alert-info">
+    <p>You have a new event request from:</p>
+    <div class="row">
+        <div class="span4"></div>
+        <div class="span2">
+            <button class="btn btn-block btn-success" type="button">Accept</button>
+        </div>
+        <div class="span2">
+            <button class="btn btn-block btn-danger" type="button">Reject</button>     
+        </div>
+        <div class="span4"></div>
+    </div>
+</div>
+<div class="alert alert-info">
+    <p>You have a new event request from:</p>
+    <div class="row">
+        <div class="span4"></div>
+        <div class="span2">
+            <button class="btn btn-block btn-success" type="button">Accept</button>
+        </div>
+        <div class="span2">
+            <button class="btn btn-block btn-danger" type="button">Reject</button>     
+        </div>
+        <div class="span4"></div>
+    </div>
+</div>
 
 <div class="row">
     <div class="span3"><button type="button" class="btn btn-block btn-primary">Back</button></div>
@@ -25,18 +51,24 @@
         </tr>
     </thead>
 </table>
-<div id="scrollbar1">
+<div id="scrollbar1" class="noSelect">
     <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
     <div class="viewport">
         <div class="overview">
+            <div class='dragged'></div>
             <div class="calendarTable">
                 <table>
                     <tbody>
                         {% for hour in hours %}
-                        <tr class="calendarEntry">
-                            <td class="calendarEntry" width="9%">{{hour}}</td>
+                        <tr class="calendarRow">
+                            <td class="hourEntry" rowspan="2" width="9%">{{hour}}</td>
                             {% for day in days %}
                             <td class="calendarEntry" width="13%"></td>
+                            {% endfor %}
+                        </tr>
+                        <tr class="calendarRow">
+                            {% for day in days %}
+                            <td class="calendarHalfHour" width="13%"></td>
                             {% endfor %}
                         </tr>
                         {% endfor %}
@@ -54,10 +86,10 @@
 <div class="btn-group" data-toggle="buttons-radio">
 
     <div class="row">
-        <div class="span3"><button type="button" class="btn btn-block btn-primary">Time Block</button></div>
-        <div class="span3"><button type="button" class="btn btn-block btn-primary">Private</button></div>
-        <div class="span3"><button type="button" class="btn btn-block btn-primary">Public</button></div>
-        <div class="span3"><button type="button" class="btn btn-block btn-primary">Friends</button></div>
+        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Time Block</button></div>
+        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Private</button></div>
+        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Public</button></div>
+        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Friends</button></div>
     </div>
 
 
@@ -66,40 +98,75 @@
     <div class="span12"><p></p></div>
 </div>
 
-<div class="alert alert-info">
-    <p>You have a new event request from:</p>
-    <div class="row">
-        <div class="span4"></div>
-        <div class="span2">
-            <button class="btn btn-block btn-success" type="button">Accept</button>
-        </div>
-        <div class="span2">
-            <button class="btn btn-block btn-danger" type="button">Reject</button>     
-        </div>
-        <div class="span4"></div>
-    </div>
-</div>
-<div class="alert alert-info">
-    <p>You have a new event request from:</p>
-    <div class="row">
-        <div class="span4"></div>
-        <div class="span2">
-            <button class="btn btn-block btn-success" type="button">Accept</button>
-        </div>
-        <div class="span2">
-            <button class="btn btn-block btn-danger" type="button">Reject</button>     
-        </div>
-        <div class="span4"></div>
-    </div>
-</div>
+
 
 
 <script type="text/javascript">
     $(document).ready(function(){
 
-            $('#scrollbar1').tinyscrollbar();
+            var scrollBar = $('#scrollbar1');
+            scrollBar.tinyscrollbar({wheel: 38});
+            scrollBar.tinyscrollbar_update(304);
 
             });
+    var $cells = $(".calendarEntry, .calendarHalfHour");
+    var startx = 0
+    var starty = 0;
+    var topY = 0;
+    var bottomY = 0;
+    var $dragged = $(".dragged");
+    var $reference;
+    var borderWidth = 1;
+    $cells.on("mousedown", function(eventObject) {
+            eventObject.preventDefault();
+            var index = $cells.index($(this));
+            startx = index%7;
+            starty = parseInt(index/7);
+
+            topY = $(this).offset().top;
+            bottomY = $(this).offset().top+$(this).height();
+            var height = (bottomY-topY+borderWidth);
+            var width = ($(this).width()+borderWidth);
+
+            $dragged.height(height);
+            $dragged.width(width);
+            $dragged.show();
+            $dragged.offset({ top: topY+borderWidth, left: $(this).offset().left+borderWidth })
+            $reference = $(this);
+            });
+
+    $cells.on("mouseover", function(eventObject) {
+            eventObject.preventDefault();
+            var index = $cells.index($(this));
+            var hour = parseInt(index/7);
+            if (eventObject.which == 1) {
+                topY = $reference.offset().top;
+                bottomY = $reference.offset().top+$(this).height();
+
+                var height = (hour-starty);
+                console.log(height);
+
+                if (height >= 0) {
+                $dragged.height($(this).offset().top+$(this).height() +
+                    2*borderWidth - topY);
+                $dragged.offset({top: topY});
+                } 
+                if (height < 0) {
+                $dragged.height(bottomY - $(this).offset().top + 2*borderWidth);
+                $dragged.offset({top: $(this).offset().top});
+                    }
+
+
+            }
+    });
+
+    $cells.on("mouseup", function(eventObject) {
+            eventObject.preventDefault();
+            $dragged.hide();
+            });
+
+
+
 </script>
 
 {% endblock main %}
