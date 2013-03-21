@@ -1,6 +1,6 @@
 #scrollbar1 { width: 100%; clear: both; margin: 20px 0 10px; }
 #scrollbar1 .viewport { width: 100%; height: 373px; overflow: hidden; position: relative; border: 1px solid #D8D8D8; }
-#scrollbar1 .overview { list-style: none; position: absolute; left: 0; top: 0; }
+#scrollbar1 .overview { list-style: none; position: absolute; left: 0; top: 0; width: 100%;}
 #scrollbar1 .thumb .end,
 #scrollbar1 .thumb { background-color: #003D5D; }
 #scrollbar1 .scrollbar { position: relative; float: right; width: 15px; margin-right: -20px;}

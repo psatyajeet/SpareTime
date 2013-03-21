@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponse, HttpResponseNotFound
 import calendar
 from datetime import date, timedelta
@@ -65,6 +67,7 @@ def getDays(offset=0):
     return days, hours, dates, header
 
 
+@ensure_csrf_cookie
 def index(request):
 
     #if (not request.session.__contains__('whichweek')):
@@ -81,6 +84,7 @@ def index(request):
     return render(request, 'socialcalendar/calendar.html', context)
 
 
+@csrf_protect
 def ajax(request):
     #request.session['whichweek'] += 1
     if request.method == "POST":
