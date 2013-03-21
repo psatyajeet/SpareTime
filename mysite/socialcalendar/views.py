@@ -3,8 +3,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponse, HttpResponseNotFound
 import calendar
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+from dateutil import tz
 from django.utils import simplejson
+
+from socialcalendar.models import Event
 
 
 def getDays(offset=0):
@@ -70,26 +73,80 @@ def getDays(offset=0):
 @ensure_csrf_cookie
 def index(request):
 
-    #if (not request.session.__contains__('whichweek')):
-    #    request.session['whichweek'] = 0
+    if (not request.session.__contains__('whichweek')):
+        request.session['whichweek'] = 0
 
-    days, hours, dates, header = getDays()
+    days, hours, dates, header = getDays(request.session['whichweek'])
     context = {
         'days': days,
         'hours': hours,
         'dates': dates,
         'header': header,
+        'events': Event.objects.all(),
     }
 
     return render(request, 'socialcalendar/calendar.html', context)
 
 
 @csrf_protect
-def ajax(request):
-    #request.session['whichweek'] += 1
+def changeWeek(request):
     if request.method == "POST":
-        days, hours, dates, header = getDays(int(request.POST['amount']))# request.session['whichweek'])
+        change = int(request.POST['amount'])
+        if (change == 0):
+            request.session['whichweek'] = 0
+        else:
+            request.session['whichweek'] += change
+        days, hours, dates, header = getDays(request.session['whichweek'])
         d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
+
+
+@csrf_protect
+def submitEvent(request):
+    if request.method == "POST":
+        dateString = "%m/%d/%Y %I:%M %p"
+        startDate = datetime.strptime(request.POST['startTime'],
+                                          dateString)
+        endDate = datetime.strptime(request.POST['endTime'],
+                                          dateString)
+
+        startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+        endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
+        startDate = startDate.astimezone(tz.tzlocal())
+        endDate = endDate.astimezone(tz.tzlocal())
+
+        e = Event(
+            title=request.POST['title'],
+            description=request.POST['description'],
+            location=request.POST['location'],
+            start=startDate,
+            end=endDate,
+        )
+
+        e.save()
+        #d = {'header': header, 'days': days, 'dates': dates}
+        return HttpResponse()
+    else:
+        return HttpResponseNotFound()
+
+
+@csrf_protect
+def populateEvents(request):
+    today = date.today() + timedelta(request.session['whichweek']*7)
+    delta = timedelta((today.weekday()+1) % 7)
+    first = today - delta
+    last = first + timedelta(7)
+
+    events = Event.objects.filter(start__gte=first).filter(end__lt=last)
+    d = []
+    for e in events:
+        d.append({
+            'title': e.title,
+            'start': e.start.hour+e.start.minute/60.0,
+            'end': e.end.hour+e.end.minute/60.0,
+            'day': ((e.start.weekday()+1) % 7),
+        })
+
+    return HttpResponse(simplejson.dumps(d))

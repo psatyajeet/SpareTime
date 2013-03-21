@@ -30,6 +30,8 @@ td.hourEntry {
     border: 1px solid #D8D8D8;
     border-bottom: none;
     height: 16px;
+    padding: 0px;
+    margin: 0px;
 }
 
 .calendarToday {
@@ -90,3 +92,10 @@ tr.calendarRow td:last-child {
     display: hidden;
 }
 
+.event {
+    background-color: #009BFF;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    pointer-events: none;
+}
