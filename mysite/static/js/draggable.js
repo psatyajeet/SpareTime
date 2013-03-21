@@ -51,7 +51,7 @@ $cells.on("mouseover", function(eventObject) {
     eventObject.preventDefault();
     var index = $cells.index($(this));
     var hour = parseInt(index/7);
-    if (eventObject.which == 1) {
+    if (eventObject.which == 1 && $reference != null) {
         topY = $reference.offset().top;
         bottomY = $reference.offset().top+$(this).height();
 

@@ -32,11 +32,11 @@ td.hourEntry {
     height: 16px;
 }
 
-td.calendarEntryToday, td.calendarHalfHourToday{
+.calendarToday {
     background-color: #CCCCCC;
 }
 
-td.calendarEntry, td.calendarEntryToday{
+td.calendarEntry {
     border: 1px solid #D8D8D8;
     border-bottom: none;
     height: 16px;
@@ -45,7 +45,7 @@ td.calendarEntry, td.calendarEntryToday{
     overflow: visible;
 }
 
-td.calendarHalfHour, td.calendarHalfHourToday{
+td.calendarHalfHour {
     border: 1px solid #D8D8D8;
     border-top: 1px dashed #D8D8D8;
     height: 16px;

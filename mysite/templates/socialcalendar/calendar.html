@@ -71,7 +71,7 @@
                             <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
                             {% for day in days %}
                             {% if day.today %}
-                            <td class="calendarEntryToday" width="13.5%"></td>
+                            <td class="calendarEntry calendarToday" width="13.5%"></td>
                             {% else %}
                             <td class="calendarEntry" width="13.5%"></td>
                             {% endif %}
@@ -80,7 +80,7 @@
                         <tr class="calendarRow">
                             {% for day in days %}
                             {% if day.today %}
-                            <td class="calendarHalfHourToday" width="13.5%"></td>
+                            <td class="calendarHalfHour calendarToday" width="13.5%"></td>
                             {% else %}
                             <td class="calendarHalfHour" width="13.5%"></td>
                             {% endif %}
@@ -207,10 +207,10 @@ $.ajaxSetup({
                                     date.month,
                                     date.day);
                     });
-                var $cells1 = $(".calendarEntry, .calendarEntryToday");
-                var $cells2 = $(".calendarHalfHour, .calendarHalfHourToday");
-                $cells1.removeClass().addClass("calendarEntry");
-                $cells2.removeClass().addClass("calendarHalfHour");
+                var $cells1 = $(".calendarEntry");
+                var $cells2 = $(".calendarHalfHour");
+                $cells1.removeClass("calendarToday").addClass();
+                $cells2.removeClass("calendarToday").addClass();
 
                 var hasToday = -1;
                 $(".headings").each(function(index) {
@@ -224,11 +224,11 @@ $.ajaxSetup({
                 if (hasToday >= 0) {
                     $cells1.each(function(index) {
                         if (index % 7 == hasToday)
-                            $(this).removeClass().addClass("calendarEntryToday");
+                            $(this).addClass("calendarToday");
                             });
                     $cells2.each(function(index) {
                         if (index % 7 == hasToday)
-                            $(this).removeClass().addClass("calendarHalfHourToday");
+                            $(this).addClass("calendarToday");
                             });
                 }
         }, "json");
