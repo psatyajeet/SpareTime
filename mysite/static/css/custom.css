@@ -18,6 +18,8 @@
 
 .navbar-inverse .brand {
   color: #009BFF;
+  font-size: 25px;
+  font-weight: 400;
 }
 
 .calendarTable table{
