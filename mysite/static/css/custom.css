@@ -16,8 +16,22 @@
     color: #009BFF;  
 }
 
+#footer {
+      Position: absolute;
+      Width: 100%;
+      Bottom: 0;
+      Height: 75px;  /* This value is the height of your footer */
+}
+
+#footer {
+      background-color: #f5f5f5;
+}
+
+
 .navbar-inverse .brand {
   color: #009BFF;
+  font-size: 25px;
+  font-weight: 400;
 }
 
 .calendarTable table{
@@ -83,8 +97,6 @@ tr.calendarRow td:first-child {
 tr.calendarRow td:last-child {
     border-right: 0;
 }
-
-
 
 #weekname {
     text-align: center;
