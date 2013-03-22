@@ -10,4 +10,5 @@ urlpatterns = patterns(
     url(r'^populateEvents', views.populateEvents, name='populateEvents'),
     url(r'^getEventData', views.getEventData, name='getEventData'),
     url(r'^deleteEvent', views.deleteEvent, name='deleteEvent'),
+    url(r'^editEvent', views.editEvent, name='editEvent'),
 )

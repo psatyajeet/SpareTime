@@ -12,6 +12,7 @@ from socialcalendar.models import Event
 
 dateString = "%m/%d/%Y %I:%M %p"
 
+
 def getDays(offset=0):
     calendar.setfirstweekday(calendar.SUNDAY)
     # Days contains the abbrevations for the days of the week
@@ -141,14 +142,40 @@ def populateEvents(request):
     last = first + timedelta(7)
 
     events = Event.objects.filter(start__gte=first).filter(end__lt=last)
+    events = events.extra(order_by=['start'])
+    x = 0
+    last = 0
+    biggestEnd = events[0].end 
+    widths = []
+    xs = []
+    for i in range(len(events)-1):
+        xs.append(x)
+        if events[i].end > biggestEnd:
+            biggestEnd = events[i].end
+        if biggestEnd > events[i+1].start:
+            x = x + 1
+        else:
+            for j in range(last, i+1):
+                widths.append(x+1)
+            biggestEnd = events[i+1].end
+            x = 0
+            last = i+1
+
+    xs.append(x)
+    for j in range(last, len(events)):
+        widths.append(x+1)
+
     d = []
-    for e in events:
+    for i in range(len(events)):
+        e = events[i]
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
             'end': e.end.hour+e.end.minute/60.0,
             'day': ((e.start.weekday()+1) % 7),
             'id': e.id,
+            'x': xs[i]/float(widths[i]),
+            'width': 1.0/float(widths[i]),
         })
 
     return HttpResponse(simplejson.dumps(d))
@@ -180,12 +207,34 @@ def getEventData(request):
 def deleteEvent(request):
 
     if request.method == "POST":
-        print request.POST['id']
-        events = Event.objects.filter(id=request.POST['id'])
-        if (len(events) != 1):
-            return HttpResponseNotFound()
-        else:
-            events.delete()
-            return HttpResponse()
+        event = Event.objects.get(id=request.POST['id'])
+        event.delete()
+        return HttpResponse()
+    else:
+        return HttpResponseNotFound()
+
+
+@csrf_protect
+def editEvent(request):
+    if request.method == "POST":
+        event = Event.objects.get(id=request.POST['id'])
+        startDate = datetime.strptime(request.POST['startTime'],
+                                      dateString)
+        endDate = datetime.strptime(request.POST['endTime'],
+                                    dateString)
+
+        startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+        endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
+        startDate = startDate.astimezone(tz.tzlocal())
+        endDate = endDate.astimezone(tz.tzlocal())
+
+        event.title = request.POST['title']
+        event.description = request.POST['description']
+        event.location = request.POST['location']
+        event.start = startDate
+        event.end = endDate
+
+        event.save()
+        return HttpResponse()
     else:
         return HttpResponseNotFound()

@@ -33,6 +33,7 @@ th.headings {
 td.hourEntry {
     border: 1px solid #D8D8D8;
     border-bottom: none;
+    border-left: none;
     height: 16px;
     padding: 0px;
     margin: 0px;
@@ -45,6 +46,7 @@ td.hourEntry {
 td.calendarEntry {
     border: 1px solid #D8D8D8;
     border-bottom: none;
+    border-left: none;
     height: 16px;
     padding: 0px;
     margin: 0px;
@@ -54,10 +56,16 @@ td.calendarEntry {
 td.calendarHalfHour {
     border: 1px solid #D8D8D8;
     border-top: 1px dashed #D8D8D8;
+    border-left: none;
     height: 16px;
     padding: 0px;
     margin: 0px;
     overflow: visible;
+}
+
+.calendarRow {
+    padding: 0;
+    margin: 0;
 }
 
 tr:first-child.calendarRow td{
@@ -98,6 +106,7 @@ tr.calendarRow td:last-child {
 
 .event {
     background-color: #009BFF;
+    border: 2px solid #0065A6; 
     height: 100px;
     width: 100px;
     position: absolute;

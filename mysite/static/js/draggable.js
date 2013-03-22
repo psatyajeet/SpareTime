@@ -99,6 +99,9 @@ $(document).on("mouseup", function(eventObject) {
         $('#deleteEvent').hide();
         $('#editEvent').hide();
         $('#eventModal').modal();
+        $('#eventModal').on('shown', function(){                    
+            $('#eventName').focus();
+        });
     }
 
     starty = -1;
