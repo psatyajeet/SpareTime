@@ -2,8 +2,7 @@
 *.pyc
 .DS_Store
 venv
+*.pyc
 *.swp
-
 mysite/socialcalendar/views.pyc
 
-*.pyc

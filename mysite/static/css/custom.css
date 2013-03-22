@@ -16,6 +16,10 @@
     color: #009BFF;  
 }
 
+.navbar-inverse .brand {
+  color: #009BFF;
+}
+
 .calendarTable table{
     table-layout:fixed;
     width: 100%;
