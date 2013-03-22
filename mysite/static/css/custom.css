@@ -97,5 +97,6 @@ tr.calendarRow td:last-child {
     height: 100px;
     width: 100px;
     position: absolute;
-    pointer-events: none;
+    overflow: hidden;
+    cursor: default;
 }

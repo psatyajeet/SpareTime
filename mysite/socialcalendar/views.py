@@ -10,6 +10,8 @@ from django.utils import simplejson
 from socialcalendar.models import Event
 
 
+dateString = "%m/%d/%Y %I:%M %p"
+
 def getDays(offset=0):
     calendar.setfirstweekday(calendar.SUNDAY)
     # Days contains the abbrevations for the days of the week
@@ -106,11 +108,10 @@ def changeWeek(request):
 @csrf_protect
 def submitEvent(request):
     if request.method == "POST":
-        dateString = "%m/%d/%Y %I:%M %p"
         startDate = datetime.strptime(request.POST['startTime'],
-                                          dateString)
+                                      dateString)
         endDate = datetime.strptime(request.POST['endTime'],
-                                          dateString)
+                                    dateString)
 
         startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
@@ -147,6 +148,44 @@ def populateEvents(request):
             'start': e.start.hour+e.start.minute/60.0,
             'end': e.end.hour+e.end.minute/60.0,
             'day': ((e.start.weekday()+1) % 7),
+            'id': e.id,
         })
 
     return HttpResponse(simplejson.dumps(d))
+
+
+@csrf_protect
+def getEventData(request):
+
+    if request.method == "POST":
+        events = Event.objects.filter(id=request.POST['id'])
+        if (len(events) != 1):
+            return HttpResponseNotFound()
+        else:
+            event = list(events)[0]
+            d = {
+                'title': event.title,
+                'description': event.description,
+                'location': event.location,
+                'start': event.start.strftime(dateString),
+                'end': event.end.strftime(dateString),
+                'id': event.id,
+            }
+            return HttpResponse(simplejson.dumps(d))
+    else:
+        return HttpResponseNotFound()
+
+
+@csrf_protect
+def deleteEvent(request):
+
+    if request.method == "POST":
+        print request.POST['id']
+        events = Event.objects.filter(id=request.POST['id'])
+        if (len(events) != 1):
+            return HttpResponseNotFound()
+        else:
+            events.delete()
+            return HttpResponse()
+    else:
+        return HttpResponseNotFound()

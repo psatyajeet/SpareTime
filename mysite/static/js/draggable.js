@@ -77,7 +77,7 @@ $cells.on("mouseover", function(eventObject) {
     }
 });
 
-$cells.on("mouseup", function(eventObject) {
+$(document).on("mouseup", function(eventObject) {
     if (starty != -1) {
         eventObject.preventDefault();
         $dragged.hide();
@@ -92,6 +92,12 @@ $cells.on("mouseup", function(eventObject) {
         dates[startx].setMinutes(30*(endHour%2));
         picker2.setLocalDate(dates[startx]);
 
+        clearModal();
+        currentlyViewing = -1;
+
+        $('#createEvent').show();
+        $('#deleteEvent').hide();
+        $('#editEvent').hide();
         $('#eventModal').modal();
     }
 

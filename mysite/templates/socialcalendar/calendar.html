@@ -149,12 +149,22 @@
     </form>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button class="btn btn-danger" id="deleteEvent">Delete</button>
+        <button class="btn btn-primary" id="editEvent">Edit</button>
         <button class="btn btn-primary" id="createEvent">Create</button>
     </div>
 </div>
 
 
 <script type="text/javascript">
+
+    var currentlyViewing = -1;
+    var clearModal = function () {
+        $("#eventName").val("");
+        $("#eventDescription").val("");
+        $("#eventLocation").val("");
+    }
+
     var dates = new Array();
     {% for date in dates %}
     dates.push(new Date({{ date.year }},
@@ -199,6 +209,7 @@ $.ajaxSetup({
     }
     });
 
+
     var populateEvents = function() {
         $.get('populateEvents', function (data, status) {
                 $('.event').remove();
@@ -208,17 +219,40 @@ $.ajaxSetup({
                 var height = $('.calendarEntry').height();
                 var borderWidth = 1;
             $.each(data, function(index, dat) {
-                        $div = $('<div class="event">'+dat.title+'</div>');
+                $div = $('<div class="event" id="'+dat.id+'">'+dat.title+'</div>');
                         $div.height((height+borderWidth)*(dat.end - dat.start)*2);
                         $div.width(width+borderWidth);
                         $div.offset({top: (height+borderWidth)*dat.start*2, left: x + width*dat.day + 2*borderWidth*(dat.day+1)});
 
                         $overview.prepend($div);
                     });
-            $('.event').click(function (){
-                    alert('here');
-                    return false;
+
+            $('.event').off('click');
+            $('.event').on('click', function (){
+                clearModal();
+
+        $.post('getEventData', {"id": $(this).attr('id')}, function (data, status) {
+                $("#eventName").val(data.title);
+                $("#eventDescription").val(data.description);
+                $("#eventLocation").val(data.location);
+                $("#eventStart").val(data.start);
+                $("#eventEnd").val(data.end);
+
+                $('#createEvent').hide();
+                $('#deleteEvent').show();
+                $('#editEvent').show();
+                $('#eventModal').modal();
+
+                currentlyViewing = data.id;
+
+            }, "json");
+        return false;
                 });
+            $('.event').on('mousemove', function (event){
+                event.preventDefault();
+                return false;
+                    });
+
 
         }, "json");
     }
@@ -282,10 +316,18 @@ $(document).ready(function(){
     }
     $("#createEvent").click(function() {createEvent()});
 
+    var deleteEvent = function() {
+        $.post('deleteEvent', {"id": currentlyViewing}, 
+                                 "json").done(function (data, status) {
+                                    populateEvents();
+                                });
+        $('#eventModal').modal('hide');
+    }
+    $("#deleteEvent").click(function() {deleteEvent()});
 
 
 
 </script>
-<script type="text/javascript" src="{{ STATIC_URL }}/js/draggable.js"></script>
 
+<script type="text/javascript" src="{{ STATIC_URL }}/js/draggable.js"></script>
 {% endblock main %}

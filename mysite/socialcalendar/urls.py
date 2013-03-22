@@ -8,4 +8,6 @@ urlpatterns = patterns(
     url(r'^changeWeek', views.changeWeek, name='changeWeek'),
     url(r'^submitEvent', views.submitEvent, name='submitEvent'),
     url(r'^populateEvents', views.populateEvents, name='populateEvents'),
+    url(r'^getEventData', views.getEventData, name='getEventData'),
+    url(r'^deleteEvent', views.deleteEvent, name='deleteEvent'),
 )
