@@ -16,6 +16,17 @@
     color: #009BFF;  
 }
 
+#footer {
+      Position: absolute;
+      Width: 100%;
+      Bottom: 0;
+      Height: 75px;  /* This value is the height of your footer */
+}
+
+#footer {
+      background-color: #f5f5f5;
+}
+
 .navbar-inverse .brand {
   color: #009BFF;
   font-size: 25px;
