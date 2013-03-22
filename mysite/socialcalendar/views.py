@@ -143,6 +143,9 @@ def populateEvents(request):
 
     events = Event.objects.filter(start__gte=first).filter(end__lt=last)
     events = events.extra(order_by=['start'])
+    d = []
+    if (len(events) == 0):
+        return HttpResponse(simplejson.dumps(d))
     x = 0
     last = 0
     biggestEnd = events[0].end 
