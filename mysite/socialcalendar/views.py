@@ -113,11 +113,14 @@ def submitEvent(request):
                                       dateString)
         endDate = datetime.strptime(request.POST['endTime'],
                                     dateString)
-
         startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
-        startDate = startDate.astimezone(tz.tzlocal())
-        endDate = endDate.astimezone(tz.tzlocal())
+        startDate = startDate.astimezone(tz.gettz('UTC'))
+        endDate = endDate.astimezone(tz.gettz('UTC'))
+        #startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+        #endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
+        #startDate = startDate.astimezone(tz.tzlocal())
+        #endDate = endDate.astimezone(tz.tzlocal())
 
         e = Event(
             title=request.POST['title'],
@@ -136,10 +139,14 @@ def submitEvent(request):
 
 @csrf_protect
 def populateEvents(request):
-    today = date.today() + timedelta(request.session['whichweek']*7)
+    today = datetime.today() + timedelta(request.session['whichweek']*7)
+    today = today.replace(hour=0, minute=0, second=0, microsecond=0)
     delta = timedelta((today.weekday()+1) % 7)
     first = today - delta
     last = first + timedelta(7)
+
+    first = first.replace(tzinfo=tz.gettz('UTC'))
+    last = last.replace(tzinfo=tz.gettz('UTC'))
 
     events = Event.objects.filter(start__gte=first).filter(end__lt=last)
     events = events.extra(order_by=['start'])
@@ -168,7 +175,6 @@ def populateEvents(request):
     for j in range(last, len(events)):
         widths.append(x+1)
 
-    d = []
     for i in range(len(events)):
         e = events[i]
         d.append({
@@ -180,6 +186,7 @@ def populateEvents(request):
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
         })
+        print d[len(d)-1]
 
     return HttpResponse(simplejson.dumps(d))
 
