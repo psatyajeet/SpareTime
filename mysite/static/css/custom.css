@@ -125,3 +125,9 @@ tr.calendarRow td:last-child {
     overflow: hidden;
     cursor: default;
 }
+
+.movingEvent {
+    opacity: 0.6;
+    filter: alpha(opacity=60);
+    z-index: 5;
+}

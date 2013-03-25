@@ -117,10 +117,6 @@ def submitEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
-        #startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
-        #endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
-        #startDate = startDate.astimezone(tz.tzlocal())
-        #endDate = endDate.astimezone(tz.tzlocal())
 
         e = Event(
             title=request.POST['title'],
@@ -155,7 +151,7 @@ def populateEvents(request):
         return HttpResponse(simplejson.dumps(d))
     x = 0
     last = 0
-    biggestEnd = events[0].end 
+    biggestEnd = events[0].end
     widths = []
     xs = []
     for i in range(len(events)-1):
@@ -186,7 +182,6 @@ def populateEvents(request):
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
         })
-        print d[len(d)-1]
 
     return HttpResponse(simplejson.dumps(d))
 
@@ -243,6 +238,26 @@ def editEvent(request):
         event.location = request.POST['location']
         event.start = startDate
         event.end = endDate
+
+        event.save()
+        return HttpResponse()
+    else:
+        return HttpResponseNotFound()
+
+
+@csrf_protect
+def changeStart(request):
+    if request.method == "POST":
+        event = Event.objects.get(id=request.POST['id'])
+        startDate = datetime.strptime(request.POST['startTime'],
+                                      dateString)
+
+        startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+        startDate = startDate.astimezone(tz.tzlocal())
+
+        eventLength = event.end - event.start
+        event.start = startDate
+        event.end = startDate + eventLength
 
         event.save()
         return HttpResponse()
