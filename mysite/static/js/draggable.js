@@ -1,8 +1,6 @@
 var currentlyViewing = -1;
 var currentlyMoving = -1;
 var currentlyMovingY = 0;
-var currentlyX = 0;
-var currentlyY = 0;
 var currentlyClicking = -1;
 
 
@@ -79,8 +77,6 @@ var populateEvents = function() {
         currentlyMoving = parseInt($(this).attr("id"));
         currentlyMovingY = event.pageY - $(this).offset().top;
 
-        currentlyX = event.pageX;
-        currentlyY = event.pageY-currentlyMovingY;
     });
     $('.event').on('click', function (){
         if (currentlyClicking == 1) {
@@ -110,33 +106,41 @@ var populateEvents = function() {
     $('.event').on('mousemove', function (event){
         var x = event.pageX;
         var y = event.pageY-currentlyMovingY;
-        if (Math.abs(currentlyX - x) > 5 || Math.abs(currentlyY - y) > 5) {
-            currentlyClicking = -1;
-        }
+
+       $cells.each(function(index) {
+            if (y >= $(this).offset().top && 
+                y <= $(this).offset().top + $(this).height() &&
+                x >= $(this).offset().left && 
+                x <= $(this).offset().left + $(this).width()) {
+                currentlyClicking = -1;
+                tableOver($(this), event);
+            }
+        });
         if (currentlyClicking == -1 && currentlyMoving == parseInt($(this).attr("id"))) {
             $(this).width($cells.width());
             $(this).attr("class", "event movingEvent");
         }
-        $cells.each(function(index) {
-            if (y >= $(this).offset().top && 
-                y < $(this).offset().top + $(this).height() &&
-                x >= $(this).offset().left && 
-                x < $(this).offset().left + $(this).width()) {
-                tableOver($(this), event);
-            }
-        });
+ 
     });
     $('.event').on('mouseup', function (event){
+        console.log("mouseup");
         var x = event.pageX;
         var y = event.pageY-currentlyMovingY;
+        var called = false;
         $cells.each(function(index) {
                 if (y >= $(this).offset().top && 
-                    y < $(this).offset().top + $(this).height() &&
+                    y <= $(this).offset().top + $(this).height() &&
                     x >= $(this).offset().left && 
-                    x < $(this).offset().left + $(this).width()) {
+                    x <= $(this).offset().left + $(this).width()) {
                     tableUp($(this), event);
+                    called = true;
                 }
             });
+        if (!called) {
+            currentlyMoving = -1;
+            populateEvents();
+            tableUp(null, event);
+        }
         return false;
     });
 
@@ -381,7 +385,8 @@ var tableUp = function($cell, eventObject) {
 }
 
 $cells.on("mouseup", function(eventObject) {
-    tableUp($(this), eventObject);
+    var $cell = $($cells.get($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7));
+    tableUp($cell, eventObject);
     return false;
 });
 
