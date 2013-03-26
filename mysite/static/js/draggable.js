@@ -123,7 +123,6 @@ var populateEvents = function() {
  
     });
     $('.event').on('mouseup', function (event){
-        console.log("mouseup");
         var x = event.pageX;
         var y = event.pageY-currentlyMovingY;
         var called = false;
