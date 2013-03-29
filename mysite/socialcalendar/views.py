@@ -263,3 +263,8 @@ def changeStart(request):
         return HttpResponse()
     else:
         return HttpResponseNotFound()
+
+
+@csrf_protect
+def gcal(request):
+    return HttpResponse()

@@ -45,6 +45,10 @@
 </div>
 
 <div class="row">
+    <div class="span12"><button id="gcal" type="button" class="btn btn-block btn-primary">Do Google Calendar Stuff</button></div>
+</div>
+
+<div class="row">
     <div class="span12"><p></p></div>
 </div>
 
@@ -177,6 +181,14 @@
             scrollBar.tinyscrollbar_update(272);
 
             });
+
+
+var gcal = function() {
+    $.get('gcal', function (data, status) {
+}, "json");
+};
+
+$("#gcal").click(gcal);
 
 </script>
 
