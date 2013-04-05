@@ -184,8 +184,11 @@
 
 
 var gcal = function() {
-    $.get('gcal', function (data, status) {
-}, "json");
+    $.post('gcal', function (data, status) {
+    populateEvents();
+}, "json").done(function(data, status){
+    populateEvents();
+}) ;
 };
 
 $("#gcal").click(gcal);

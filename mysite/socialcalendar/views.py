@@ -126,13 +126,14 @@ def submitEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
-
+        
         e = Event(
             title=request.POST['title'],
             description=request.POST['description'],
             location=request.POST['location'],
             start=startDate,
             end=endDate,
+            gid=''
         )
 
         e.save()
@@ -247,7 +248,7 @@ def editEvent(request):
         event.location = request.POST['location']
         event.start = startDate
         event.end = endDate
-
+        
         event.save()
         return HttpResponse()
     else:
@@ -285,8 +286,8 @@ def gcal(request):
     # Create a flow object. This object holds the client_id, client_secret, and
     # scope. It assists with OAuth 2.0 steps to get user authorization and
     # credentials.
-    flow = OAuth2WebServerFlow(client_id, client_secret, scope)
-
+    flow = OAuth2WebServerFlow(client_id, client_secret, scope, oauth_callback = 'http://localhost:8000', redirect_uri = 'http://localhost:8000')
+    
     # Create a Storage object. This object holds the credentials that your
     # application needs to authorize access to the user's data. The name of the
     # credentials file is provided. If the file does not exist, it is
@@ -308,7 +309,6 @@ def gcal(request):
     # which updates the credentials.dat file.
     if credentials is None or credentials.invalid:
         credentials = run(flow, storage)
-
     # Create an httplib2.Http object to handle our HTTP requests, and authorize it
     # using the credentials.authorize() function.
     http = httplib2.Http()
@@ -327,6 +327,9 @@ def gcal(request):
         events = service.events().list(calendarId='primary').execute()
         if events['items']:
             for event in events['items']:
+                existentEvent = Event.objects.filter(gid=event['iCalUID'])
+                if(len(existentEvent) != 0):
+                    continue
                 if not event.has_key('summary'):
                     event['summary'] = ''
                 if not event.has_key('description'):
@@ -337,11 +340,15 @@ def gcal(request):
                     event['start']['dateTime'] = ''
                 if not event.has_key('end'):
                     event['end']['dateTime'] = ''
+                if not event.has_key('iCalUID'):
+                    event['iCalUID'] = ''
+            
                 e = Event(title=event['summary'],
                           description=event['description'],
                           location=event['location'],
                           start=event['start']['dateTime'].replace("T", " "),
                           end=event['end']['dateTime'].replace("T", " "),
+                          gid=event['iCalUID']
                           )
                 e.save()
         page_token = events.get('nextPageToken')

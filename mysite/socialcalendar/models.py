@@ -8,7 +8,7 @@ class Event(models.Model):
     description = models.TextField()
     start = models.DateTimeField('Event start')
     end = models.DateTimeField('Event end')
-
+    gid = models.CharField(max_length= 75)
     def __unicode__(self):
         return self.title
 
