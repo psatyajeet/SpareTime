@@ -866,6 +866,7 @@
 
         this.isShown = false
 
+        // not sure if necessary
         this.escape()
         
         this.enter()
@@ -903,9 +904,11 @@
       
     , enter: function () {
         var that = this
+
         if (this.isShown && this.options.keyboard) {
           this.$element.on('keyup.dismiss.modal', function ( e ) {
             e.which == 13 && that.hide()
+            document.getElementById('createEvent').click();
           })
         } else if (!this.isShown) {
           this.$element.off('keyup.dismiss.modal')
