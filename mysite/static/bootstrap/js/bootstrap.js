@@ -908,7 +908,8 @@
         if (this.isShown && this.options.keyboard) {
           this.$element.on('keyup.dismiss.modal', function ( e ) {
             e.which == 13 && that.hide()
-            document.getElementById('createEvent').click();
+            if (e.which == 13)
+                document.getElementById('createEvent').click();
           })
         } else if (!this.isShown) {
           this.$element.off('keyup.dismiss.modal')
