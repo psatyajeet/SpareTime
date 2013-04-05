@@ -823,6 +823,8 @@
         this.isShown = true
 
         this.escape()
+        
+        this.enter()
 
         this.backdrop(function () {
           var transition = $.support.transition && that.$element.hasClass('fade')
@@ -865,6 +867,8 @@
         this.isShown = false
 
         this.escape()
+        
+        this.enter()
 
         $(document).off('focusin.modal')
 
@@ -891,6 +895,17 @@
         if (this.isShown && this.options.keyboard) {
           this.$element.on('keyup.dismiss.modal', function ( e ) {
             e.which == 27 && that.hide()
+          })
+        } else if (!this.isShown) {
+          this.$element.off('keyup.dismiss.modal')
+        }
+      }
+      
+    , enter: function () {
+        var that = this
+        if (this.isShown && this.options.keyboard) {
+          this.$element.on('keyup.dismiss.modal', function ( e ) {
+            e.which == 13 && that.hide()
           })
         } else if (!this.isShown) {
           this.$element.off('keyup.dismiss.modal')
@@ -1919,6 +1934,8 @@
       switch(e.keyCode) {
         case 9: // tab
         case 13: // enter
+          e.preventDefault()
+          break
         case 27: // escape
           e.preventDefault()
           break
