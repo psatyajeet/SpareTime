@@ -1,0 +1,50 @@
+{% extends "socialcalendar/calendar.html" %}
+{% block calendar %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th width="5.5%"></th>
+            {% for day in days %}
+            <th class="headings" width="13.5%">{{day.title}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+</table>
+
+<div id="scrollbar1" class="noSelect">
+    <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+    <div class="viewport">
+        <div class="overview">
+           <div class='dragged'></div>
+            <div class="calendarTable">
+                <table>
+                    <tbody>
+                        {% for hour in hours %}
+                        <tr class="calendarRow">
+                            <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
+                            {% for day in days %}
+                            {% if day.today %}
+                            <td class="calendarEntry calendarToday" width="13.5%"></td>
+                            {% else %}
+                            <td class="calendarEntry" width="13.5%"></td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        <tr class="calendarRow">
+                            {% for day in days %}
+                            {% if day.today %}
+                            <td class="calendarHalfHour calendarToday" width="13.5%"></td>
+                            {% else %}
+                            <td class="calendarHalfHour" width="13.5%"></td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock calendar %}

@@ -57,6 +57,11 @@ td.hourEntry {
     background-color: #CCCCCC;
 }
 
+
+.otherMonth.calendarToday {
+    background-color: #EEEEEE;
+}
+
 td.calendarEntry {
     border: 1px solid #D8D8D8;
     border-bottom: none;
@@ -130,4 +135,32 @@ tr.calendarRow td:last-child {
     opacity: 0.6;
     filter: alpha(opacity=60);
     z-index: 5;
+}
+
+
+.calendarMonthTable table{
+    table-layout:fixed;
+    width: 100%;
+    border: 1px solid #D8D8D8;
+    border-collapse: collapse;
+}
+
+td.calendarMonthEntry {
+    border: 1px solid #D8D8D8;
+    border-bottom: none;
+    border-left: none; 
+    vertical-align: top;
+    height: 80px;
+    padding: 5px;
+    margin: 0px;
+    overflow: visible;
+}
+
+td.otherMonth {
+    color: #CCCCCC;
+}
+
+.monthEvent {
+    width: 100%;
+    background-color: #009BFF;
 }

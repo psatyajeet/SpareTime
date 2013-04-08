@@ -5,7 +5,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}/timePicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/tinyscrollbar.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/timePicker/css/bootstrap-datetimepicker.min.css"/>
-
+<!---
 <div class="alert alert-info">
     <p>You have a new event request from:</p>
     <div class="row-fluid">
@@ -32,7 +32,7 @@
         <div class="span4"></div>
     </div>
 </div>
-
+-->
 
 <div class="row">
     <div class="span1"><button type="button" id="calendarBack" class="btn btn-block btn-primary">&lt&lt</button></div>
@@ -40,8 +40,8 @@
     <div class="span1"><button type="button" id="calendarForward" class="btn btn-block btn-primary">&gt&gt</button></div>
     <div class="span6"><h4 id="weekname">{{ header }}</h4></div>
     <div class="span1"></div>
-    <div class="span1"><button type="button" class="btn btn-block btn-primary">Monthly</button></div>
-    <div class="span1"><button type="button" class="btn btn-block btn-primary">Weekly</button></div>
+    <div class="span1"><button type="button" id="monthlyButton" class="btn btn-block btn-primary">Monthly</button></div>
+    <div class="span1"><button type="button" id="weeklyButton" class="btn btn-block btn-primary">Weekly</button></div>
 </div>
 
 <div class="row">
@@ -52,51 +52,98 @@
     <div class="span12"><p></p></div>
 </div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th width="5.5%"></th>
-            {% for day in days %}
-            <th class="headings" width="13.5%">{{day.title}}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-</table>
-<div id="scrollbar1" class="noSelect">
-    <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
-    <div class="viewport">
-        <div class="overview">
-           <div class='dragged'></div>
-            <div class="calendarTable">
-                <table>
-                    <tbody>
-                        {% for hour in hours %}
-                        <tr class="calendarRow">
-                            <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
-                            {% for day in days %}
-                            {% if day.today %}
-                            <td class="calendarEntry calendarToday" width="13.5%"></td>
-                            {% else %}
-                            <td class="calendarEntry" width="13.5%"></td>
-                            {% endif %}
+<!-- Start Week Calendar -->
+<div id="weeklyCalendar">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th width="5.5%"></th>
+                {% for day in days %}
+                <th class="headings weekly" width="13.5%">{{day.title}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+    </table>
+
+    <div id="scrollbar1" class="noSelect">
+        <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+        <div class="viewport">
+            <div class="overview">
+               <div class='dragged'></div>
+                <div class="calendarTable">
+                    <table>
+                        <tbody>
+                            {% for hour in hours %}
+                            <tr class="calendarRow">
+                                <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
+                                {% for day in days %}
+                                {% if day.today %}
+                                <td class="calendarEntry calendarToday" width="13.5%"></td>
+                                {% else %}
+                                <td class="calendarEntry" width="13.5%"></td>
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                            <tr class="calendarRow">
+                                {% for day in days %}
+                                {% if day.today %}
+                                <td class="calendarHalfHour calendarToday" width="13.5%"></td>
+                                {% else %}
+                                <td class="calendarHalfHour" width="13.5%"></td>
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
                             {% endfor %}
-                        </tr>
-                        <tr class="calendarRow">
-                            {% for day in days %}
-                            {% if day.today %}
-                            <td class="calendarHalfHour calendarToday" width="13.5%"></td>
-                            {% else %}
-                            <td class="calendarHalfHour" width="13.5%"></td>
-                            {% endif %}
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<!-- End Week Calendar -->
+
+<!-- Start Month Calendar -->
+<div id="monthlyCalendar">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                {% for day in monthDays %}
+                    <th class="headings monthly" width="14.3%">{{day.title}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+    </table>
+
+
+    <div class="calendarMonthTable">
+        <table>
+            <tbody>
+                {% for week in monthWeeks %}
+                <tr class="calendarRow">
+                    {% for day in week %}
+                    {% if day.thisMonth %}
+                        {% if day.today %}
+                            <td class="calendarMonthEntry calendarToday" width="14.3%"><div>{{day.date}}</div></td>
+                        {% else %}
+                            <td class="calendarMonthEntry" width="14.3%"><div>{{day.date}}</div></td>
+                        {% endif %}
+                    {% else %}
+                        {% if day.today %}
+                            <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%"><div>{{day.date}}</div></td>
+                        {% else %}
+                            <td class="calendarMonthEntry otherMonth" width="14.3%"><div>{{day.date}}</div></td>
+                        {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- End of Month Calendar -->
 
 <div class="row">
     <div class="span12"><p></p></div>
@@ -115,6 +162,11 @@
 </div>
 <div class="row">
     <div class="span12"><p></p></div>
+</div>
+
+<!-- Popover -->
+<div id="repeatPopover">
+    "Hello World"
 </div>
 
 <!-- Modal -->
@@ -162,6 +214,10 @@
 
 <script type="text/javascript">
 
+    var format = "{{format}}";
+
+    $("#repeatPopover").popover()
+
     var clearModal = function () {
         $("#eventName").val("");
         $("#eventDescription").val("");
@@ -180,6 +236,9 @@
             scrollBar.tinyscrollbar({wheel: 34});
             scrollBar.tinyscrollbar_update(272);
 
+
+            $("#monthlyCalendar").hide();
+
             });
 
 
@@ -188,8 +247,33 @@ var gcal = function() {
 }, "json");
 };
 
+
 $("#gcal").click(gcal);
 
+
+
+var changeFormat = function(newFormat) {
+    $.get('changeFormat', {'format': newFormat}, function (data, status) {
+            $("#weekname").html(data.header);
+            format = newFormat;
+            }, "json")};
+
+
+$("#weeklyButton").click(function() {
+        $("#monthlyCalendar").hide();
+        $('.event').remove();
+        $("#weeklyCalendar").show();
+        format = "weekly"
+        changeFormat("weekly");
+        populateEvents();
+        });
+$("#monthlyButton").click(function() {
+        $("#monthlyCalendar").show();
+        $("#weeklyCalendar").hide();
+        format = "monthly"
+        changeFormat("monthly");
+        populateMonthEvents();
+        });
 </script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}/js/draggable.js"></script>

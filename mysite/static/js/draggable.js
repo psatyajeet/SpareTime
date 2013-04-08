@@ -34,7 +34,18 @@ $.ajaxSetup({
     }
 });
 
-
+var populateMonthEvents = function() {
+    $.get('populateMonthEvents', function (data, status) {
+        $monthEntries = $(".calendarMonthEntry");
+        $monthEntries.children().html("");
+        for (var i = 0; i < data.length; i++) {
+            console.log(data[i].day);
+            $entry = $($monthEntries.get(data[i].day)).children();
+            $entry.children().html($entry.children().html()+'<div class="monthEvent">'+data[i].title+'</div>');
+        }
+    }, "json");
+};
+ 
 var populateEvents = function() {
     $.get('populateEvents', function (data, status) {
         $('.event').remove();
@@ -140,6 +151,7 @@ var populateEvents = function() {
             populateEvents();
             tableUp(null, event);
         }
+        currentlyMovingY = 0
         return false;
     });
 
@@ -152,40 +164,70 @@ $(document).ready(function(){
 });
 
 var updateCalendar = function(amount) {
-    $.post('changeWeek', {"amount": amount}, function (data, status) {
-        $("#weekname").html(data.header);
-        $.each(data.dates, function(index, date) {
-            dates[index] = new Date(date.year,
-                date.month,
-                date.day);
-        });
-        var $cells1 = $(".calendarEntry");
-        var $cells2 = $(".calendarHalfHour");
-        $cells1.removeClass("calendarToday");
-        $cells2.removeClass("calendarToday");
+    if (format === "monthly") {
+        $.post('changeMonth', {"amount": amount}, function (data, status) {
+            $("#weekname").html(data.header);
+            $month = $(".calendarMonthTable");
+            html = ''
 
-        var hasToday = -1;
-        $(".headings").each(function(index) {
-            $(this).html(data.days[index].title);
-            if (data.days[index].today === true) {
-                hasToday = index;
+            html += '<table><tbody>'; 
+            for (var i = 0; i < data.weeks.length; i++) {
+                html += '<tr class="calendarRow">'; 
+                for (var j = 0; j < data.weeks[i].length; j++) {
+                            
+                    html += '<td class="calendarMonthEntry'; 
+                    if (data.weeks[i][j].today)
+                        html += ' calendarToday';
+                    if (!data.weeks[i][j].thisMonth)
+                        html += ' otherMonth';
+                    html += '" width="14.3%">'+data.weeks[i][j].date+'</td>'; 
+                }
+                html += '</tr>'; 
             }
+            html += '</tbody></table>'; 
+            $month.html(html);
+
+        }, "json").done(function() {
+            populateMonthEvents();
         });
+    } else {
+        $.post('changeWeek', {"amount": amount}, function (data, status) {
+            $("#weekname").html(data.header);
+            $.each(data.dates, function(index, date) {
+                dates[index] = new Date(date.year,
+                    date.month,
+                    date.day);
+            });
+            var $cells1 = $(".calendarEntry");
+            var $cells2 = $(".calendarHalfHour");
+            $cells1.removeClass("calendarToday");
+            $cells2.removeClass("calendarToday");
+
+            var hasToday = -1;
+            $(".headings weekly").each(function(index) {
+            console.log("hello");
+                console.log(data.days[index].title);
+                $(this).html(data.days[index].title);
+                if (data.days[index].today === true) {
+                    hasToday = index;
+                }
+            });
 
 
-        if (hasToday >= 0) {
-            $cells1.each(function(index) {
-                if (index % 7 == hasToday)
-                $(this).addClass("calendarToday");
-            });
-            $cells2.each(function(index) {
-                if (index % 7 == hasToday)
-                $(this).addClass("calendarToday");
-            });
-        }
-    }, "json").done(function() {
-        populateEvents();
-    });
+            if (hasToday >= 0) {
+                $cells1.each(function(index) {
+                    if (index % 7 == hasToday)
+                    $(this).addClass("calendarToday");
+                });
+                $cells2.each(function(index) {
+                    if (index % 7 == hasToday)
+                    $(this).addClass("calendarToday");
+                });
+            }
+        }, "json").done(function() {
+            populateEvents();
+        });
+    }
 }
 
 $("#calendarBack").click(function() {updateCalendar(-1)});

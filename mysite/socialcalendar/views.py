@@ -6,6 +6,7 @@ import calendar
 from datetime import date, timedelta, datetime
 from dateutil import tz
 from django.utils import simplejson
+from dateutil.relativedelta import relativedelta
 
 from socialcalendar.models import Event
 
@@ -73,22 +74,123 @@ def getDays(offset=0):
     return days, hours, dates, header
 
 
+def getWeeks(offset=0):
+    calendar.setfirstweekday(calendar.SUNDAY)
+    # Days contains the abbrevations for the days of the week
+
+    today = date.today()
+    current = date.today() + relativedelta(months=offset)
+    first, monthrange = calendar.monthrange(current.year, current.month)
+    first = (first+1) % 7
+    previousMonth = current + relativedelta(months=-1)
+    hold, previousMonthrange = calendar.monthrange(previousMonth.year, previousMonth.month)
+
+    days = []
+    for i in range(6, 13):
+        days.append({"title": calendar.day_abbr[i % 7]})
+
+    header = current.strftime("%B %Y")
+
+    dates = []
+    weeks = []
+    for i in range(first):
+        isToday = False
+        if (today.year == previousMonth.year and
+           today.month == previousMonth.month and
+           today.day == previousMonthrange+i-first):
+
+            isToday = True
+
+        dates.append({"date": previousMonthrange+i-first+1,
+                      "thisMonth": False,
+                      "today": isToday})
+
+    for i in range(first, monthrange+first):
+        isToday = False
+        if (current.year == today.year and
+           current.month == today.month and
+           i == current.day - first + 1):
+
+            isToday = True
+        dates.append({"date": i-first+1, "thisMonth": True, "today": isToday})
+        if (i % 7 == 6):
+            weeks.append(dates)
+            dates = []
+
+    nextMonth = (current + relativedelta(months=1))
+    for i in range(monthrange+first+1, monthrange+first+8):
+        isToday = False
+        if (today.year == nextMonth.year and
+           today.month == nextMonth.month and
+           today.day == i - monthrange - first):
+
+            isToday = True
+
+        dates.append({"date": i - monthrange-first, "thisMonth": False, "today": isToday})
+        if ((i-1) % 7 == 6):
+            weeks.append(dates)
+            break
+
+    return days, weeks, header
+
+
 @ensure_csrf_cookie
 def index(request):
 
     if (not request.session.__contains__('whichweek')):
         request.session['whichweek'] = 0
 
-    days, hours, dates, header = getDays(request.session['whichweek'])
+    if (not request.session.__contains__('whichmonth')):
+        request.session['whichmonth'] = 0
+
+    request.session['format'] = "weekly"
+
+    days, hours, dates, weekHeader = getDays(request.session['whichweek'])
+    monthDays, monthWeeks, monthHeader = getWeeks(request.session['whichmonth'])
+
+    if request.session['format'] == "weekly":
+        header = weekHeader
+    if request.session['format'] == "monthly":
+        header = monthHeader
+
     context = {
+        'format': request.session['format'],
         'days': days,
         'hours': hours,
         'dates': dates,
         'header': header,
         'events': Event.objects.all(),
+        'monthDays': monthDays,
+        'monthWeeks': monthWeeks,
     }
-
     return render(request, 'socialcalendar/calendar.html', context)
+
+
+@csrf_protect
+def changeFormat(request):
+    if request.method == "GET":
+        oldFormat = request.session['format']
+        calendarFormat = request.GET['format']
+        request.session['format'] = calendarFormat
+
+        if (calendarFormat == "monthly"):
+            if (oldFormat == "weekly"):
+                today = date.today()
+                current = today + relativedelta(days=request.session['whichweek']*7)
+                request.session['whichmonth'] = ((current.year - date.today().year)*12
+                                                 + current.month - today.month)
+            monthDays, monthWeeks, header = getWeeks(request.session['whichmonth'])
+        else:
+            if (oldFormat == "monthly"):
+                today = date.today()
+                current = today + relativedelta(months=request.session['whichmonth'])
+                request.session['whichweek'] = (current - today).days/7
+            days, hours, dates, header = getDays(request.session['whichweek'])
+
+        d = {'header': header}
+        return HttpResponse(simplejson.dumps(d))
+    else:
+        return HttpResponseNotFound()
 
 
 @csrf_protect
@@ -99,9 +201,28 @@ def changeWeek(request):
             request.session['whichweek'] = 0
         else:
             request.session['whichweek'] += change
+
         days, hours, dates, header = getDays(request.session['whichweek'])
         d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse(simplejson.dumps(d))
+    else:
+        return HttpResponseNotFound()
+
+
+@csrf_protect
+def changeMonth(request):
+    if request.method == "POST":
+        change = int(request.POST['amount'])
+        if (change == 0):
+            request.session['whichmonth'] = 0
+        else:
+
+            request.session['whichmonth'] += change
+
+        monthDays, monthWeeks, header = getWeeks(request.session['whichmonth'])
+        d = {'header': header, 'weeks': monthWeeks}
+        return HttpResponse(simplejson.dumps(d))
+
     else:
         return HttpResponseNotFound()
 
@@ -181,6 +302,39 @@ def populateEvents(request):
             'id': e.id,
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
+        })
+
+    return HttpResponse(simplejson.dumps(d))
+
+
+@csrf_protect
+def populateMonthEvents(request):
+
+    today = datetime.today() + relativedelta(months=request.session['whichmonth'])
+    today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+    delta = timedelta((today.weekday()+1) % 7)
+    first = today - delta
+    last = first + relativedelta(months=1)
+    delta = timedelta((today.weekday()+1) % 7)
+    last = last + (timedelta(7) - delta)
+
+    first = first.replace(tzinfo=tz.gettz('UTC'))
+    last = last.replace(tzinfo=tz.gettz('UTC'))
+
+    events = Event.objects.filter(start__gte=first).filter(end__lt=last)
+    events = events.extra(order_by=['start'])
+    d = []
+    if (len(events) == 0):
+        return HttpResponse(simplejson.dumps(d))
+
+    for i in range(len(events)):
+        e = events[i]
+        d.append({
+            'title': e.title,
+            'start': e.start.hour+e.start.minute/60.0,
+            'end': e.end.hour+e.end.minute/60.0,
+            'day': ((e.start - first).days),
+            'id': e.id,
         })
 
     return HttpResponse(simplejson.dumps(d))
