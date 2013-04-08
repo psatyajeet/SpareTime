@@ -20,6 +20,7 @@ from socialcalendar.models import Event
 
 
 dateString = "%m/%d/%Y %I:%M %p"
+googleDateString = "%Y-%m-%dT%H:%M:%S"
 
 
 def getDays(offset=0):
@@ -156,6 +157,7 @@ def populateEvents(request):
 
     events = Event.objects.filter(start__gte=first).filter(end__lt=last)
     events = events.extra(order_by=['start'])
+
     d = []
     if (len(events) == 0):
         return HttpResponse(simplejson.dumps(d))
@@ -183,6 +185,7 @@ def populateEvents(request):
 
     for i in range(len(events)):
         e = events[i]
+
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
@@ -327,9 +330,10 @@ def gcal(request):
         events = service.events().list(calendarId='primary').execute()
         if events['items']:
             for event in events['items']:
-                existentEvent = Event.objects.filter(gid=event['iCalUID'])
-                if(len(existentEvent) != 0):
-                    continue
+                if event.has_key('iCalUID'):
+                    existentEvent = Event.objects.filter(gid=event['iCalUID'])
+                    if(len(existentEvent) != 0):
+                        continue
                 if not event.has_key('summary'):
                     event['summary'] = ''
                 if not event.has_key('description'):
@@ -337,17 +341,27 @@ def gcal(request):
                 if not event.has_key('location'):
                     event['location'] = ''
                 if not event.has_key('start'):
-                    event['start']['dateTime'] = ''
+            #                    event['start'] = {'dateTime':''}
+                    continue
                 if not event.has_key('end'):
-                    event['end']['dateTime'] = ''
+            #       event['end'] = {'dateTime':''}
+                    continue
                 if not event.has_key('iCalUID'):
                     event['iCalUID'] = ''
-            
+                
+                print event['start']['dateTime']
+                print event['end']['dateTime']
+
+                startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
+                startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
+                endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
+                endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
+
                 e = Event(title=event['summary'],
                           description=event['description'],
                           location=event['location'],
-                          start=event['start']['dateTime'].replace("T", " "),
-                          end=event['end']['dateTime'].replace("T", " "),
+                          start=startTime,
+                          end=endTime,
                           gid=event['iCalUID']
                           )
                 e.save()
