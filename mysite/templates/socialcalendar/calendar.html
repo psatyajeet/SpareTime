@@ -8,10 +8,15 @@
 <!--
 <script src="http://connect.facebook.net/en_US/all.js"></script>
 
+<<<<<<< HEAD
 <fb:login-button autologoutlink="true" onlogin="OnRequestPermission();">
 </fb:login-button>
 -->
 
+=======
+<!--<fb:login-button autologoutlink="true" onlogin="OnRequestPermission();">
+</fb:login-button>-->
+>>>>>>> Added friend autocomplete
 <script language="javascript" type="text/javascript">
 window.fbAsyncInit = function() {
     FB.init({
@@ -30,6 +35,8 @@ FB.getLoginStatus(function(response) {
         // not_logged_in
         login();
     }
+
+    ShowMyName();
 });
 };
 
@@ -52,17 +59,26 @@ function login() {
    }(document));
 
 </script>
+<<<<<<< HEAD
 <!--
 <button name="my_full_name" onclick="ShowMyName()" value="My Name" />
+=======
+
+<!--<button name="my_full_name" onclick="ShowMyName()" value="My Name" />-->
+    
+>>>>>>> Added friend autocomplete
 <script language="javascript" type="text/javascript">
+
+var friends;
+var friendNames = [];
+
 function ShowMyName() {
     FB.api('/me/friends', function(response) {
-        var i = 0;
         if(response.data) {
-            $.each(response.data,function(index,friend) {
-//                alert(friend.name + ' has id:' + friend.id);
-                i = i + 1;
-            });
+            friends = response.data;
+            $.each(response.data, function(index, friend) {
+                friendNames.push(friend.name);
+                });
         } else {
             alert("Error!");
         }
@@ -224,6 +240,7 @@ function ShowMyName() {
         <div class="span3"><button type="button" class="btn btn-block btn-inverse">Public</button></div>
         <div class="span3"><button type="button" class="btn btn-block btn-inverse">Friends</button></div>
     </div>
+    <input type="text" class="friendComplete">
 
 
 </div>
@@ -340,6 +357,9 @@ $("#monthlyButton").click(function() {
         $("#monthlyCalendar").show();
         $("#weeklyCalendar").hide();
         });
+
+
+$('.friendComplete').typeahead({source: friendNames});
 
 </script>
 
