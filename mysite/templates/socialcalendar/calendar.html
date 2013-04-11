@@ -23,7 +23,7 @@ window.fbAsyncInit = function() {
 
 FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
-        console.log("connected")
+        FB.logout(function(response){});
     } else if (response.status === 'not_authorized') {
         login();
     } else {

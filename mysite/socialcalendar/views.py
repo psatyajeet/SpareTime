@@ -429,7 +429,18 @@ def gcal(request):
 
 @csrf_protect
 def makeUser(request):
+    print "hi"
+
     name = request.GET['name']
     fbid = request.GET['fbid']
     
+    user = UserProfile.objects.get(user=fbid)
+    print "hi2"
+    if(user):
+        print  user.name
+        return HttpResponse()
+    
+    prof = UserProfile(user=fbid, events='',name=name) 
+    prof.save()
+
     return HttpResponse()
