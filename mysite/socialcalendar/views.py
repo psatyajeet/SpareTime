@@ -143,7 +143,8 @@ def index(request):
     if (not request.session.__contains__('whichmonth')):
         request.session['whichmonth'] = 0
 
-    #request.session['format'] = "weekly"
+    if (not request.session.__contains__('format')):
+        request.session['format'] = "weekly"
 
     days, hours, dates, weekHeader = getDays(request.session['whichweek'])
     monthDays, monthWeeks, monthHeader = getWeeks(request.session['whichmonth'])
