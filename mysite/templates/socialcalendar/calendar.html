@@ -5,16 +5,17 @@
 <script type="text/javascript" src="{{ STATIC_URL }}/timePicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/tinyscrollbar.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/timePicker/css/bootstrap-datetimepicker.min.css"/>
-
+<!--
 <script src="http://connect.facebook.net/en_US/all.js"></script>
 
 <fb:login-button autologoutlink="true" onlogin="OnRequestPermission();">
 </fb:login-button>
+-->
+
 <script language="javascript" type="text/javascript">
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '329753420461644', // App ID
-      channelUrl : '//localhost:8000/channel.html', // Channel File
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
       xfbml      : true  // parse XFBML
@@ -32,7 +33,7 @@ FB.getLoginStatus(function(response) {
 });
 };
 
-  function login() {
+function login() {
     FB.login(function(response) {
         if (response.authResponse) {
             // connected
@@ -41,15 +42,6 @@ FB.getLoginStatus(function(response) {
         }
     });
 }
-
-function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-        console.log('Good to see you, ' + response.name + '.');
-    });
-}
-
-
   // Load the SDK Asynchronously
   (function(d){
      var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
@@ -60,7 +52,7 @@ function testAPI() {
    }(document));
 
 </script>
-
+<!--
 <button name="my_full_name" onclick="ShowMyName()" value="My Name" />
 <script language="javascript" type="text/javascript">
 function ShowMyName() {
@@ -78,6 +70,7 @@ function ShowMyName() {
     });         
     }
 </script>
+-->
 <!---
 <div class="alert alert-info">
     <p>You have a new event request from:</p>
