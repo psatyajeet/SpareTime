@@ -9,6 +9,7 @@ from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
 
 from socialcalendar.models import Event
+from socialcalendar.models import UserProfile
 
 
 dateString = "%m/%d/%Y %I:%M %p"
@@ -429,18 +430,17 @@ def gcal(request):
 
 @csrf_protect
 def makeUser(request):
-    print "hi"
 
     name = request.GET['name']
     fbid = request.GET['fbid']
     
-    user = UserProfile.objects.get(user=fbid)
-    print "hi2"
-    if(user):
-        print  user.name
+    usr = UserProfile.objects.filter(user=fbid)
+
+    if(usr[0]):
+        print  usr[0].name
         return HttpResponse()
     
-    prof = UserProfile(user=fbid, events='',name=name) 
+    prof = UserProfile(user=fbid,name=name) 
     prof.save()
 
     return HttpResponse()

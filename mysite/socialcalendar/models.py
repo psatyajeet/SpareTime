@@ -18,9 +18,9 @@ class Event(models.Model):
 
 class UserProfile(models.Model):
     #home_address = models.TextField()
-    user = models.ForeignKey(User, unique=True)
+    user = models.CharField(max_length=100) #models.ForeignKey(User, unique=True)
     events = models.ManyToManyField(Event)
     name = models.CharField(max_length=30)
-    
+
     def __unicode__(self):
         return self.user
