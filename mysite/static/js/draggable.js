@@ -34,110 +34,162 @@ $.ajaxSetup({
     }
 });
 
+var populateEvents = function() {
+    if (format == "weekly")
+        populateWeekEvents();
+    else
+        populateMonthEvents();
+};
+
+
 var populateMonthEvents = function() {
     $.get('populateMonthEvents', function (data, status) {
         $monthEntries = $(".calendarMonthEntry");
-        $monthEntries.children().html("");
+        var numEvents = [];
+        for (i = 0; i < $monthEntries.length; i++) {
+            numEvents[i] = [];
+        }
+        $(".monthEvent, .monthExtra").remove();
         for (var i = 0; i < data.length; i++) {
-            console.log(data[i].day);
             $entry = $($monthEntries.get(data[i].day)).children();
-        $entry.children().html($entry.children().html()+'<div class="monthEvent">'+data[i].title+'</div>');
-    }
-}, "json");
+            if ($entry.children().length >= 2) {
+                numEvents[parseInt(data[i].day)].push(data[i]);
+            } else {
+                $monthEvent = $('<div id="'+data[i].id+'" class="monthEvent">'+data[i].title+'</div>');
+                $entry.append($monthEvent);
+            }
+        }
+
+        for (i = 0; i < $monthEntries.length; i++) {
+            
+            if (numEvents[i].length > 0) {
+                    $popover = $('<a href="#" onclick="return false" class="popoverMonthlyEvent" rel="popover" data-title="More Events" data-toggle="popover" data-placement="right" title="">+ '+numEvents[i].length+' More</a>');
+                    $extra = $('<div class="monthExtra"></div>');
+                    $extra.html($popover);
+                    $entry.append($extra);
+                    monthEvents = "";
+                    for (var j = 0; j < numEvents[i].length; j++) {
+                        monthEvents += '<div id="'+numEvents[i][j].id+'" class="monthEvent">'+numEvents[i][j].title+'</div>';
+                    }
+                    $popover.popover({html: true, trigger: 'manual', content: monthEvents, position: 'on right'});
+
+
+                    var canClosePopover = true;
+                    var onPopoverLink = false;
+
+                    $popover.on("mouseenter", function() {
+                        onPopoverLink = true;
+                        $(this).popover('show');
+                        var $pop = $(this);
+                        canClosePopover = true;
+
+                        $(this).next().on("mouseenter", function() {
+                            canClosePopover = false;
+                        });
+                        $(this).next().on("mouseleave", function() {
+                            if (!onPopoverLink) {
+                                setTimeout(function() {
+                                    if (!onPopoverLink)
+                                    $pop.popover('hide');
+                                canClosePopover = true;
+                                }, 250);
+                            }
+                        });
+
+                    });
+
+                    $popover.on("mouseleave", function() {
+                        var $pop = $(this);
+                        onPopoverLink = false;
+                        setTimeout(function() {
+                            if (canClosePopover && !onPopoverLink)
+                                $pop.popover('hide');
+                        }, 250);
+                    });
+            }
+        }
+
+        $(document).on('click', '.monthEvent', function (){
+            openID($(this).attr('id'));
+            return false;
+        });
+    }, "json");
 };
 
-var populateEvents = function() {
-$.get('populateEvents', function (data, status) {
-    $('.event').remove();
-    $overview = $('.overview');
-    var x = $('.hourEntry').width();
-    var widths = [7];
-    $entries = $('.calendarEntry');
-    for(var i = 0; i < 200; i++) {
-        widths[i] = $($entries.get(i)).width();
-    }
-    var cumWidths = [7];
-    $entries = $('.calendarEntry');
-    var reference = $('.overview').offset().left;
-    for(var i = 0; i < 7; i++) {
-        cumWidths[i] = $($entries.get(i)).offset().left-reference;
-    }
-    var height = $('.calendarEntry').height();
-    var eventBorderWidth = 4;
-    var cellBorderWidth = 1;
-    var bufferWidth = 4;
-    $.each(data, function(index, dat) {
-        $div = $('<div class="event" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-        $div.height((height+cellBorderWidth)*(dat.end - dat.start)*2-bufferWidth-eventBorderWidth);
-        $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
-        $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
-            left: cumWidths[dat.day]+widths[dat.day]*dat.x + 1});
-        //left: x + cumWidths[dat.day]+widths[dat.day]*dat.x + 
-        //    borderWidth*(dat.day+3)});
-
-        $overview.prepend($div);
-});
-
-$('.event').off('click');
-$('.event').off('mousedown');
-$('.event').off('mouseup');
-$('.event').off('mousemove');
-$('.event').on('mousedown', function(event){
-    currentlyClicking = 1;
-
-    currentlyMoving = parseInt($(this).attr("id"));
-    currentlyMovingY = event.pageY - $(this).offset().top;
-
-});
-$('.event').on('click', function (){
-    if (currentlyClicking == 1) {
-        clearModal();
-
-        $.post('getEventData', {"id": $(this).attr('id')}, function (data, status) {
-            $("#eventName").val(data.title);
-            $("#eventDescription").val(data.description);
-            $("#eventLocation").val(data.location);
-            $("#startTime").val(data.start);
-            $("#endTime").val(data.end);
-
-            $('#createEvent').hide();
-            $('#deleteEvent').show();
-            $('#editEvent').show();
-            $('#eventModal').modal();
-            $('#eventModal').on('shown', function(){                    
-                $('#eventName').focus();
-            });
-
-            currentlyViewing = data.id;
-
-        }, "json");
-    }
-    return false;
-});
-$('.event').on('mousemove', function (event){
-    var x = event.pageX;
-    var y = event.pageY-currentlyMovingY;
-
-   $cells.each(function(index) {
-        if (y >= $(this).offset().top && 
-            y <= $(this).offset().top + $(this).height() &&
-            x >= $(this).offset().left && 
-            x <= $(this).offset().left + $(this).width()) {
-            currentlyClicking = -1;
-            tableOver($(this), event);
+var populateWeekEvents = function() {
+    $.get('populateEvents', function (data, status) {
+        $('.event').remove();
+        $overview = $('.overview');
+        var x = $('.hourEntry').width();
+        var widths = [7];
+        $entries = $('.calendarEntry');
+        for(var i = 0; i < 200; i++) {
+            widths[i] = $($entries.get(i)).width();
         }
-    });
-    if (currentlyClicking == -1 && currentlyMoving == parseInt($(this).attr("id"))) {
-        $(this).width($cells.width());
-        $(this).attr("class", "event movingEvent");
-    }
+        var cumWidths = [7];
+        $entries = $('.calendarEntry');
+        var reference = $('.overview').offset().left;
+        for(var i = 0; i < 7; i++) {
+            cumWidths[i] = $($entries.get(i)).offset().left-reference;
+        }
+        var height = $('.calendarEntry').height();
+        var eventBorderWidth = 4;
+        var cellBorderWidth = 1;
+        var bufferWidth = 4;
+        $.each(data, function(index, dat) {
+            $div = $('<div class="event" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+            $div.height((height+cellBorderWidth)*(dat.end - dat.start)*2-bufferWidth-eventBorderWidth);
+            $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
+            $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
+                left: cumWidths[dat.day]+widths[dat.day]*dat.x + 1});
+            //left: x + cumWidths[dat.day]+widths[dat.day]*dat.x + 
+            //    borderWidth*(dat.day+3)});
 
-});
-$('.event').on('mouseup', function (event){
-    var x = event.pageX;
-    var y = event.pageY-currentlyMovingY;
-    var called = false;
-    $cells.each(function(index) {
+            $overview.prepend($div);
+    });
+
+    $('.event').off('click');
+    $('.event').off('mousedown');
+    $('.event').off('mouseup');
+    $('.event').off('mousemove');
+    $('.event').on('mousedown', function(event){
+        event.preventDefault();
+        currentlyClicking = 1;
+
+        currentlyMoving = parseInt($(this).attr("id"));
+        currentlyMovingY = event.pageY - $(this).offset().top;
+
+    });
+    $('.event').on('click', function (){
+        if (currentlyClicking == 1) {
+            openID($(this).attr('id'));
+        }
+        return false;
+    });
+    $('.event').on('mousemove', function (event){
+        var x = event.pageX;
+        var y = event.pageY-currentlyMovingY;
+
+        $cells.each(function(index) {
+            if (y >= $(this).offset().top && 
+                y <= $(this).offset().top + $(this).height() &&
+                x >= $(this).offset().left && 
+                x <= $(this).offset().left + $(this).width()) {
+                currentlyClicking = -1;
+                tableOver($(this), event);
+            }
+        });
+        if (currentlyClicking == -1 && currentlyMoving == parseInt($(this).attr("id"))) {
+            $(this).width($cells.width());
+            $(this).attr("class", "event movingEvent");
+        }
+
+    });
+    $('.event').on('mouseup', function (event){
+        var x = event.pageX;
+        var y = event.pageY-currentlyMovingY;
+        var called = false;
+        $cells.each(function(index) {
             if (y >= $(this).offset().top && 
                 y <= $(this).offset().top + $(this).height() &&
                 x >= $(this).offset().left && 
@@ -146,52 +198,94 @@ $('.event').on('mouseup', function (event){
                 called = true;
             }
         });
-    if (!called) {
-        currentlyMoving = -1;
-        populateEvents();
-        tableUp(null, event);
-    }
-    currentlyMovingY = 0
-    return false;
-});
+        if (!called) {
+            currentlyMoving = -1;
+            populateEvents();
+            tableUp(null, event);
+        }
+        currentlyMovingY = 0
+        return false;
+    });
 
 
 }, "json");
 };
 
+var openID = function(id) {
+    clearModal();
+
+    $.post('getEventData', {"id": id}, function (data, status) {
+        $("#eventName").val(data.title);
+        $("#eventDescription").val(data.description);
+        $("#eventLocation").val(data.location);
+        $("#startTime").val(data.start);
+        $("#endTime").val(data.end);
+
+        $('#createEvent').hide();
+        $('#deleteEvent').show();
+        $('#editEvent').show();
+        $('#eventModal').modal();
+        $('#eventModal').on('shown', function(){                    
+            $('#eventName').focus();
+        });
+
+        currentlyViewing = data.id;
+
+    }, "json");
+}
+
 $(document).ready(function(){
-populateEvents();
+    populateEvents();
 });
 
 var updateCalendar = function(amount) {
-if (format === "monthly") {
-    $.post('changeMonth', {"amount": amount}, function (data, status) {
+    if (format === "monthly") {
+        $.post('changeMonth', {"amount": amount}, function (data, status) {
+            formatCalendar("monthly", data);
+        }, "json").done(function() {
+            populateMonthEvents();
+        });
+    } else {
+        $.post('changeWeek', {"amount": amount}, function (data, status) {
+            formatCalendar("weekly", data);
+        }, "json").done(function() {
+            populateEvents();
+        });
+    }
+};
+
+var formatCalendar = function(format, data) {
+    if (format === "monthly") {
         $("#weekname").html(data.header);
         $month = $(".calendarMonthTable");
         html = ''
 
-        html += '<table><tbody>'; 
+            html += '<table><tbody>'; 
         for (var i = 0; i < data.weeks.length; i++) {
             html += '<tr class="calendarRow">'; 
             for (var j = 0; j < data.weeks[i].length; j++) {
-                        
+
                 html += '<td class="calendarMonthEntry'; 
-                if (data.weeks[i][j].today)
-                    html += ' calendarToday';
+                    if (data.weeks[i][j].today)
+                        html += ' calendarToday';
                 if (!data.weeks[i][j].thisMonth)
                     html += ' otherMonth';
-                html += '" width="14.3%">'+data.weeks[i][j].date+'</td>'; 
+                html += '" width="14.3%">'+data.weeks[i][j].date+'<div></div></td>'; 
             }
             html += '</tr>'; 
         }
         html += '</tbody></table>'; 
+
         $month.html(html);
 
-    }, "json").done(function() {
-        populateMonthEvents();
-    });
-} else {
-    $.post('changeWeek', {"amount": amount}, function (data, status) {
+        var $monthCells = $(".calendarMonthEntry");
+
+        $monthCells.on("mousedown", function(event) {
+            event.preventDefault();
+        });
+
+
+    } else {
         $("#weekname").html(data.header);
         $.each(data.dates, function(index, date) {
             dates[index] = new Date(date.year,
@@ -204,9 +298,7 @@ if (format === "monthly") {
         $cells2.removeClass("calendarToday");
 
         var hasToday = -1;
-        $(".headings weekly").each(function(index) {
-        console.log("hello");
-            console.log(data.days[index].title);
+        $(".headings.weekly").each(function(index) {
             $(this).html(data.days[index].title);
             if (data.days[index].today === true) {
                 hasToday = index;
@@ -224,11 +316,8 @@ if (format === "monthly") {
                 $(this).addClass("calendarToday");
             });
         }
-    }, "json").done(function() {
-        populateEvents();
-    });
-}
-}
+    }
+};
 
 $("#calendarBack").click(function() {updateCalendar(-1)});
 $("#calendarToday").click(function() {updateCalendar(0)});
@@ -237,38 +326,38 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
-$.post('submitEvent', {"title": $("#eventName").val(), 
-    "description": $("#eventDescription").val(),
-    "location": $("#eventLocation").val(),
-    "startTime": $("#startTime").val(),
-    "endTime": $("#endTime").val()}, 
-    "json").done(function (data, status) {
-    populateEvents();
-});
-$('#eventModal').modal('hide');
+    $.post('submitEvent', {"title": $("#eventName").val(), 
+        "description": $("#eventDescription").val(),
+        "location": $("#eventLocation").val(),
+        "startTime": $("#startTime").val(),
+        "endTime": $("#endTime").val()}, 
+        "json").done(function (data, status) {
+        populateEvents();
+    });
+    $('#eventModal').modal('hide');
 }
 $("#createEvent").click(function() {createEvent()});
 
 var deleteEvent = function() {
-$.post('deleteEvent', {"id": currentlyViewing}, 
-        "json").done(function (data, status) {
-    populateEvents();
-});
-$('#eventModal').modal('hide');
+    $.post('deleteEvent', {"id": currentlyViewing}, 
+            "json").done(function (data, status) {
+        populateEvents();
+    });
+    $('#eventModal').modal('hide');
 }
 $("#deleteEvent").click(function() {deleteEvent()});
 
 var editEvent = function() {
-$.post('editEvent', {"title": $("#eventName").val(), 
-    "description": $("#eventDescription").val(),
-    "location": $("#eventLocation").val(),
-    "startTime": $("#startTime").val(),
-    "endTime": $("#endTime").val(),
-    "id": currentlyViewing}, 
-    "json").done(function (data, status) {
-    populateEvents();
-});
-$('#eventModal').modal('hide');
+    $.post('editEvent', {"title": $("#eventName").val(), 
+        "description": $("#eventDescription").val(),
+        "location": $("#eventLocation").val(),
+        "startTime": $("#startTime").val(),
+        "endTime": $("#endTime").val(),
+        "id": currentlyViewing}, 
+        "json").done(function (data, status) {
+        populateEvents();
+    });
+    $('#eventModal').modal('hide');
 }
 $("#editEvent").click(function() {editEvent()});
 
@@ -277,24 +366,30 @@ $("#editEvent").click(function() {editEvent()});
 
 
 $(function() {
-$('#datetimepicker').datetimepicker({
-    language: 'en',
-    pick12HourFormat: true,
-    pickSeconds: false
-});
+    $('#datetimepicker').datetimepicker({
+        language: 'en',
+        pick12HourFormat: true,
+        pickSeconds: false
+    });
 });
 
 $(function() {
-$('#datetimepicker2').datetimepicker({
-    language: 'en',
-    pick12HourFormat: true,
-    pickSeconds: false
-});
+    $('#datetimepicker2').datetimepicker({
+        language: 'en',
+        pick12HourFormat: true,
+        pickSeconds: false
+    });
 });
 
+// Stop text selection on monthly calendar
 
-var $cells = $(".calendarEntry, .calendarHalfHour,\
-    .calendarEntryToday, .calendarHalfHourToday");
+var $monthCells = $(".calendarMonthEntry");
+
+$monthCells.on("mousedown", function(event) {
+    event.preventDefault();
+});
+
+var $cells = $(".calendarEntry, .calendarHalfHour");
 
 var startx = 0;
 var starty = -1;
@@ -306,47 +401,47 @@ var $dragged = $(".dragged");
 var $reference;
 var borderWidth = 1;
 $cells.on("mousedown", function(eventObject) {
-eventObject.preventDefault();
-var index = $cells.index($(this));
-startx = index%7;
-starty = parseInt(index/7);
-startHour = starty;
-endHour = (starty+1);
+    eventObject.preventDefault();
+    var index = $cells.index($(this));
+    startx = index%7;
+    starty = parseInt(index/7);
+    startHour = starty;
+    endHour = (starty+1);
 
-topY = $(this).offset().top;
-bottomY = $(this).offset().top+$(this).height();
-var height = (bottomY-topY+borderWidth);
-var width = ($(this).width()+borderWidth);
+    topY = $(this).offset().top;
+    bottomY = $(this).offset().top+$(this).height();
+    var height = (bottomY-topY+borderWidth);
+    var width = ($(this).width()+borderWidth);
 
-$dragged.height(height);
-$dragged.width(width);
-$dragged.show();
-$dragged.offset({ top: topY+borderWidth, left: $(this).offset().left+borderWidth })
-$reference = $(this);
+    $dragged.height(height);
+    $dragged.width(width);
+    $dragged.show();
+    $dragged.offset({ top: topY+borderWidth, left: $(this).offset().left+borderWidth })
+    $reference = $(this);
 });
 
 var tableOver = function(cell, eventObject) {
-if (starty != -1) {
-    eventObject.preventDefault();
-    var index = $cells.index(cell);
-    var hour = parseInt(index/7);
-    if (eventObject.which === 1 && $reference !== null) {
-        topY = $reference.offset().top;
-        bottomY = $reference.offset().top+cell.height();
+    if (starty != -1) {
+        eventObject.preventDefault();
+        var index = $cells.index(cell);
+        var hour = parseInt(index/7);
+        if (eventObject.which === 1 && $reference !== null) {
+            topY = $reference.offset().top;
+            bottomY = $reference.offset().top+cell.height();
 
-        var height = (hour-starty);
+            var height = (hour-starty);
 
-        if (height >= 0) {
-            $dragged.height(cell.offset().top+cell.height() +
-                2*borderWidth - topY);
-            $dragged.offset({top: topY});
+            if (height >= 0) {
+                $dragged.height(cell.offset().top+cell.height() +
+                        2*borderWidth - topY);
+                $dragged.offset({top: topY});
 
-            startHour = starty;
-            endHour = (starty+1+height);
-        } 
-        if (height < 0) {
-            $dragged.height(bottomY - cell.offset().top + 2*borderWidth);
-            $dragged.offset({top: cell.offset().top});
+                startHour = starty;
+                endHour = (starty+1+height);
+            } 
+            if (height < 0) {
+                $dragged.height(bottomY - cell.offset().top + 2*borderWidth);
+                $dragged.offset({top: cell.offset().top});
 
                 startHour = (starty+height);
                 endHour = (starty+1);

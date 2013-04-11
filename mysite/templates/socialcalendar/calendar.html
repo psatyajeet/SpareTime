@@ -44,9 +44,11 @@
     <div class="span1"><button type="button" id="weeklyButton" class="btn btn-block btn-primary">Weekly</button></div>
 </div>
 
+<!--
 <div class="row">
     <div class="span12"><button id="gcal" type="button" class="btn btn-block btn-primary">Do Google Calendar Stuff</button></div>
 </div>
+-->
 
 <div class="row">
     <div class="span12"><p></p></div>
@@ -103,7 +105,6 @@
 </div>
 <!-- End Week Calendar -->
 
-<!-- Start Month Calendar -->
 <div id="monthlyCalendar">
     <table class="table table-bordered">
         <thead>
@@ -124,15 +125,15 @@
                     {% for day in week %}
                     {% if day.thisMonth %}
                         {% if day.today %}
-                            <td class="calendarMonthEntry calendarToday" width="14.3%"><div>{{day.date}}</div></td>
+                            <td class="calendarMonthEntry calendarToday" width="14.3%">{{day.date}}<div></div></td>
                         {% else %}
-                            <td class="calendarMonthEntry" width="14.3%"><div>{{day.date}}</div></td>
+                            <td class="calendarMonthEntry" width="14.3%">{{day.date}}<div></div></td>
                         {% endif %}
                     {% else %}
                         {% if day.today %}
-                            <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%"><div>{{day.date}}</div></td>
+                            <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%">{{day.date}}<div></div></td>
                         {% else %}
-                            <td class="calendarMonthEntry otherMonth" width="14.3%"><div>{{day.date}}</div></td>
+                            <td class="calendarMonthEntry otherMonth" width="14.3%">{{day.date}}<div></div></td>
                         {% endif %}
                     {% endif %}
                     {% endfor %}
@@ -164,10 +165,6 @@
     <div class="span12"><p></p></div>
 </div>
 
-<!-- Popover -->
-<div id="repeatPopover">
-    "Hello World"
-</div>
 
 <!-- Modal -->
 <div id="eventModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -236,8 +233,10 @@
             scrollBar.tinyscrollbar({wheel: 34});
             scrollBar.tinyscrollbar_update(272);
 
-
-            $("#monthlyCalendar").hide();
+            if (format == "weekly")
+                $("#monthlyCalendar").hide();
+            else
+                $("#weeklyCalendar").hide();
 
             });
 
@@ -254,26 +253,28 @@ $("#gcal").click(gcal);
 
 var changeFormat = function(newFormat) {
     $.get('changeFormat', {'format': newFormat}, function (data, status) {
-            $("#weekname").html(data.header);
             format = newFormat;
-            }, "json")};
+            formatCalendar(format, data);
+            }, "json").done( function() {
+                populateEvents();
+
+                });};
 
 
 $("#weeklyButton").click(function() {
         $("#monthlyCalendar").hide();
         $('.event').remove();
         $("#weeklyCalendar").show();
-        format = "weekly"
+        format = "weekly";
         changeFormat("weekly");
-        populateEvents();
         });
 $("#monthlyButton").click(function() {
+        format = "monthly";
+        changeFormat("monthly");
         $("#monthlyCalendar").show();
         $("#weeklyCalendar").hide();
-        format = "monthly"
-        changeFormat("monthly");
-        populateMonthEvents();
         });
+
 </script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}/js/draggable.js"></script>

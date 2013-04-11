@@ -143,7 +143,7 @@ def index(request):
     if (not request.session.__contains__('whichmonth')):
         request.session['whichmonth'] = 0
 
-    request.session['format'] = "weekly"
+    #request.session['format'] = "weekly"
 
     days, hours, dates, weekHeader = getDays(request.session['whichweek'])
     monthDays, monthWeeks, monthHeader = getWeeks(request.session['whichmonth'])
@@ -180,6 +180,7 @@ def changeFormat(request):
                 request.session['whichmonth'] = ((current.year - date.today().year)*12
                                                  + current.month - today.month)
             monthDays, monthWeeks, header = getWeeks(request.session['whichmonth'])
+            d = {'header': header, 'weeks': monthWeeks}
         else:
             if (oldFormat == "monthly"):
                 today = date.today()
@@ -187,7 +188,7 @@ def changeFormat(request):
                 request.session['whichweek'] = (current - today).days/7
             days, hours, dates, header = getDays(request.session['whichweek'])
 
-        d = {'header': header}
+            d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
@@ -310,11 +311,13 @@ def populateEvents(request):
 @csrf_protect
 def populateMonthEvents(request):
 
+    print request.session['whichmonth']
+
     today = datetime.today() + relativedelta(months=request.session['whichmonth'])
-    today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+    today = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     delta = timedelta((today.weekday()+1) % 7)
     first = today - delta
-    last = first + relativedelta(months=1)
+    last = today + relativedelta(months=1)
     delta = timedelta((today.weekday()+1) % 7)
     last = last + (timedelta(7) - delta)
 
