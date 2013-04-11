@@ -426,3 +426,10 @@ def changeStart(request):
 @csrf_protect
 def gcal(request):
     return HttpResponse()
+
+@csrf_protect
+def makeUser(request):
+    name = request.GET['name']
+    fbid = request.GET['fbid']
+    
+    return HttpResponse()
