@@ -5,6 +5,79 @@
 <script type="text/javascript" src="{{ STATIC_URL }}/timePicker/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/tinyscrollbar.css" />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/timePicker/css/bootstrap-datetimepicker.min.css"/>
+
+<script src="http://connect.facebook.net/en_US/all.js"></script>
+
+<fb:login-button autologoutlink="true" onlogin="OnRequestPermission();">
+</fb:login-button>
+<script language="javascript" type="text/javascript">
+window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '329753420461644', // App ID
+      channelUrl : '//localhost:8000/channel.html', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true  // parse XFBML
+    });
+
+FB.getLoginStatus(function(response) {
+    if (response.status === 'connected') {
+        console.log("connected")
+    } else if (response.status === 'not_authorized') {
+        login();
+    } else {
+        // not_logged_in
+        login();
+    }
+});
+};
+
+  function login() {
+    FB.login(function(response) {
+        if (response.authResponse) {
+            // connected
+        } else {
+            // cancelled
+        }
+    });
+}
+
+function testAPI() {
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+        console.log('Good to see you, ' + response.name + '.');
+    });
+}
+
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document));
+
+</script>
+
+<button name="my_full_name" onclick="ShowMyName()" value="My Name" />
+<script language="javascript" type="text/javascript">
+function ShowMyName() {
+    FB.api('/me/friends', function(response) {
+        var i = 0;
+        if(response.data) {
+            $.each(response.data,function(index,friend) {
+//                alert(friend.name + ' has id:' + friend.id);
+                i = i + 1;
+            });
+        } else {
+            alert("Error!");
+        }
+        alert(i)
+    });         
+    }
+</script>
 <!---
 <div class="alert alert-info">
     <p>You have a new event request from:</p>
