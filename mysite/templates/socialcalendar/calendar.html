@@ -82,7 +82,6 @@ function ShowMyName() {
         } else {
             alert("Error!");
         }
-        alert(i)
     });         
     }
 </script>
@@ -238,15 +237,38 @@ function ShowMyName() {
         <div class="span3"><button type="button" class="btn btn-block btn-inverse">Time Block</button></div>
         <div class="span3"><button type="button" class="btn btn-block btn-inverse">Private</button></div>
         <div class="span3"><button type="button" class="btn btn-block btn-inverse">Public</button></div>
-        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Friends</button></div>
+        <div class="span3"><button type="button" id="addFriends" class="btn btn-block btn-inverse">Friends</button></div>
     </div>
-    <input type="text" class="friendComplete">
 
 
 </div>
 <div class="row">
     <div class="span12"><p></p></div>
 </div>
+
+
+<!-- Friend Modal -->
+<div id="friendModal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Invite Friends</h3>
+    </div>
+    <div class="modal-body">
+        <p>Add friends to invite to your event:</p>
+        <input type="text" id="friendComplete">
+
+        <div class="row-fluid">
+            <div id="invitedFriends">
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="chooseFriendsCancel" class="btn">Cancel</a>
+        <a href="#" id="showFriendAvailability" class="btn btn-primary">Show Availability</a>
+    </div>
+</div>
+<!-- End Friend Modal -->
 
 
 <!-- Modal -->
@@ -359,7 +381,54 @@ $("#monthlyButton").click(function() {
         });
 
 
-$('.friendComplete').typeahead({source: friendNames});
+var invitedFriendsID = [];
+var nonRemovedFriends;
+
+var addFriend = function(item) {
+    var $invited = $('#invitedFriends');
+    var $friendComplete = $('#friendComplete');
+    $invited.html($invited.html() + '<span class="invitedFriend" ><span>' + item + '</span><span class="friendCloseBox">X</span></span>');
+    $friendComplete.val("");
+    var index = friendNames.indexOf(item);
+    invitedFriendsID.push(friends[index].id);
+    index = nonRemovedFriends.indexOf(item);
+    nonRemovedFriends.splice(index, 1);
+}
+
+$(document).on('click', '.friendCloseBox', function() {
+    var name = $(this).siblings().html();
+    var index = friendNames.indexOf(name);
+    invitedFriendsID.splice(index, 1);
+    $(this).parent().remove();
+    nonRemovedFriends.push(name);
+        });
+
+$('#friendComplete').typeahead({
+        source: function() {
+            return nonRemovedFriends;
+        }, 
+        'updater': addFriend,
+        open: function (event, ui) {
+            $('.ui-autocomplete').css('z-index', '99999');
+        }});
+
+
+$('#friendModal').modal({'show': false, 'keyboard': false});
+
+$("#chooseFriendsCancel").on("click", function() {
+    $('#friendModal').modal('hide');
+});
+
+$("#showFriendAvailability").on("click", function() {
+    $('#friendModal').modal('hide');
+});
+
+$("#addFriends").on("click", function() {
+    $('#invitedFriends').html("");
+    invitedFriendsID = [];
+    nonRemovedFriends = friendNames.slice(0);
+    $("#friendModal").modal('show');
+});
 
 </script>
 
