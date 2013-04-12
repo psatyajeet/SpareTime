@@ -448,7 +448,8 @@ $("#showFriendAvailability").on("click", function() {
     $('#friendModal').modal('hide');
 
     if (invitedFriendsID.length > 0) {
-        $.post('heatMap', {"friendIDs": invitedFriendsID}, function (data, status) {
+        var data = JSON.stringify(invitedFriendsID);
+        $.post('heatMap', {'data': {'param': data}}, function (data, status) {
             var values = [];
             $.each(data, function(index, dat) {
                 values.push(dat.ratios);
