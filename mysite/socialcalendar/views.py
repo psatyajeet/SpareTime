@@ -333,8 +333,9 @@ def populateMonthEvents(request):
 
     first = first.replace(tzinfo=tz.gettz('UTC'))
     last = last.replace(tzinfo=tz.gettz('UTC'))
-
-    events = Event.objects.filter(start__gte=first).filter(end__lt=last)
+    
+    usr = UserProfile.objects.get(user=request.session['fbid'])
+    events = usr.events.filter(start__gte=first).filter(end__lt=last)
     events = events.extra(order_by=['start'])
     d = []
     if (len(events) == 0):
