@@ -452,26 +452,27 @@ def heatMap(request):
         first = first.replace(tzinfo=tz.gettz('UTC'))
         last = last.replace(tzinfo=tz.gettz('UTC'))
         ratio = [[0 for x in xrange(48)] for x in xrange(7)]         
-        weight = 1.0/(float(len(friendIDs)))
-        print "weight", weight
+
+        total = 0.0;
+
         for friend in friendIDs :
             timeSlotConsider = [[0 for x in xrange(48)] for x in xrange(7)] 
 
-
-
-
-            usr = UserProfile.objects.get(user=friend)     
-            events = usr.events.filter(start__gte=first).filter(end__lt=last)
+            usr = UserProfile.objects.filter(user=friend)     
+            if(len(usr) == 0):
+                continue
+            total = total+1.0;
+            events = usr[0].events.filter(start__gte=first).filter(end__lt=last)
             events = events.extra(order_by=['start'])
             
             for event in events:
                 start = event.start;
                 end = event.end;
                 day = (start.weekday()+1) % 7
-                for i in range(start.hour*2+start.minute/30, end.hour*2-end.hour/30):
+                for i in range(start.hour*2+start.minute/30, end.hour*2-end.hour/30+1):
                     print i, day
                     if not timeSlotConsider[day][i]:
-                        ratio[day][i] += weight 
+                        ratio[day][i] += 1;
                     timeSlotConsider[day][i] = True
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
@@ -481,7 +482,7 @@ def heatMap(request):
             for i in range(len(days)):
                 print i, j, ratio[i][j]
                 d.append({
-                    'ratios': (1-ratio[i][j]),
+                    'ratios': (1-ratio[i][j]/total),
                 })
 
         return HttpResponse(simplejson.dumps(d))
