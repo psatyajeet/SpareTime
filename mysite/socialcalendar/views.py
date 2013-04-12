@@ -440,19 +440,50 @@ def changeStart(request):
 @csrf_protect
 def heatMap(request):
     if request.method == "POST":
-        friendIDs = request.POST['friendIDs[]']
+
+        friendIDs = [request.POST['friendIDs[]']]
+        print friendIDs
+        today = datetime.today() + timedelta(request.session['whichweek']*7)
+        today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        delta = timedelta((today.weekday()+1) % 7)
+        first = today - delta
+        last = first + timedelta(7)
+
+        first = first.replace(tzinfo=tz.gettz('UTC'))
+        last = last.replace(tzinfo=tz.gettz('UTC'))
+        ratio = [[0 for x in xrange(48)] for x in xrange(7)]         
+        weight = 1.0/(float(len(friendIDs)))
+        print "weight", weight
+        for friend in friendIDs :
+            timeSlotConsider = [[0 for x in xrange(48)] for x in xrange(7)] 
+
+
+
+
+            usr = UserProfile.objects.get(user=friend)     
+            events = usr.events.filter(start__gte=first).filter(end__lt=last)
+            events = events.extra(order_by=['start'])
+            
+            for event in events:
+                start = event.start;
+                end = event.end;
+                day = (start.weekday()+1) % 7
+                for i in range(start.hour*2+start.minute/30, end.hour*2-end.hour/30):
+                    print i, day
+                    if not timeSlotConsider[day][i]:
+                        ratio[day][i] += weight 
+                    timeSlotConsider[day][i] = True
+
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
         d = []
-        for day in days:
-            for hour in hours:
+            
+        for j in range(len(hours)*2):
+            for i in range(len(days)):
+                print i, j, ratio[i][j]
                 d.append({
-                    'ratios': random.random(),
+                    'ratios': (1-ratio[i][j]),
                 })
 
-            for hour in hours:
-                d.append({
-                    'ratios': random.random(),
-                })
         return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
