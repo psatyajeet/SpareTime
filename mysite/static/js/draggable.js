@@ -118,6 +118,7 @@ var populateMonthEvents = function() {
 
 var populateWeekEvents = function() {
     $.get('populateEvents', function (data, status) {
+        console.log(data);
         $('.event').remove();
         $overview = $('.overview');
         var x = $('.hourEntry').width();

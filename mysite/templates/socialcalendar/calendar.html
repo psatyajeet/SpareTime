@@ -404,7 +404,11 @@ $('#friendComplete').typeahead({
         }});
 
 
-$('#friendModal').modal({'show': false, 'keyboard': false});
+$('#friendModal').modal({'show': false});
+
+$('#friendModal').on('shown', function() {
+        $('#friendComplete').focus();
+        });
 
 $("#chooseFriendsCancel").on("click", function() {
     $('#friendModal').modal('hide');
@@ -412,6 +416,16 @@ $("#chooseFriendsCancel").on("click", function() {
 
 $("#showFriendAvailability").on("click", function() {
     $('#friendModal').modal('hide');
+
+    if (invitedFriendsID.length > 0) {
+        $.post('heatMap', {"friendIDs": invitedFriendsID}, function (data, status) {
+            var values = [];
+            $.each(data, function(index, dat) {
+                values.push(dat.ratios);
+                });
+            colorCells(values);
+            }, "json");
+    }
 });
 
 $("#addFriends").on("click", function() {
@@ -420,6 +434,24 @@ $("#addFriends").on("click", function() {
     nonRemovedFriends = friendNames.slice(0);
     $("#friendModal").modal('show');
 });
+
+
+var $cells = $(".calendarEntry, .calendarHalfHour");
+var colorCells = function(values) {
+    $cells.each(function(index, cell) {
+
+        $(cell).css("background-color", "hsl("+(Math.floor(120*values[index]))+", 70%, 65%)");
+            });
+};
+
+/*
+var cellValues = [];
+$cells.each(function(index, $cell) {
+    cellValues.push(Math.random()); 
+        });
+
+colorCells(cellValues);
+ */
 
 </script>
 

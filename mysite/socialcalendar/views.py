@@ -10,6 +10,7 @@ from dateutil.relativedelta import relativedelta
 
 from socialcalendar.models import Event
 
+import random
 
 dateString = "%m/%d/%Y %I:%M %p"
 
@@ -419,6 +420,27 @@ def changeStart(request):
 
         event.save()
         return HttpResponse()
+    else:
+        return HttpResponseNotFound()
+
+
+@csrf_protect
+def heatMap(request):
+    if request.method == "POST":
+        friendIDs = request.POST['friendIDs[]']
+        days, hours, dates, weekHeader = getDays(request.session['whichweek'])
+        d = []
+        for day in days:
+            for hour in hours:
+                d.append({
+                    'ratios': random.random(),
+                })
+
+            for hour in hours:
+                d.append({
+                    'ratios': random.random(),
+                })
+        return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
 
