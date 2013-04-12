@@ -274,8 +274,8 @@ def populateEvents(request):
     last = last.replace(tzinfo=tz.gettz('UTC'))
     
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    print usr.name
-    events = usr.events.objects.filter(start__gte=first).filter(end__lt=last)
+
+    events = usr.events.filter(start__gte=first).filter(end__lt=last)
 
     events = events.extra(order_by=['start'])
     d = []
@@ -443,10 +443,11 @@ def makeUser(request):
     fbid = request.GET['fbid']
     
     request.session['fbid'] = fbid
-    usr = UserProfile.objects.get(user=fbid)
 
-    if(usr):
-        print  usr.name
+    usr = UserProfile.objects.filter(user=fbid)
+
+    if(len(usr) != 0):
+        print  usr[0].name
         return HttpResponse()
     
     prof = UserProfile(user=fbid,name=name) 
