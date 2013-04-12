@@ -426,9 +426,11 @@ $(document).on('click', '.friendCloseBox', function() {
 
 $('#friendComplete').typeahead({
         source: function() {
-            if(nonRemovedFriends.length == 0)
+            if(nonRemovedFriends.length == 0) {
+                friendNames = []
                 ShowMyName();
                 nonRemovedFriends = friendNames;
+            }
             return nonRemovedFriends;
         }, 
         'updater': addFriend,
