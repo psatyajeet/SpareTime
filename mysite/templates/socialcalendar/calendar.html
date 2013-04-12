@@ -186,7 +186,7 @@
 var gcal = function() {
     $.post('gcal', function (data, status) {
     populateEvents();
-}, "json").done(function(data, status){
+}).done(function(data, status){
     populateEvents();
 }) ;
 };
