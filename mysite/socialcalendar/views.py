@@ -251,6 +251,11 @@ def submitEvent(request):
         )
 
         e.save()
+
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+        usr.events.add(e)
+
+
         #d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse()
     else:
@@ -267,8 +272,11 @@ def populateEvents(request):
 
     first = first.replace(tzinfo=tz.gettz('UTC'))
     last = last.replace(tzinfo=tz.gettz('UTC'))
+    
+    usr = UserProfile.objects.get(user=request.session['fbid'])
+    print usr.name
+    events = usr.events.objects.filter(start__gte=first).filter(end__lt=last)
 
-    events = Event.objects.filter(start__gte=first).filter(end__lt=last)
     events = events.extra(order_by=['start'])
     d = []
     if (len(events) == 0):
@@ -434,10 +442,11 @@ def makeUser(request):
     name = request.GET['name']
     fbid = request.GET['fbid']
     
-    usr = UserProfile.objects.filter(user=fbid)
+    request.session['fbid'] = fbid
+    usr = UserProfile.objects.get(user=fbid)
 
-    if(usr[0]):
-        print  usr[0].name
+    if(usr):
+        print  usr.name
         return HttpResponse()
     
     prof = UserProfile(user=fbid,name=name) 
