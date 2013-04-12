@@ -14,6 +14,10 @@ urlpatterns = patterns(
     url(r'^changeStart', views.changeStart, name='changeStart'),
     url(r'^gcal', views.gcal, name='gcal'),
 
+    url(r'^deleteCookie', views.deleteCookie, name='deleteCookie'),
+
+    url(r'^makeUser', views.makeUser, name='makeUser'),
+
     url(r'^changeFormat', views.changeFormat, name='changeFormat'),
     url(r'^changeMonth', views.changeMonth, name='changeMonth'),
     url(r'^populateMonthEvents', views.populateMonthEvents, name='populateMonthEvents'),

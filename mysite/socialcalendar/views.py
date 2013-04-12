@@ -9,6 +9,7 @@ from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
 
 from socialcalendar.models import Event
+from socialcalendar.models import UserProfile
 
 import random
 
@@ -251,6 +252,11 @@ def submitEvent(request):
         )
 
         e.save()
+
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+        usr.events.add(e)
+
+
         #d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse()
     else:
@@ -267,8 +273,14 @@ def populateEvents(request):
 
     first = first.replace(tzinfo=tz.gettz('UTC'))
     last = last.replace(tzinfo=tz.gettz('UTC'))
+    
+    if (not request.session.__contains__('fbid')):
+        d = []
+        return HttpResponse(simplejson.dumps(d))
 
-    events = Event.objects.filter(start__gte=first).filter(end__lt=last)
+    usr = UserProfile.objects.get(user=request.session['fbid'])
+    events = usr.events.filter(start__gte=first).filter(end__lt=last)
+
     events = events.extra(order_by=['start'])
     d = []
     if (len(events) == 0):
@@ -325,8 +337,9 @@ def populateMonthEvents(request):
 
     first = first.replace(tzinfo=tz.gettz('UTC'))
     last = last.replace(tzinfo=tz.gettz('UTC'))
-
-    events = Event.objects.filter(start__gte=first).filter(end__lt=last)
+    
+    usr = UserProfile.objects.get(user=request.session['fbid'])
+    events = usr.events.filter(start__gte=first).filter(end__lt=last)
     events = events.extra(order_by=['start'])
     d = []
     if (len(events) == 0):
@@ -447,4 +460,28 @@ def heatMap(request):
 
 @csrf_protect
 def gcal(request):
+    return HttpResponse()
+
+@csrf_protect
+def makeUser(request):
+
+    name = request.GET['name']
+    fbid = request.GET['fbid']
+    
+    request.session['fbid'] = fbid
+
+    usr = UserProfile.objects.filter(user=fbid)
+
+    if(len(usr) != 0):
+        print  usr[0].name
+        return HttpResponse()
+    
+    prof = UserProfile(user=fbid,name=name) 
+    prof.save()
+
+    return HttpResponse()
+
+@csrf_protect
+def deleteCookie(request):
+    del request.session['fbid']
     return HttpResponse()

@@ -23,26 +23,55 @@ window.fbAsyncInit = function() {
 
 FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
-        console.log("connected")
+        $loginButton = $("#loginButton");
+        $loginButton.html("Logout");
+        $loginButton.attr("id", "logoutButton");   
     } else if (response.status === 'not_authorized') {
-        login();
+        //login();
     } else {
         // not_logged_in
-        login();
+        //login();
     }
-
-    ShowMyName();
 });
 };
 
 function login() {
     FB.login(function(response) {
         if (response.authResponse) {
-            // connected
+            FB.api('/me', function(response) {
+                makeUser(response.name, response.id);
+            })
         } else {
             // cancelled
         }
     });
+}
+
+function logout() {    
+    $.get('deleteCookie', function (data, status) {}).done(function() {
+                populateEvents();
+                });
+    
+    FB.logout(function(response) {
+    });
+}
+
+var changeFormat = function(newFormat) {
+    $.get('changeFormat', {'format': newFormat}, function (data, status) {
+            format = newFormat;
+            formatCalendar(format, data);
+            }, "json").done( function() {
+                populateEvents();
+
+                });};
+
+function makeUser(name, id) {
+    $.get('makeUser', {'name' : name, 'fbid': id}, function (data, status) {
+    }).done(function() {
+                populateEvents();
+                ShowMyName();
+
+                });
 }
   // Load the SDK Asynchronously
   (function(d){
@@ -372,6 +401,7 @@ $("#monthlyButton").click(function() {
         });
 
 
+
 var invitedFriendsID = [];
 var nonRemovedFriends;
 
@@ -452,6 +482,20 @@ $cells.each(function(index, $cell) {
 
 colorCells(cellValues);
  */
+
+
+$(document).on("click", "#loginButton", function() {
+    login();
+    $(this).html("Logout");
+    $(this).attr("id", "logoutButton");
+});
+
+$(document).on("click", "#logoutButton", function() {
+    logout();
+    $(this).html("Login");
+    $(this).attr("id", "loginButton");
+});
+
 
 </script>
 
