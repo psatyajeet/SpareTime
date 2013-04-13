@@ -10,6 +10,7 @@
    <body>
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
       <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}/js/facebook.js"></script>
       <!--<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>-->
       <div id="wrap">
       <div class="navbar navbar-inverse navbar-fixed-top">
@@ -27,13 +28,8 @@
                   </ul>
                   <ul class="nav pull-right">
                      <li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>
-                     {# If user is  logged in, show logout button in top-right #}
-                     {% if user.is_authenticated %}
-                     <li><a href="#" id="logoutButton">Logout</a></li>
-                     {# Otherwise show login button #}
-                     {% else %}
+                     
                      <li><a href="#" id="loginButton">Login</a></li>
-                     {% endif %}
                   </ul>
                </div>
             </div>

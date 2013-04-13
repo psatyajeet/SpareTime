@@ -12,6 +12,7 @@
 </fb:login-button>
 -->
 
+<<<<<<< HEAD
  <!--Add a button for the user to click to initiate auth sequence -->
      <button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
 
@@ -80,6 +81,9 @@
     <script src="https://apis.google.com/js/client.js"></script>
 
 
+=======
+<!--
+>>>>>>> Tried to separate FB js
 <script language="javascript" type="text/javascript">
 window.fbAsyncInit = function() {
     FB.init({
@@ -148,10 +152,11 @@ function makeUser(name, id) {
    }(document));
 
 </script>
+-->
 <!--
 <button name="my_full_name" onclick="ShowMyName()" value="My Name" />
 -->
-
+<!--
 <script language="javascript" type="text/javascript">
 
 var friends;
@@ -170,7 +175,7 @@ function ShowMyName() {
     });         
     }
 </script>
-
+-->
 <!---
 <div class="alert alert-info">
     <p>You have a new event request from:</p>
@@ -556,13 +561,13 @@ var uncolorCells = function() {
 
 
 $(document).on("click", "#loginButton", function() {
-    login();
+    done=login();
     $(this).html("Logout");
     $(this).attr("id", "logoutButton");
 });
 
 $(document).on("click", "#logoutButton", function() {
-    logout();
+    done=logout();
     $(this).html("Login");
     $(this).attr("id", "loginButton");
 });
