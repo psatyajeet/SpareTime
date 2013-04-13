@@ -11,6 +11,7 @@
       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
       <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.js"></script>
       <!--<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>-->
+      <div id="wrap">
       <div class="navbar navbar-inverse navbar-fixed-top">
          <div class="navbar-inner">
             <div class="container">
@@ -48,9 +49,13 @@
          {% block main %}
          {% endblock main %}
       </div>
+      </div>
       
-      <div class="container">
-         <p class="muted credit"> © 2013 SpareTime. All rights reserved. </p>
+      <div id="footer">
+          <div class="container">
+             <p class="muted credit"> 
+             <br>© 2013 SpareTime. All rights reserved. </p>
+          </div>
       </div>
       <!-- Le javascript
          ================================================== -->

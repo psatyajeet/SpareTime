@@ -142,6 +142,9 @@ def getWeeks(offset=0):
 @ensure_csrf_cookie
 def index(request):
 
+    if not request.user.is_authenticated:
+        return render(request, 'homepage.html')
+        
     if (not request.session.__contains__('whichweek')):
         request.session['whichweek'] = 0
 
@@ -169,6 +172,7 @@ def index(request):
         'monthDays': monthDays,
         'monthWeeks': monthWeeks,
     }
+
     return render(request, 'socialcalendar/calendar.html', context)
 
 
