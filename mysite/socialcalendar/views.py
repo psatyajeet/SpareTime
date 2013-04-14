@@ -16,6 +16,7 @@ import json
 import random
 
 dateString = "%m/%d/%Y %I:%M %p"
+googleDateString = "%Y-%m-%dT%H:%M:%S"
 
 
 def getDays(offset=0):
