@@ -444,7 +444,7 @@ function ShowMyName() {
 
 
 var gcal = function(resp) {
-    $.get('gcal', resp, function (data, status) {
+    $.get('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
     }).done(function() {
                 populateEvents();
                 });};

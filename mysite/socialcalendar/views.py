@@ -11,6 +11,8 @@ from dateutil.relativedelta import relativedelta
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 
+import json  
+
 import random
 
 dateString = "%m/%d/%Y %I:%M %p"
@@ -496,6 +498,26 @@ def heatMap(request):
 
 @csrf_protect
 def gcal(request):
+    events = json.loads(request.GET['responseJSON'])
+    if events['items']:
+            for event in events['items']:
+                if not event.has_key('summary'):
+                    event['summary'] = ''
+                if not event.has_key('description'):
+                    event['description'] = ''
+                if not event.has_key('location'):
+                    event['location'] = ''
+                if not event.has_key('start'):
+                    event['start']['dateTime'] = ''
+                if not event.has_key('end'):
+                    event['end']['dateTime'] = ''
+                e = Event(title=event['summary'],
+                    description=event['description'],
+                    location=event['location'],
+                    start=event['start']['dateTime'].replace("T", " "),
+                    end=event['end']['dateTime'].replace("T", " "),
+                    )
+                e.save()
     return HttpResponse()
 
 @csrf_protect
