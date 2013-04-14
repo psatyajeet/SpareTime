@@ -45,8 +45,6 @@
 
       // Use a button to handle authentication the first time.
       function handleClientLoad() {
-        console.log("handleClientLoad")
-
         gapi.client.setApiKey(apiKey);
         window.setTimeout(checkAuth,1);
       }
@@ -73,7 +71,6 @@
 
       // Load the API and make an API call.  Display the results on the screen.
     function getGoogleEvents() {
-        console.log("makeApiCall")        
          var restRequest = gapi.client.request({
         'path': '/calendar/v3/calendars/primary/events',
         });

@@ -500,10 +500,11 @@ def heatMap(request):
 @csrf_protect
 def gcal(request):
     events = json.loads(request.GET['responseJSON'])
+    usr = UserProfile.objects.get(user=request.session['fbid'])
+
     if events['items']:
         for event in events['items']:
             if event.has_key('iCalUID'):
-                usr = UserProfile.objects.get(user=request.session['fbid'])
                 existentEvent = usr.events.filter(gid=event['iCalUID'])
                 if(len(existentEvent) != 0):
                     continue
@@ -514,10 +515,8 @@ def gcal(request):
             if not event.has_key('location'):
                 event['location'] = ''
             if not event.has_key('start'):
-        #                    event['start'] = {'dateTime':''}
                 continue
             if not event.has_key('end'):
-        #       event['end'] = {'dateTime':''}
                 continue
             if not event.has_key('iCalUID'):
                 event['iCalUID'] = ''
@@ -536,7 +535,6 @@ def gcal(request):
                       )
             e.save()
 
-            usr = UserProfile.objects.get(user=request.session['fbid'])
             usr.events.add(e)
     return HttpResponse()
 
