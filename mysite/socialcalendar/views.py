@@ -501,8 +501,9 @@ def heatMap(request):
 def gcal(request):
     events = json.loads(request.POST['responseJSON'])
     usr = UserProfile.objects.get(user=request.session['fbid'])
-
+    print events
     if events['items']:
+        print "heyyyy"
         for event in events['items']:
             if event.has_key('iCalUID'):
                 existentEvent = usr.events.filter(gid=event['iCalUID'])
@@ -520,12 +521,14 @@ def gcal(request):
                 continue
             if not event.has_key('iCalUID'):
                 event['iCalUID'] = ''
-
+            if event['end'].has_key('date') and len(event['end']['date']) ==10 :
+                continue
+            print event
             startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
             startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
             endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
             endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
-
+            print startTime
             e = Event(title=event['summary'],
                       description=event['description'],
                       location=event['location'],
