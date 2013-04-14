@@ -499,7 +499,7 @@ def heatMap(request):
 
 @csrf_protect
 def gcal(request):
-    events = json.loads(request.GET['responseJSON'])
+    events = json.loads(request.POST['responseJSON'])
     usr = UserProfile.objects.get(user=request.session['fbid'])
 
     if events['items']:

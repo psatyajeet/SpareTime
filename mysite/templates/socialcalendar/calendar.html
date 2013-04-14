@@ -439,10 +439,11 @@ function ShowMyName() {
 
 
 var gcal = function(resp) {
-    $.get('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
+    $.post('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
     }).done(function() {
                 populateEvents();
-                });};
+                });
+}
 
 
 $("#gcal").click(gcal);
