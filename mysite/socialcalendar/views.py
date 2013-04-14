@@ -500,24 +500,43 @@ def heatMap(request):
 def gcal(request):
     events = json.loads(request.GET['responseJSON'])
     if events['items']:
-            for event in events['items']:
-                if not event.has_key('summary'):
-                    event['summary'] = ''
-                if not event.has_key('description'):
-                    event['description'] = ''
-                if not event.has_key('location'):
-                    event['location'] = ''
-                if not event.has_key('start'):
-                    event['start']['dateTime'] = ''
-                if not event.has_key('end'):
-                    event['end']['dateTime'] = ''
-                e = Event(title=event['summary'],
-                    description=event['description'],
-                    location=event['location'],
-                    start=event['start']['dateTime'].replace("T", " "),
-                    end=event['end']['dateTime'].replace("T", " "),
-                    )
-                e.save()
+        for event in events['items']:
+            if event.has_key('iCalUID'):
+                usr = UserProfile.objects.get(user=request.session['fbid'])
+                existentEvent = usr.events.filter(gid=event['iCalUID'])
+                if(len(existentEvent) != 0):
+                    continue
+            if not event.has_key('summary'):
+                event['summary'] = ''
+            if not event.has_key('description'):
+                event['description'] = ''
+            if not event.has_key('location'):
+                event['location'] = ''
+            if not event.has_key('start'):
+        #                    event['start'] = {'dateTime':''}
+                continue
+            if not event.has_key('end'):
+        #       event['end'] = {'dateTime':''}
+                continue
+            if not event.has_key('iCalUID'):
+                event['iCalUID'] = ''
+
+            startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
+            startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
+            endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
+            endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
+
+            e = Event(title=event['summary'],
+                      description=event['description'],
+                      location=event['location'],
+                      start=startTime,
+                      end=endTime,
+                      gid=event['iCalUID']
+                      )
+            e.save()
+
+            usr = UserProfile.objects.get(user=request.session['fbid'])
+            usr.events.add(e)
     return HttpResponse()
 
 @csrf_protect
