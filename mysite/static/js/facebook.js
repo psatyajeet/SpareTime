@@ -28,6 +28,8 @@ function login() {
             FB.api('/me', function(response) {
                 makeUser(response.name, response.id);
             })
+            $("#loginButton").html("Logout");
+            $("#loginButton").attr("id", "logoutButton");
         } else {
             // cancelled
         }

@@ -561,13 +561,11 @@ var uncolorCells = function() {
 
 
 $(document).on("click", "#loginButton", function() {
-    done=login();
-    $(this).html("Logout");
-    $(this).attr("id", "logoutButton");
+    login();
 });
 
 $(document).on("click", "#logoutButton", function() {
-    done=logout();
+    logout();
     $(this).html("Login");
     $(this).attr("id", "loginButton");
 });
