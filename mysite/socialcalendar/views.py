@@ -508,7 +508,7 @@ def gcal(request):
                 if(len(existentEvent) != 0):
                     continue
             if not event.has_key('summary'):
-                event['summary'] = ''
+                event['summary'] = 'no-title'
             if not event.has_key('description'):
                 event['description'] = ''
             if not event.has_key('location'):
