@@ -239,6 +239,8 @@ $(document).ready(function(){
 });
 
 var updateCalendar = function(amount) {
+
+    uncolorCells();
     if (format === "monthly") {
         $.post('changeMonth', {"amount": amount}, function (data, status) {
             formatCalendar("monthly", data);
@@ -332,6 +334,7 @@ var createEvent = function() {
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val()}, 
         "json").done(function (data, status) {
+        uncolorCells();
         populateEvents();
     });
     $('#eventModal').modal('hide');

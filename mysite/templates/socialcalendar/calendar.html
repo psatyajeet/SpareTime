@@ -379,9 +379,11 @@ $("#gcal").click(gcal);
 
 var changeFormat = function(newFormat) {
     $.get('changeFormat', {'format': newFormat}, function (data, status) {
+            uncolorCells();
             format = newFormat;
             formatCalendar(format, data);
             }, "json").done( function() {
+
                 populateEvents();
 
                 });};
@@ -440,7 +442,7 @@ $('#friendComplete').typeahead({
         }});
 
 
-$('#friendModal').modal({'show': false});
+$('#friendModal').modal({'show': false, 'keyboard': false});
 
 $('#friendModal').on('shown', function() {
         $('#friendComplete').focus();
@@ -481,14 +483,10 @@ var colorCells = function(values) {
             });
 };
 
-/*
-var cellValues = [];
-$cells.each(function(index, $cell) {
-    cellValues.push(Math.random()); 
-        });
+var uncolorCells = function() {
+    $cells.css("background-color", "white");
+}
 
-colorCells(cellValues);
- */
 
 
 $(document).on("click", "#loginButton", function() {
