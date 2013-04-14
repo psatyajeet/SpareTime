@@ -14,6 +14,7 @@
 
  <!--Add a button for the user to click to initiate auth sequence -->
      <button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
+
     <script>
         var logoutGmail = function(){
 //        document.location.href = "https://accounts.google.com/logout";
@@ -23,7 +24,7 @@
     }
     </script>
 
-    <button id="authorize-button" style="visibility: hidden">Authorize</button>
+    <button id="authorize-button" onclick="handleClientLoad()">Authorize</button>
     <script type="text/javascript">
       // Enter a client ID for a web application from the Google Developer Console.
       // The provided clientId will only work if the sample is run directly from
@@ -51,7 +52,6 @@
       }
 
       function checkAuth() {
-        console.log("checkAuth")
         gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
       }
 
@@ -59,8 +59,7 @@
       function handleAuthResult(authResult) {
         var authorizeButton = document.getElementById('authorize-button');
         if (authResult && !authResult.error) {
-          authorizeButton.style.visibility = 'hidden';
-          makeApiCall();
+          getGoogleEvents();
         } else {
           authorizeButton.style.visibility = '';
           authorizeButton.onclick = handleAuthClick;
@@ -73,7 +72,7 @@
       }
 
       // Load the API and make an API call.  Display the results on the screen.
-    function makeApiCall() {
+    function getGoogleEvents() {
         console.log("makeApiCall")        
          var restRequest = gapi.client.request({
         'path': '/calendar/v3/calendars/primary/events',
@@ -85,7 +84,7 @@
     }
 
     </script>
-    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <script src="https://apis.google.com/js/client.js"></script>
 
 
 <script language="javascript" type="text/javascript">
