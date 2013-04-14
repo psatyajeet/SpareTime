@@ -17,10 +17,7 @@
 
     <script>
         var logoutGmail = function(){
-//        document.location.href = "https://accounts.google.com/logout";
         window.open('https://accounts.google.com/logout','_newtab');
-
-
     }
     </script>
 
@@ -50,17 +47,15 @@
       }
 
       function checkAuth() {
-        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, handleAuthResult);
+        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
       }
 
 
       function handleAuthResult(authResult) {
-        var authorizeButton = document.getElementById('authorize-button');
         if (authResult && !authResult.error) {
           getGoogleEvents();
         } else {
-          authorizeButton.style.visibility = '';
-          authorizeButton.onclick = handleAuthClick;
+            alert("Couldn't authorize")
         }
       }
 
@@ -73,7 +68,7 @@
     function getGoogleEvents() {
          var restRequest = gapi.client.request({
             'path': '/calendar/v3/calendars/primary/events',
-            'params': {'timeMax': '2014-09-14T16:00:00-04:00', 'timeMin': '2012-09-14T16:00:00-04:00'}  
+            'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-01-01T16:00:00-04:00'}  
 
         });
         restRequest.execute(function(resp) { 
@@ -89,7 +84,6 @@
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '329753420461644', // Local App ID
-      //appId      : '122925221235344', // Heroku App ID
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
       xfbml      : true  // parse XFBML
@@ -101,10 +95,7 @@ FB.getLoginStatus(function(response) {
         $loginButton.html("Logout");
         $loginButton.attr("id", "logoutButton");   
     } else if (response.status === 'not_authorized') {
-        //login();
     } else {
-        // not_logged_in
-        //login();
     }
 });
 };

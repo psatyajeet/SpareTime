@@ -449,7 +449,6 @@ def heatMap(request):
     if request.method == "POST":
 
         friendIDs = eval(request.POST['data[param]'])
-        print friendIDs
         today = datetime.today() + timedelta(request.session['whichweek']*7)
         today = today.replace(hour=0, minute=0, second=0, microsecond=0)
         delta = timedelta((today.weekday()+1) % 7)
