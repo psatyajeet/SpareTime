@@ -142,7 +142,6 @@ def getWeeks(offset=0):
 @ensure_csrf_cookie
 def index(request):
 
-    print request.session.get('fbid')
     if request.session.get('fbid')==None:
         return render(request, 'homepage.html')
         
@@ -505,9 +504,7 @@ def heatMap(request):
 def gcal(request):
     events = json.loads(request.POST['responseJSON'])
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    print events
     if events['items']:
-        print "heyyyy"
         for event in events['items']:
             if event.has_key('iCalUID'):
                 existentEvent = usr.events.filter(gid=event['iCalUID'])
