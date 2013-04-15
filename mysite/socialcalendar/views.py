@@ -11,9 +11,12 @@ from dateutil.relativedelta import relativedelta
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 
+import json  
+
 import random
 
 dateString = "%m/%d/%Y %I:%M %p"
+googleDateString = "%Y-%m-%dT%H:%M:%S"
 
 
 def getDays(offset=0):
@@ -446,7 +449,6 @@ def heatMap(request):
     if request.method == "POST":
 
         friendIDs = eval(request.POST['data[param]'])
-        print friendIDs
         today = datetime.today() + timedelta(request.session['whichweek']*7)
         today = today.replace(hour=0, minute=0, second=0, microsecond=0)
         delta = timedelta((today.weekday()+1) % 7)
@@ -496,6 +498,46 @@ def heatMap(request):
 
 @csrf_protect
 def gcal(request):
+    events = json.loads(request.POST['responseJSON'])
+    usr = UserProfile.objects.get(user=request.session['fbid'])
+    print events
+    if events['items']:
+        print "heyyyy"
+        for event in events['items']:
+            if event.has_key('iCalUID'):
+                existentEvent = usr.events.filter(gid=event['iCalUID'])
+                if(len(existentEvent) != 0):
+                    continue
+            if not event.has_key('summary'):
+                event['summary'] = 'no-title'
+            if not event.has_key('description'):
+                event['description'] = ''
+            if not event.has_key('location'):
+                event['location'] = ''
+            if not event.has_key('start'):
+                continue
+            if not event.has_key('end'):
+                continue
+            if not event.has_key('iCalUID'):
+                event['iCalUID'] = ''
+            if event['end'].has_key('date') and len(event['end']['date']) ==10 :
+                continue
+            print event
+            startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
+            startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
+            endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
+            endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
+            print startTime
+            e = Event(title=event['summary'],
+                      description=event['description'],
+                      location=event['location'],
+                      start=startTime,
+                      end=endTime,
+                      gid=event['iCalUID']
+                      )
+            e.save()
+
+            usr.events.add(e)
     return HttpResponse()
 
 @csrf_protect

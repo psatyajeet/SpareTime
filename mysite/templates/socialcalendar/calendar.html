@@ -12,11 +12,78 @@
 </fb:login-button>
 -->
 
+ <!--Add a button for the user to click to initiate auth sequence -->
+     <button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
+
+    <script>
+        var logoutGmail = function(){
+        window.open('https://accounts.google.com/logout','_newtab');
+    }
+    </script>
+
+    <button id="authorize-button" onclick="handleClientLoad()">Authorize</button>
+    <script type="text/javascript">
+      // Enter a client ID for a web application from the Google Developer Console.
+      // The provided clientId will only work if the sample is run directly from
+      // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
+      // In your Developer Console project, add a JavaScript origin that corresponds to the domain
+      // where you will be running the script.
+      var clientId = '984176055001-8d2phedubon1coodjcrti1m0r198mp7a.apps.googleusercontent.com';
+
+      // Enter the API key from the Google Develoepr Console - to handle any unauthenticated
+      // requests in the code.
+      // The provided key works for this sample only when run from
+      // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
+      // To use in your own application, replace this API key with your own.
+      var apiKey = 'AIzaSyBWD6GSRwVl4lDZHFuzzPsRPb9cG0f8vKc';
+
+      // To enter one or more authentication scopes, refer to the documentation for the API.
+      var scopes = 'https://www.googleapis.com/auth/calendar';
+
+      // Use a button to handle authentication the first time.
+      function handleClientLoad() {
+        gapi.client.setApiKey(apiKey);
+        window.setTimeout(checkAuth,1);
+      }
+
+      function checkAuth() {
+        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+      }
+
+
+      function handleAuthResult(authResult) {
+        if (authResult && !authResult.error) {
+          getGoogleEvents();
+        } else {
+            alert("Couldn't authorize")
+        }
+      }
+
+      function handleAuthClick(event) {
+        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+        return false;
+      }
+
+      // Load the API and make an API call.  Display the results on the screen.
+    function getGoogleEvents() {
+         var restRequest = gapi.client.request({
+            'path': '/calendar/v3/calendars/primary/events',
+            'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-01-01T16:00:00-04:00'}  
+
+        });
+        restRequest.execute(function(resp) { 
+            gcal(resp); 
+        });       
+    }
+
+    </script>
+    <script src="https://apis.google.com/js/client.js"></script>
+
+
 <script language="javascript" type="text/javascript">
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '329753420461644', // Local App ID
-      //appId      : '122925221235344', // Heroku App ID
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
       xfbml      : true  // parse XFBML
@@ -28,10 +95,7 @@ FB.getLoginStatus(function(response) {
         $loginButton.html("Logout");
         $loginButton.attr("id", "logoutButton");   
     } else if (response.status === 'not_authorized') {
-        //login();
     } else {
-        // not_logged_in
-        //login();
     }
 });
 };
@@ -367,10 +431,12 @@ function ShowMyName() {
             });
 
 
-var gcal = function() {
-    $.get('gcal', function (data, status) {
-}, "json");
-};
+var gcal = function(resp) {
+    $.post('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
+    }).done(function() {
+                populateEvents();
+                });
+}
 
 
 $("#gcal").click(gcal);
