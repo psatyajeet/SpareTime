@@ -277,18 +277,8 @@ def submitEvent(request):
         return HttpResponseNotFound()
 
 def getNotifications(user):
-    d = [];
     events = user.notifications.all();
-    for i in range(len(events)):
-        e = events[i]
-        d.append({
-            'title': e.title,
-            'start': e.start.hour+e.start.minute/60.0,
-            'end': e.end.hour+e.end.minute/60.0,
-            'day': ((e.start.weekday()+1) % 7),
-            'id': e.id,
-        })
-    return d;
+    return getArrayofWeeklyEvents(events);
 
 def submitNotification(friendIDs, e):
     for friendID in friendIDs:
@@ -296,6 +286,8 @@ def submitNotification(friendIDs, e):
         if (len(usr) != 0):
             usr[0].notifications.add(e)
 
+def removeNotification(user, e) :
+    user.notifications.remove(e);
 
 @csrf_protect
 def populateEvents(request):
@@ -316,11 +308,19 @@ def populateEvents(request):
     events = usr.events.filter(start__gte=first).filter(end__lt=last)
 
     events = events.extra(order_by=['start'])
+    
+    d = getArrayofWeeklyEvents(events)
+    notifs = getNotifications(usr);
+    d.append({'notifications': notifs})
+    return HttpResponse(simplejson.dumps(d))
+
+def getArrayofWeeklyEvents(events):
     d = []
-    if (len(events) == 0):
-        return HttpResponse(simplejson.dumps(d))
     x = 0
     last = 0
+    if(len(events) == 0):
+        return d
+
     biggestEnd = events[0].end
     widths = []
     xs = []
@@ -352,11 +352,7 @@ def populateEvents(request):
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
         })
-
-    notifs = getNotifications(usr);
-    d.append({'notifications': notifs})
-    return HttpResponse(simplejson.dumps(d))
-
+    return d;
 
 @csrf_protect
 def populateMonthEvents(request):
