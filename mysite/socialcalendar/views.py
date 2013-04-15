@@ -270,7 +270,7 @@ def submitEvent(request):
         usr.events.add(e)
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
-            submitNotification(friendIDs, e)
+            storeNotificationForFriends(friendIDs, e)
         #d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse()
     else:
@@ -280,7 +280,7 @@ def getNotifications(user):
     events = user.notifications.all();
     return getArrayofWeeklyEvents(events);
 
-def submitNotification(friendIDs, e):
+def storeNotificationForFriends(friendIDs, e):
     for friendID in friendIDs:
         usr = UserProfile.objects.filter(user=friendID)
         if (len(usr) != 0):
@@ -288,6 +288,14 @@ def submitNotification(friendIDs, e):
 
 def removeNotification(user, e) :
     user.notifications.remove(e);
+
+@csrf_protect
+def getNotificationsRequest(request):
+    if request.method == "GET":
+        notifs = getNotifications(usr);
+        return simplejson.dumps(notifs);
+    else :
+        return HttpResponseNotFound()
 
 @csrf_protect
 def populateEvents(request):
@@ -308,10 +316,8 @@ def populateEvents(request):
     events = usr.events.filter(start__gte=first).filter(end__lt=last)
 
     events = events.extra(order_by=['start'])
-    
+
     d = getArrayofWeeklyEvents(events)
-    notifs = getNotifications(usr);
-    d.append({'notifications': notifs})
     return HttpResponse(simplejson.dumps(d))
 
 def getArrayofWeeklyEvents(events):
