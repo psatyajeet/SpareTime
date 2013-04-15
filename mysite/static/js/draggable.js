@@ -349,6 +349,7 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
+    d = []
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
