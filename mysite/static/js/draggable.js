@@ -480,8 +480,11 @@ var tableOver = function(cell, eventObject) {
 
 
 $cells.on("mouseover", function(eventObject) {
-    var $cell = $($cells.get($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7));
-    tableOver($cell, eventObject);
+    var index = ($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7);
+    if (index >= 0) { 
+        var $cell = $($cells.get(index));
+        tableOver($cell, eventObject);
+    }
 });
 
 var formatTime = function(date) {
@@ -527,6 +530,7 @@ var tableUp = function($cell, eventObject) {
             $('#eventName').focus();
         });
     }
+    console.log("moving " + currentlyMoving);
     if (currentlyMoving != -1) {
         var index = $cells.index($cell);
         var x = index%7;
@@ -542,7 +546,7 @@ var tableUp = function($cell, eventObject) {
         if (newEnd > 24) {
             y = parseInt(($cells.length - 7 - (length * 2 - 1)* 7 + index%7)/7);
         }
-        if (newStart < 0) {
+        if (y <= 0) {
             y = 0;
         }
 
