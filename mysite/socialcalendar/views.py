@@ -293,6 +293,7 @@ def removeNotification(user, e) :
 @csrf_protect
 def getNotificationsRequest(request):
     if request.method == "GET":
+        usr = UserProfile.objects.get(user=request.session['fbid'])
         notifs = getNotifications(usr);
         return simplejson.dumps(notifs);
     else :
