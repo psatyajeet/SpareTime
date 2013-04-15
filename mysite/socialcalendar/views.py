@@ -270,10 +270,7 @@ def submitEvent(request):
         usr.events.add(e)
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
-            for friendID in friendIDs:
-                usr = UserProfile.objects.filter(user=friendID)
-                if (len(usr) != 0):
-                    usr[0].notifications.add(e)
+            submitNotification(friendIDs, e)
         #d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse()
     else:
@@ -292,6 +289,13 @@ def getNotifications(user):
             'id': e.id,
         })
     return d;
+
+def submitNotification(friendIDs, e):
+    for friendID in friendIDs:
+        usr = UserProfile.objects.filter(user=friendID)
+        if (len(usr) != 0):
+            usr[0].notifications.add(e)
+
 
 @csrf_protect
 def populateEvents(request):
@@ -566,25 +570,27 @@ def gcal(request):
 
 @csrf_protect
 def makeUser(request):
+    if request.method == "GET":
+        name = request.GET['name']
+        fbid = request.GET['fbid']
+        
+        d = [];
 
-    name = request.POST['name']
-    fbid = request.POST['fbid']
-    
-    d = [];
+        if (request.session.__contains__('fbid') and not (request.session['fbid'] == fbid)):
+            d.append({'changed': True, })
+        request.session['fbid'] = fbid
+        usr = UserProfile.objects.filter(user=fbid)
 
-    if (request.session.__contains__('fbid') and not (request.session['fbid'] == fbid)):
-        d.append({'changed': True, })
-    request.session['fbid'] = fbid
-    usr = UserProfile.objects.filter(user=fbid)
+        if(len(usr) != 0):
+            print  usr[0].name
+            return HttpResponse(simplejson.dumps(d))
+        
+        prof = UserProfile(user=fbid,name=name) 
+        prof.save()
 
-    if(len(usr) != 0):
-        print  usr[0].name
-        return HttpResponse(simplejson.dumps(d))
-    
-    prof = UserProfile(user=fbid,name=name) 
-    prof.save()
-
-    return HttpResponse()
+        return HttpResponse()
+    else :
+        return HttpResponseNotFound()        
 
 @csrf_protect
 def deleteCookie(request):
