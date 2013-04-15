@@ -12,7 +12,6 @@ window.fbAsyncInit = function() {
 FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
         if(homepage) {
-            console.log("here too")
               homepage = false;
                 FB.api('/me', function(response) {
                     makeUser(response.name, response.id);
@@ -37,7 +36,7 @@ FB.getLoginStatus(function(response) {
             if(!homepage) {
                 location.reload(true);
             }
-                });
+        });
     }
 });
 };
@@ -104,7 +103,7 @@ function ShowMyName() {
                 friendNames.push(friend.name);
                 });
         } else {
-            alert("Error!");
+            console.log("Error!");
         }
     });         
     }
