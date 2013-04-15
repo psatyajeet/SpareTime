@@ -249,26 +249,49 @@ def submitEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
-
-        e = Event(
-            title=request.POST['title'],
+        if(len(request.POST['title']) == 0):
+            e = Event(
             description=request.POST['description'],
             location=request.POST['location'],
             start=startDate,
             end=endDate,
-        )
+        ) 
+        else:    
+            e = Event(
+                title=request.POST['title'],
+                description=request.POST['description'],
+                location=request.POST['location'],
+                start=startDate,
+                end=endDate,
+            )
 
         e.save()
-
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.events.add(e)
-
-
+        if(request.POST.has_key('friendIDs')):
+            friendIDs = json.loads(request.POST['friendIDs'])
+            for friendID in friendIDs:
+                usr = UserProfile.objects.filter(user=friendID)
+                if (len(usr) != 0):
+                    usr[0].notifications.add(e)
         #d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse()
     else:
         return HttpResponseNotFound()
 
+def getNotifications(user):
+    d = [];
+    events = user.notifications.all();
+    for i in range(len(events)):
+        e = events[i]
+        d.append({
+            'title': e.title,
+            'start': e.start.hour+e.start.minute/60.0,
+            'end': e.end.hour+e.end.minute/60.0,
+            'day': ((e.start.weekday()+1) % 7),
+            'id': e.id,
+        })
+    return d;
 
 @csrf_protect
 def populateEvents(request):
@@ -326,6 +349,8 @@ def populateEvents(request):
             'width': 1.0/float(widths[i]),
         })
 
+    notifs = getNotifications(usr);
+    d.append({'notifications': notifs})
     return HttpResponse(simplejson.dumps(d))
 
 
@@ -511,7 +536,7 @@ def gcal(request):
                 if(len(existentEvent) != 0):
                     continue
             if not event.has_key('summary'):
-                event['summary'] = 'no-title'
+                event['summary'] = 'No-Title'
             if not event.has_key('description'):
                 event['description'] = ''
             if not event.has_key('location'):
@@ -522,14 +547,12 @@ def gcal(request):
                 continue
             if not event.has_key('iCalUID'):
                 event['iCalUID'] = ''
-            if event['end'].has_key('date') and len(event['end']['date']) ==10 :
+            if event['end'].has_key('date') and len(event['end']['date']) <=10 :
                 continue
-            print event
             startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
             startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
             endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
             endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
-            print startTime
             e = Event(title=event['summary'],
                       description=event['description'],
                       location=event['location'],
@@ -538,15 +561,14 @@ def gcal(request):
                       gid=event['iCalUID']
                       )
             e.save()
-
             usr.events.add(e)
     return HttpResponse()
 
 @csrf_protect
 def makeUser(request):
 
-    name = request.GET['name']
-    fbid = request.GET['fbid']
+    name = request.POST['name']
+    fbid = request.POST['fbid']
     
     d = [];
 

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Event(models.Model):
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=30, default = 'No-Title')
     location = models.CharField(max_length=30)
     description = models.TextField()
     start = models.DateTimeField('Event start')
@@ -21,8 +21,9 @@ class Event(models.Model):
 class UserProfile(models.Model):
     #home_address = models.TextField()
     user = models.CharField(max_length=100, unique=True) #models.ForeignKey(User, unique=True)
-    events = models.ManyToManyField(Event)
+    events = models.ManyToManyField(Event, related_name = 'events')
     name = models.CharField(max_length=30)
+    notifications = models.ManyToManyField(Event, related_name = 'notification')
 
     def __unicode__(self):
         return self.user

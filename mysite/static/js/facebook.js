@@ -19,7 +19,7 @@ FB.getLoginStatus(function(response) {
             })        
         } else {
             FB.api('/me', function(response) {
-              $.get('makeUser', {'name' : response.name, 'fbid': response.id}, function (data, status) {
+              $.post('makeUser', {'name' : response.name, 'fbid': response.id}, function (data, status) {
                 if(JSON.parse(data)[0]) {populateEvents();}})
             }) 
             
@@ -81,7 +81,7 @@ var changeFormat = function(newFormat) {
                 });};
 
 function makeUser(name, id) {
-    $.get('makeUser', {'name' : name, 'fbid': id}, function (data, status) {
+    $.post('makeUser', {'name' : name, 'fbid': id}, function (data, status) {
     }).done(function() {
                 location.reload(true);
                 });

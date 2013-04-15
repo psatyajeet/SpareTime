@@ -328,11 +328,13 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
+    d = [];
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
         "startTime": $("#startTime").val(),
-        "endTime": $("#endTime").val()}, 
+        "endTime": $("#endTime").val(), 
+        "friendIDs": JSON.stringify(d)},
         "json").done(function (data, status) {
         uncolorCells();
         populateEvents();
