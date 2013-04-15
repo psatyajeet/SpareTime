@@ -571,6 +571,16 @@ def gcal(request):
     return HttpResponse()
 
 @csrf_protect
+def acceptNotification(request):    
+    if(request.method == POST):
+        usr = UserProfile.objects.filter(user=request.session['fbid'])
+        event = Event.objects.get(id=request.POST['id'])
+        removeNotification(usr, event)
+        usr.events.add(e)
+    else:
+        HttpResponseNotFound();
+
+@csrf_protect
 def makeUser(request):
     if request.method == "GET":
         name = request.GET['name']

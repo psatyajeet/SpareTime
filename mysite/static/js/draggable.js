@@ -539,4 +539,9 @@ $(document).on("mouseup", function(eventObject) {
     }
     tableUp($(this), eventObject);
 });
+     
+var acceptNotification = function(eventID) {
+    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {populateEvents();});
+}
+
 
