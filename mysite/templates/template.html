@@ -12,39 +12,40 @@
       <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
       <script type="text/javascript" src="{{ STATIC_URL }}/js/facebook.js"></script>
       <!--<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>-->
-      <div id="wrap">
-      <div class="navbar navbar-inverse navbar-fixed-top">
-         <div class="navbar-inner">
-            <div class="container">
-               <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-               <span class="icon-bar"></span>
-               <span class="icon-bar"></span>
-               <span class="icon-bar"></span>
-               </a>
-               <a class="brand" href="/">SpareTime</a>
-               <div class="nav-collapse collapse">
-                  <ul class="nav">
-                     <li class="active"><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
-                  </ul>
-                  <ul class="nav pull-right">
-                     <li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>
-                     
-                     <li><a href="#" id="loginButton">Log In</a></li>
-                  </ul>
+      <div id="wrapper">
+         <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+               <div class="container">
+                  <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  </a>
+                  <a class="brand" href="/">SpareTime</a>
+                  <div class="nav-collapse collapse">
+                     <ul class="nav">
+                        <li class="active"><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
+                     </ul>
+                     <ul class="nav pull-right">
+                        <li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>
+                        
+                        <li><a href="#" id="loginButton">Log In</a></li>
+                     </ul>
+                  </div>
                </div>
             </div>
          </div>
-      </div>
-      
-      <div class="container" id="mainContent">
-         <div class="row">
-            <div class="span12">
-               <p></p>
+         
+         <div class="container" id="mainContent">
+            <div class="row">
+               <div class="span12">
+                  <p></p>
+               </div>
             </div>
+            {% block main %}
+            {% endblock main %}
          </div>
-         {% block main %}
-         {% endblock main %}
-      </div>
+         <div class="push"></div>
       </div>
       
       <div id="footer">
