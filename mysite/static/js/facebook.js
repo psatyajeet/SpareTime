@@ -58,7 +58,7 @@ function login() {
 
 function logout() {    
     $.get('deleteCookie', function (data, status) {}).done(function() {
-                populateEvents();
+                location.reload(true)
                 });
     
     FB.logout(function(response) {
