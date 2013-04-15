@@ -36,6 +36,19 @@ $.ajaxSetup({
     }
 });
 
+
+var getNotifications = function() {
+    var $notifications = $("notificationLocation");
+    $.get('getNotificationsRequest', function (data, status) {
+        console.log(data);
+        if (data.length > 0) {
+            $.each(data, function (index, dat) {
+                console.log(dat.title);
+            });
+        }
+    });
+};
+
 var populateEvents = function() {
     if (format == "weekly")
         populateWeekEvents();
@@ -243,6 +256,7 @@ var openID = function(id) {
 
 $(document).ready(function(){
     populateEvents();
+    getNotifications();
 });
 
 var updateCalendar = function(amount) {
@@ -572,6 +586,8 @@ $(document).on("mouseup", function(eventObject) {
     }
     tableUp($(this), eventObject);
 });
+
+
      
 var acceptNotification = function(eventID) {
     $.post('acceptNotification', {"eventID": eventID}, function (data, status) {

@@ -295,7 +295,7 @@ def getNotificationsRequest(request):
     if request.method == "GET":
         usr = UserProfile.objects.get(user=request.session['fbid'])
         notifs = getNotifications(usr);
-        return simplejson.dumps(notifs);
+        return HttpResponse(simplejson.dumps(notifs));
     else :
         return HttpResponseNotFound()
 
