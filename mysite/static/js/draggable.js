@@ -335,7 +335,6 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
-    d = [];
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
@@ -575,7 +574,14 @@ $(document).on("mouseup", function(eventObject) {
 });
      
 var acceptNotification = function(eventID) {
-    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {populateEvents();});
+    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
+    });
 }
 
+var rejectNotification = function(eventID) {
+    $.post('rejectNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
+    });
+}
 

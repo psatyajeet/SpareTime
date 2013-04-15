@@ -14,6 +14,9 @@ urlpatterns = patterns(
     url(r'^changeStart', views.changeStart, name='changeStart'),
     url(r'^gcal', views.gcal, name='gcal'),
 
+    url(r'^rejectNotification', views.rejectNotification, name='rejectNotification'),
+    url(r'^acceptNotification', views.acceptNotification, name='acceptNotification'),
+
     url(r'^deleteCookie', views.deleteCookie, name='deleteCookie'),
 
     url(r'^makeUser', views.makeUser, name='makeUser'),

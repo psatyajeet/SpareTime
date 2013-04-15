@@ -587,6 +587,15 @@ def acceptNotification(request):
         HttpResponseNotFound();
 
 @csrf_protect
+def rejectNotification(request):
+    if(request.method == POST):
+        usr = UserProfile.objects.filter(user=request.session['fbid'])
+        event = Event.objects.get(id=request.POST['id'])
+        removeNotification(usr, event)
+    else:
+        HttpResponseNotFound();    
+
+@csrf_protect
 def makeUser(request):
     if request.method == "GET":
         name = request.GET['name']
