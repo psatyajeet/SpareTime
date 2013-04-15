@@ -479,10 +479,6 @@ def changeStart(request):
         event.start = startDate
         event.end = startDate + eventLength
 
-        print event.start, event.end
-        if event.end.weekday() != event.start.weekday():
-            return HttpResponseBadRequest()
-
         event.save()
         return HttpResponse()
     else:

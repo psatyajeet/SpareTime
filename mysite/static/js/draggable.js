@@ -533,7 +533,8 @@ var tableUp = function($cell, eventObject) {
         var y = parseInt(index/7);
 
 
-        var delta = y/2.0 - (currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0);
+        var newStart = currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0;
+        var delta = y/2.0 - (newStart);
         var newEnd = currentlyMovingEnd.getHours() + currentlyMovingEnd.getMinutes()/60.0 + delta;
         var length = currentlyMovingEnd.getHours() + currentlyMovingEnd.getMinutes()/60.0 - (currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0);
 
@@ -541,6 +542,11 @@ var tableUp = function($cell, eventObject) {
         if (newEnd > 24) {
             y = parseInt(($cells.length - 7 - (length * 2 - 1)* 7 + index%7)/7);
         }
+        if (newStart < 0) {
+            y = 0;
+        }
+
+        console.log(y);
 
         dates[x].setHours(y/2);
         dates[x].setMinutes(30*(y%2));
