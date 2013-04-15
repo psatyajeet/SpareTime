@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 import calendar
 from datetime import date, timedelta, datetime
+import time
 from dateutil import tz
 from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
@@ -316,10 +317,13 @@ def populateEvents(request):
 
     for i in range(len(events)):
         e = events[i]
+        endhour = e.end.hour
+        if (e.end.hour == 0):
+            endhour = 24
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
-            'end': e.end.hour+e.end.minute/60.0,
+            'end': endhour+e.end.minute/60.0,
             'day': ((e.start.weekday()+1) % 7),
             'id': e.id,
             'x': xs[i]/float(widths[i]),
@@ -384,6 +388,8 @@ def getEventData(request):
                 'location': event.location,
                 'start': event.start.strftime(dateString),
                 'end': event.end.strftime(dateString),
+                'startms': calendar.timegm(event.start.timetuple())*1000,
+                'endms': calendar.timegm(event.end.timetuple())*1000,
                 'id': event.id,
             }
             return HttpResponse(simplejson.dumps(d))
@@ -441,6 +447,10 @@ def changeStart(request):
         eventLength = event.end - event.start
         event.start = startDate
         event.end = startDate + eventLength
+
+        print event.start, event.end
+        if event.end.weekday() != event.start.weekday():
+            return HttpResponseBadRequest()
 
         event.save()
         return HttpResponse()

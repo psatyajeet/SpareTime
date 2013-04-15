@@ -2,6 +2,8 @@ var currentlyViewing = -1;
 var currentlyMoving = -1;
 var currentlyMovingY = 0;
 var currentlyClicking = -1;
+var currentlyMovingStart = new Date();
+var currentlyMovingEnd = new Date();
 
 
 function getCookie(name) {
@@ -157,6 +159,11 @@ var populateWeekEvents = function() {
         currentlyClicking = 1;
 
         currentlyMoving = parseInt($(this).attr("id"));
+        $.post('getEventData', {"id": currentlyMoving}, function (data, status) {
+
+            currentlyMovingEnd = new Date(data.endms);
+            currentlyMovingStart = new Date(data.startms);
+        }, 'json');
         currentlyMovingY = event.pageY - $(this).offset().top;
 
     });
@@ -449,13 +456,23 @@ var tableOver = function(cell, eventObject) {
                 startHour = (starty+height);
                 endHour = (starty+1);
             }
-
-
         }
     }
     if (currentlyMoving != -1) {
-        $('#'+currentlyMoving).offset({top: cell.offset().top,
-            left: cell.offset().left});
+        
+        var index = $cells.index(cell);
+        var hour = parseInt(index/7);
+        var delta = hour/2.0 - (currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0);
+        var newEnd = currentlyMovingEnd.getHours() + currentlyMovingEnd.getMinutes()/60.0 + delta;
+        var length = currentlyMovingEnd.getHours() + currentlyMovingEnd.getMinutes()/60.0 - (currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0);
+        if (newEnd <= 24) {
+            $('#'+currentlyMoving).offset({top: cell.offset().top,
+                left: cell.offset().left});
+        } else {
+            $lastCell = $($cells.get($cells.length - 7 - (length * 2 - 1)* 7 + index%7));
+            $('#'+currentlyMoving).offset({top: $lastCell.offset().top,
+                left: $lastCell.offset().left});
+        }
     }
 }
 
@@ -512,6 +529,17 @@ var tableUp = function($cell, eventObject) {
         var index = $cells.index($cell);
         var x = index%7;
         var y = parseInt(index/7);
+
+
+        var delta = y/2.0 - (currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0);
+        var newEnd = currentlyMovingEnd.getHours() + currentlyMovingEnd.getMinutes()/60.0 + delta;
+        var length = currentlyMovingEnd.getHours() + currentlyMovingEnd.getMinutes()/60.0 - (currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0);
+
+        // Check if the current start time pushes the event off the edge
+        if (newEnd > 24) {
+            y = parseInt(($cells.length - 7 - (length * 2 - 1)* 7 + index%7)/7);
+        }
+
         dates[x].setHours(y/2);
         dates[x].setMinutes(30*(y%2));
         var startTime = formatTime(dates[x]);
