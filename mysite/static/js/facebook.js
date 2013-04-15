@@ -1,4 +1,5 @@
 
+
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '329753420461644', // Local App ID
@@ -10,6 +11,7 @@ window.fbAsyncInit = function() {
 
 FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
+        ShowMyName();
         $loginButton = $("#loginButton");
         $loginButton.html("Logout");
         $loginButton.attr("id", "logoutButton");   
@@ -59,10 +61,7 @@ var changeFormat = function(newFormat) {
 function makeUser(name, id) {
     $.get('makeUser', {'name' : name, 'fbid': id}, function (data, status) {
     }).done(function() {
-                populateEvents();
-                ShowMyName();
-                window.open("/", "_self");
-
+                location.reload(true);
                 });
 }
   // Load the SDK Asynchronously
