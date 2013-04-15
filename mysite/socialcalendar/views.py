@@ -479,7 +479,7 @@ def heatMap(request):
                 start = event.start;
                 end = event.end;
                 day = (start.weekday()+1) % 7
-                for i in range(start.hour*2+start.minute/30, end.hour*2-end.hour/30+1):
+                for i in range(start.hour*2+start.minute/30, end.hour*2+end.minute/30):
                     print i, day
                     if not timeSlotConsider[day][i]:
                         ratio[day][i] += 1;
