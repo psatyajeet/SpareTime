@@ -142,6 +142,7 @@ def getWeeks(offset=0):
 @ensure_csrf_cookie
 def index(request):
 
+    print request.session.get('fbid')
     if request.session.get('fbid')==None:
         return render(request, 'homepage.html')
         

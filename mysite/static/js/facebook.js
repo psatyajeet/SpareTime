@@ -30,6 +30,7 @@ function login() {
             })
             $("#loginButton").html("Logout");
             $("#loginButton").attr("id", "logoutButton");
+
         } else {
             // cancelled
         }
@@ -60,6 +61,7 @@ function makeUser(name, id) {
     }).done(function() {
                 populateEvents();
                 ShowMyName();
+                window.open("/", "_self");
 
                 });
 }
@@ -96,6 +98,6 @@ $(document).on("click", "#loginButton", function() {
 
 $(document).on("click", "#logoutButton", function() {
     logout();
-    $(this).html("Login");
+    $(this).html("Log In");
     $(this).attr("id", "loginButton");
 });
