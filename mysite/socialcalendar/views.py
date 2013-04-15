@@ -250,26 +250,53 @@ def submitEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
-
-        e = Event(
-            title=request.POST['title'],
+        if(len(request.POST['title']) == 0):
+            e = Event(
             description=request.POST['description'],
             location=request.POST['location'],
             start=startDate,
             end=endDate,
-        )
+        ) 
+        else:    
+            e = Event(
+                title=request.POST['title'],
+                description=request.POST['description'],
+                location=request.POST['location'],
+                start=startDate,
+                end=endDate,
+            )
 
         e.save()
-
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.events.add(e)
-
-
+        if(request.POST.has_key('friendIDs')):
+            friendIDs = json.loads(request.POST['friendIDs'])
+            storeNotificationForFriends(friendIDs, e)
         #d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse()
     else:
         return HttpResponseNotFound()
 
+def getNotifications(user):
+    events = user.notifications.all();
+    return getArrayofWeeklyEvents(events);
+
+def storeNotificationForFriends(friendIDs, e):
+    for friendID in friendIDs:
+        usr = UserProfile.objects.filter(user=friendID)
+        if (len(usr) != 0):
+            usr[0].notifications.add(e)
+
+def removeNotification(user, e) :
+    user.notifications.remove(e);
+
+@csrf_protect
+def getNotificationsRequest(request):
+    if request.method == "GET":
+        notifs = getNotifications(usr);
+        return simplejson.dumps(notifs);
+    else :
+        return HttpResponseNotFound()
 
 @csrf_protect
 def populateEvents(request):
@@ -290,11 +317,17 @@ def populateEvents(request):
     events = usr.events.filter(start__gte=first).filter(end__lt=last)
 
     events = events.extra(order_by=['start'])
+
+    d = getArrayofWeeklyEvents(events)
+    return HttpResponse(simplejson.dumps(d))
+
+def getArrayofWeeklyEvents(events):
     d = []
-    if (len(events) == 0):
-        return HttpResponse(simplejson.dumps(d))
     x = 0
     last = 0
+    if(len(events) == 0):
+        return d
+
     biggestEnd = events[0].end
     widths = []
     xs = []
@@ -329,9 +362,7 @@ def populateEvents(request):
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
         })
-
-    return HttpResponse(simplejson.dumps(d))
-
+    return d;
 
 @csrf_protect
 def populateMonthEvents(request):
@@ -521,7 +552,7 @@ def gcal(request):
                 if(len(existentEvent) != 0):
                     continue
             if not event.has_key('summary'):
-                event['summary'] = 'no-title'
+                event['summary'] = 'No-Title'
             if not event.has_key('description'):
                 event['description'] = ''
             if not event.has_key('location'):
@@ -532,14 +563,12 @@ def gcal(request):
                 continue
             if not event.has_key('iCalUID'):
                 event['iCalUID'] = ''
-            if event['end'].has_key('date') and len(event['end']['date']) ==10 :
+            if event['end'].has_key('date') and len(event['end']['date']) <=10 :
                 continue
-            print event
             startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
             startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
             endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
             endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
-            print startTime
             e = Event(title=event['summary'],
                       description=event['description'],
                       location=event['location'],
@@ -548,31 +577,42 @@ def gcal(request):
                       gid=event['iCalUID']
                       )
             e.save()
-
             usr.events.add(e)
     return HttpResponse()
 
 @csrf_protect
+def acceptNotification(request):    
+    if(request.method == POST):
+        usr = UserProfile.objects.filter(user=request.session['fbid'])
+        event = Event.objects.get(id=request.POST['id'])
+        removeNotification(usr, event)
+        usr.events.add(e)
+    else:
+        HttpResponseNotFound();
+
+@csrf_protect
 def makeUser(request):
+    if request.method == "GET":
+        name = request.GET['name']
+        fbid = request.GET['fbid']
+        
+        d = [];
 
-    name = request.GET['name']
-    fbid = request.GET['fbid']
-    
-    d = [];
+        if (request.session.__contains__('fbid') and not (request.session['fbid'] == fbid)):
+            d.append({'changed': True, })
+        request.session['fbid'] = fbid
+        usr = UserProfile.objects.filter(user=fbid)
 
-    if (request.session.__contains__('fbid') and not (request.session['fbid'] == fbid)):
-        d.append({'changed': True, })
-    request.session['fbid'] = fbid
-    usr = UserProfile.objects.filter(user=fbid)
+        if(len(usr) != 0):
+            print  usr[0].name
+            return HttpResponse(simplejson.dumps(d))
+        
+        prof = UserProfile(user=fbid,name=name) 
+        prof.save()
 
-    if(len(usr) != 0):
-        print  usr[0].name
-        return HttpResponse(simplejson.dumps(d))
-    
-    prof = UserProfile(user=fbid,name=name) 
-    prof.save()
-
-    return HttpResponse()
+        return HttpResponse()
+    else :
+        return HttpResponseNotFound()        
 
 @csrf_protect
 def deleteCookie(request):
