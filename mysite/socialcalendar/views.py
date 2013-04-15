@@ -551,13 +551,16 @@ def makeUser(request):
     name = request.GET['name']
     fbid = request.GET['fbid']
     
-    request.session['fbid'] = fbid
+    d = [];
 
+    if (request.session.__contains__('fbid') and not (request.session['fbid'] == fbid)):
+        d.append({'changed': True, })
+    request.session['fbid'] = fbid
     usr = UserProfile.objects.filter(user=fbid)
 
     if(len(usr) != 0):
         print  usr[0].name
-        return HttpResponse()
+        return HttpResponse(simplejson.dumps(d))
     
     prof = UserProfile(user=fbid,name=name) 
     prof.save()

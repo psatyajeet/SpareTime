@@ -18,6 +18,11 @@ FB.getLoginStatus(function(response) {
                 return;
             })        
         } else {
+            FB.api('/me', function(response) {
+              $.get('makeUser', {'name' : response.name, 'fbid': response.id}, function (data, status) {
+                if(JSON.parse(data)[0]) {populateEvents();}})
+            }) 
+            
             ShowMyName();
             $loginButton = $("#loginButton");
             $loginButton.html("Logout");
