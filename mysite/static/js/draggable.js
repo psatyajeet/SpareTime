@@ -40,13 +40,10 @@ $.ajaxSetup({
 var getNotifications = function() {
     var $notifications = $("notificationLocation");
     $.get('getNotificationsRequest', function (data, status) {
-        console.log(data);
-        if (data.length > 0) {
-            $.each(data, function (index, dat) {
-                console.log(dat.title);
-            });
-        }
-    });
+        $.each(data, function (index, dat) {
+            console.log(dat.title);
+        });
+    }, "json");
 };
 
 var populateEvents = function() {
@@ -349,7 +346,7 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
-    d = []
+    d = [714776279]
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),

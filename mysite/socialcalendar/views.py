@@ -295,6 +295,7 @@ def getNotificationsRequest(request):
     if request.method == "GET":
         usr = UserProfile.objects.get(user=request.session['fbid'])
         notifs = getNotifications(usr);
+        print len(notifs)
         return HttpResponse(simplejson.dumps(notifs));
     else :
         return HttpResponseNotFound()
@@ -610,7 +611,8 @@ def makeUser(request):
         usr = UserProfile.objects.filter(user=fbid)
 
         if(len(usr) != 0):
-            print  usr[0].name
+            print usr[0].name
+            print fbid
             return HttpResponse(simplejson.dumps(d))
         
         prof = UserProfile(user=fbid,name=name) 
