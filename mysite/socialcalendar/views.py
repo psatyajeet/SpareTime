@@ -142,7 +142,7 @@ def getWeeks(offset=0):
 @ensure_csrf_cookie
 def index(request):
 
-    if not request.user.is_authenticated:
+    if request.session.get('fbid')==None:
         return render(request, 'homepage.html')
         
     if (not request.session.__contains__('whichweek')):

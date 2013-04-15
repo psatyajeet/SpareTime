@@ -89,3 +89,13 @@ function ShowMyName() {
         }
     });         
     }
+
+$(document).on("click", "#loginButton", function() {
+    login();
+});
+
+$(document).on("click", "#logoutButton", function() {
+    logout();
+    $(this).html("Login");
+    $(this).attr("id", "loginButton");
+});
