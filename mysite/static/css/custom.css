@@ -17,7 +17,6 @@
 }
 
 #footer {
-      Position: absolute;
       Width: 100%;
       Bottom: 0;
       Height: 75px;  /* This value is the height of your footer */

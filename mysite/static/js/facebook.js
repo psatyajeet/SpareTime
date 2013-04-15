@@ -1,4 +1,4 @@
-
+var homepage = false;
 
 window.fbAsyncInit = function() {
     FB.init({
@@ -11,15 +11,33 @@ window.fbAsyncInit = function() {
 
 FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
-        ShowMyName();
-        $loginButton = $("#loginButton");
-        $loginButton.html("Logout");
-        $loginButton.attr("id", "logoutButton");   
+        if(homepage) {
+            console.log("here too")
+              homepage = false;
+                FB.api('/me', function(response) {
+                    makeUser(response.name, response.id);
+                return;
+            })        
+        } else {
+            ShowMyName();
+            $loginButton = $("#loginButton");
+            $loginButton.html("Logout");
+            $loginButton.attr("id", "logoutButton");   
+        }
     } else if (response.status === 'not_authorized') {
-        //login();
+        $.get('deleteCookie', function (data, status) {}).done(function() {
+        }).done(function() {
+            if(!homepage) {
+                location.reload(true);
+            }
+        });
     } else {
-        // not_logged_in
-        //login();
+        $.get('deleteCookie', function (data, status) {}).done(function() {
+        }).done(function() {
+            if(!homepage) {
+                location.reload(true);
+            }
+                });
     }
 });
 };

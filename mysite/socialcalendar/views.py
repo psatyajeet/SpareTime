@@ -566,5 +566,6 @@ def makeUser(request):
 
 @csrf_protect
 def deleteCookie(request):
-    del request.session['fbid']
+    if not request.session.get('fbid')==None:
+        del request.session['fbid']
     return HttpResponse()
