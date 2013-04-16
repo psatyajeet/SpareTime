@@ -328,12 +328,12 @@ function ShowMyName() {
 <div class="btn-group" data-toggle="buttons-radio">
 
     <div class="row">
-        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Time Block</button></div>
-        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Private</button></div>
-        <div class="span3"><button type="button" class="btn btn-block btn-inverse">Public</button></div>
-        <div class="span3"><button type="button" id="addFriends" class="btn btn-block btn-inverse">Friends</button></div>
+        <div class="span3"></div>
+        <div class="span3"><button type="button" id="makeEvent" class="btn btn-block btn-inverse">Make Event</button></div>
+        <div class="span0"></div>
+        <div class="span3"><button type="button" id="addFriends" class="btn btn-block btn-inverse">Invite Friends</button></div>
+        <div class="span3"></div>
     </div>
-
 
 </div>
 <div class="row">
@@ -397,6 +397,22 @@ function ShowMyName() {
                 </div>
             </div>
             <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
+
+            <div>
+                <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="publicRadio" value="option1" checked>
+                Public
+                </label>
+                <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="privateRadio" value="option2">
+                Private
+                </label>
+                <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="flexibleRadio" value="option2">
+                Flexible
+                </label>
+            </div>
+
         </div>
     </form>
     <div class="modal-footer">
@@ -549,6 +565,19 @@ $("#addFriends").on("click", function() {
     $("#friendModal").modal('show');
 });
 
+// test make event button
+$("#makeEvent").on("click", function() {
+        clearModal();
+        $('#createEvent').show();
+        $('#deleteEvent').hide();
+        $('#editEvent').hide();
+        $('#eventModal').modal();
+        $('#eventModal').on('shown', function(){                    
+            $('#eventName').focus();
+        });
+        $("#startTime").val("");
+        $("#endTime").val("");
+});
 
 var $cells = $(".calendarEntry, .calendarHalfHour");
 var colorCells = function(values) {

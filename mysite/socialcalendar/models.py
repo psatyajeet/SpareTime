@@ -9,7 +9,7 @@ class Event(models.Model):
     start = models.DateTimeField('Event start')
     end = models.DateTimeField('Event end')
     gid = models.CharField(max_length=100)
-
+    kind = models.CharField(max_length = 30)
 
     def __unicode__(self):
         return self.title
