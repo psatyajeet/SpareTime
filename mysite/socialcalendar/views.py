@@ -5,10 +5,10 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadReque
 import calendar
 from datetime import date, timedelta, datetime
 import time
+import icalendar
 from dateutil import tz
 from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
-
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 
@@ -319,6 +319,8 @@ def populateEvents(request):
     events = events.extra(order_by=['start'])
 
     d = getArrayofWeeklyEvents(events)
+    print getRecurringWeeklyEvents(usr, request.session['whichweek'])
+
     return HttpResponse(simplejson.dumps(d))
 
 def getArrayofWeeklyEvents(events):
@@ -543,10 +545,13 @@ def gcal(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events['items']:
         for event in events['items']:
+            recurring = False;
+            recurrence = '';
             if event.has_key('iCalUID'):
                 existentEvent = usr.events.filter(gid=event['iCalUID'])
                 if(len(existentEvent) != 0):
-                    continue
+                    #continue
+                    i = 0;
             if not event.has_key('summary'):
                 event['summary'] = 'No-Title'
             if not event.has_key('description'):
@@ -561,17 +566,26 @@ def gcal(request):
                 event['iCalUID'] = ''
             if event['end'].has_key('date') and len(event['end']['date']) <=10 :
                 continue
+
             startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
             startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
             endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
             endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
+
+            if event.has_key('recurrence') and len(event['recurrence']) > 0:
+                recurring = True;
+                recurrence = event['recurrence']
+                print  event['recurrence']
+
             e = Event(title=event['summary'],
                       description=event['description'],
                       location=event['location'],
                       start=startTime,
                       end=endTime,
-                      gid=event['iCalUID']
-                      )
+                      gid=event['iCalUID'],
+                      repeat=recurring,
+                      recurrence=recurrence,
+                      ) 
             e.save()
             usr.events.add(e)
     return HttpResponse()
@@ -615,3 +629,17 @@ def deleteCookie(request):
     if not request.session.get('fbid')==None:
         del request.session['fbid']
     return HttpResponse()
+
+def getRecurringWeeklyEvents(usr, whichweek):
+
+
+    events = usr.events.filter(repeat=True)
+    mycal = icalendar.ics()
+    mycal.local_load("socialcalendar/testfile")
+    mycal.parse_loaded()
+    dates = mycal.get_event_instances("20130414", "20130420")
+    print dates
+
+    return getArrayofWeeklyEvents(events)
+
+
