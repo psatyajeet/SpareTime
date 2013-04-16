@@ -38,10 +38,37 @@ $.ajaxSetup({
 
 
 var getNotifications = function() {
-    var $notifications = $("notificationLocation");
+    var $notifications = $("#notificationLocation");
+
+
     $.get('getNotificationsRequest', function (data, status) {
         $.each(data, function (index, dat) {
-            console.log(dat.title);
+            var $notify = $('<div class="alert alert-info"> '+
+                '<p>You have a new event request: '+dat.title+'</p> '+
+                '<div class="row-fluid"> '+
+                '<div class="span4"></div> '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-success acceptRequest" type="button">Accept</button> '+
+                '</div> '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-danger rejectRequest" type="button">Reject</button>      '+
+                '</div> '+
+                '<div class="span4"></div> '+
+                '</div> '+
+                '</div>');
+            $notifications.append($notify);
+        });
+
+        var $acceptButtons = $('.acceptRequest');
+        var $rejectButtons = $('.rejectRequest');
+        $.each(data, function (index, dat) {
+            $($acceptButtons.get(index)).on('click', function(e) {
+                console.log(dat.id);
+                acceptNotification(dat.id);
+            });
+            $($rejectButtons.get(index)).on('click', function(e) {
+                rejectNotification(dat.id);
+            });
         });
     }, "json");
 };
@@ -346,7 +373,7 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
-    d = [714776279]
+    d = invitedFriendsID;
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),

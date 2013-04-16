@@ -580,9 +580,9 @@ def gcal(request):
 
 @csrf_protect
 def acceptNotification(request):    
-    if(request.method == POST):
+    if(request.method == 'POST'):
         usr = UserProfile.objects.filter(user=request.session['fbid'])
-        event = Event.objects.get(id=request.POST['id'])
+        event = Event.objects.get(id=request.POST['eventID'])
         removeNotification(usr, event)
         usr.events.add(e)
     else:
@@ -590,7 +590,7 @@ def acceptNotification(request):
 
 @csrf_protect
 def rejectNotification(request):
-    if(request.method == POST):
+    if(request.method == 'POST'):
         usr = UserProfile.objects.filter(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['id'])
         removeNotification(usr, event)
