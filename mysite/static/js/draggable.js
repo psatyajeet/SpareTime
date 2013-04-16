@@ -179,9 +179,9 @@ var populateWeekEvents = function() {
 
         $cells.each(function(index) {
             if (y >= $(this).offset().top && 
-                y <= $(this).offset().top + $(this).height() &&
+                y <= $(this).offset().top + $(this).height() + borderWidth&&
                 x >= $(this).offset().left && 
-                x <= $(this).offset().left + $(this).width()) {
+                x <= $(this).offset().left + $(this).width() + borderWidth) {
                 currentlyClicking = -1;
                 tableOver($(this), event);
             }
@@ -194,13 +194,13 @@ var populateWeekEvents = function() {
     });
     $('.event').on('mouseup', function (event){
         var x = event.pageX;
-        var y = event.pageY-currentlyMovingY;
+        var y = Math.max(event.pageY-currentlyMovingY, $cells.offset().top);
         var called = false;
         $cells.each(function(index) {
             if (y >= $(this).offset().top && 
-                y <= $(this).offset().top + $(this).height() &&
+                y <= $(this).offset().top + $(this).height() + borderWidth &&
                 x >= $(this).offset().left && 
-                x <= $(this).offset().left + $(this).width()) {
+                x <= $(this).offset().left + $(this).width() + borderWidth) {
                 tableUp($(this), event);
                 called = true;
             }
@@ -481,10 +481,11 @@ var tableOver = function(cell, eventObject) {
 
 $cells.on("mouseover", function(eventObject) {
     var index = ($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7);
-    if (index >= 0) { 
-        var $cell = $($cells.get(index));
-        tableOver($cell, eventObject);
+    if (index < 0) { 
+        index = $cells.index($(this)) % 7;
     }
+    var $cell = $($cells.get(index));
+    tableOver($cell, eventObject);
 });
 
 var formatTime = function(date) {
@@ -530,7 +531,6 @@ var tableUp = function($cell, eventObject) {
             $('#eventName').focus();
         });
     }
-    console.log("moving " + currentlyMoving);
     if (currentlyMoving != -1) {
         var index = $cells.index($cell);
         var x = index%7;
@@ -550,7 +550,6 @@ var tableUp = function($cell, eventObject) {
             y = 0;
         }
 
-        console.log(y);
 
         dates[x].setHours(y/2);
         dates[x].setMinutes(30*(y%2));
@@ -564,8 +563,13 @@ var tableUp = function($cell, eventObject) {
 }
 
 $cells.on("mouseup", function(eventObject) {
-    var $cell = $($cells.get($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7));
+    var index = $cells.index($(this)) - Math.floor(currentlyMovingY/$cells.height())*7;
+    if (index < 0) { 
+        index = $cells.index($(this)) % 7;
+    }
+    var $cell = $($cells.get(index));
     tableUp($cell, eventObject);
+
     return false;
 });
 
