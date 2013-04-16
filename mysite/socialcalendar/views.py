@@ -581,19 +581,21 @@ def gcal(request):
 @csrf_protect
 def acceptNotification(request):    
     if(request.method == 'POST'):
-        usr = UserProfile.objects.filter(user=request.session['fbid'])
+        usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['eventID'])
         removeNotification(usr, event)
-        usr.events.add(e)
+        usr.events.add(event)
+        return HttpResponse();
     else:
         HttpResponseNotFound();
 
 @csrf_protect
 def rejectNotification(request):
     if(request.method == 'POST'):
-        usr = UserProfile.objects.filter(user=request.session['fbid'])
-        event = Event.objects.get(id=request.POST['id'])
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+        event = Event.objects.get(id=request.POST['eventID'])
         removeNotification(usr, event)
+        return HttpResponse();
     else:
         HttpResponseNotFound();    
 
