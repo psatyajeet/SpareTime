@@ -36,6 +36,43 @@ $.ajaxSetup({
     }
 });
 
+
+var getNotifications = function() {
+    var $notifications = $("#notificationLocation");
+
+
+    $.get('getNotificationsRequest', function (data, status) {
+        $.each(data, function (index, dat) {
+            var $notify = $('<div class="alert alert-info"> '+
+                '<p>You have a new event request: '+dat.title+'</p> '+
+                '<div class="row-fluid"> '+
+                '<div class="span4"></div> '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-success acceptRequest" type="button">Accept</button> '+
+                '</div> '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-danger rejectRequest" type="button">Reject</button>      '+
+                '</div> '+
+                '<div class="span4"></div> '+
+                '</div> '+
+                '</div>');
+            $notifications.append($notify);
+            var $acceptButtons = $('.acceptRequest').last();
+            var $rejectButtons = $('.rejectRequest').last();
+            $($acceptButtons.get(index)).on('click', function(e) {
+                acceptNotification(dat.id);
+                $notify.remove();
+            });
+            $($rejectButtons.get(index)).on('click', function(e) {
+                rejectNotification(dat.id);
+                $notify.remove();
+            });
+        });
+
+
+    }, "json");
+};
+
 var populateEvents = function() {
     if (format == "weekly")
         populateWeekEvents();
@@ -243,6 +280,7 @@ var openID = function(id) {
 
 $(document).ready(function(){
     populateEvents();
+    getNotifications();
 });
 
 var updateCalendar = function(amount) {
@@ -335,7 +373,7 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
-    d = [];
+    d = invitedFriendsID;
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
@@ -581,9 +619,18 @@ $(document).on("mouseup", function(eventObject) {
     }
     tableUp($(this), eventObject);
 });
+
+
      
 var acceptNotification = function(eventID) {
-    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {populateEvents();});
+    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
+    });
 }
 
+var rejectNotification = function(eventID) {
+    $.post('rejectNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
+    });
+}
 
