@@ -57,19 +57,19 @@ var getNotifications = function() {
                 '</div> '+
                 '</div>');
             $notifications.append($notify);
-        });
-
-        var $acceptButtons = $('.acceptRequest');
-        var $rejectButtons = $('.rejectRequest');
-        $.each(data, function (index, dat) {
+            var $acceptButtons = $('.acceptRequest').last();
+            var $rejectButtons = $('.rejectRequest').last();
             $($acceptButtons.get(index)).on('click', function(e) {
-                console.log(dat.id);
                 acceptNotification(dat.id);
+                $notify.remove();
             });
             $($rejectButtons.get(index)).on('click', function(e) {
                 rejectNotification(dat.id);
+                $notify.remove();
             });
         });
+
+
     }, "json");
 };
 
