@@ -1,7 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
+class ExceptionDate(models.Model):
+    exception = models.DateTimeField()
+    
+    def __unicode__(self):
+        return self.exception    
+        
 class Event(models.Model):
     title = models.CharField(max_length=30, default = 'No-Title')
     location = models.CharField(max_length=30)
@@ -11,6 +16,7 @@ class Event(models.Model):
     gid = models.CharField(max_length=100)
     repeat = models.BooleanField(default = False)
     recurrence = models.CharField(max_length = 100)
+    exceptions = models.ManyToManyField(ExceptionDate, related_name = 'ExceptionDate')
 
     def __unicode__(self):
         return self.title
@@ -28,3 +34,4 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         return self.user
+

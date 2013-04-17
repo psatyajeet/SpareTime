@@ -321,7 +321,6 @@ def populateEvents(request):
     
     events = sorted(chain(events, getWeeklyRecurringEvents(usr, request.session['whichweek'])), key=lambda event: event.start)
 
-    print events
     d = getArrayofWeeklyEvents(events)
 
     return HttpResponse(simplejson.dumps(d))
@@ -643,8 +642,12 @@ def getWeeklyRecurringEvents(usr, whichweek):
     for event in events:
         print "inloop"
         print str(event.recurrence.replace('u\'', '\'').replace("[\'", "").replace('\']', ''))
-        rule = rrulestr(str(event.recurrence.replace('u\'', '\'').replace("[\'", "").replace('\']', '')), ignoretz=True, dtstart = datetime(event.start.year, event.start.month, event.start.day))
+        startDateTime = datetime(event.start.year, event.start.month, event.start.day, 0,0,1);
+        rule = rrulestr(str(event.recurrence.replace('u\'', '\'').replace("[\'", "").replace('\']', '')), ignoretz=True, dtstart = startDateTime)
         print rule, event.start
+        print "------"
+        print startDateTime, event.title
+        print "-----"
         
         today = datetime.today() + timedelta(whichweek*7)
         today = today.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -653,6 +656,8 @@ def getWeeklyRecurringEvents(usr, whichweek):
         last = first + timedelta(7)
         
         times = rule.between(first, last, inc=True)
+
+        print first, last, times
 
         print times
         for time in times:
@@ -663,6 +668,8 @@ def getWeeklyRecurringEvents(usr, whichweek):
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
             )
+            e.save()
             totalForWeek.append(e)
+    print first, last
     print totalForWeek
     return totalForWeek
