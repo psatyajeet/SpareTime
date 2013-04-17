@@ -4,13 +4,16 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 import calendar
 from datetime import date, timedelta, datetime
-import time
+from dateutil.rrule import *
+from dateutil.parser import *
+
 import icalendar
 from dateutil import tz
 from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
+from itertools import chain
 
 import json  
 
@@ -314,12 +317,12 @@ def populateEvents(request):
         return HttpResponse(simplejson.dumps(d))
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    events = usr.events.filter(start__gte=first).filter(end__lt=last)
+    events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
+    
+    events = sorted(chain(events, getWeeklyRecurringEvents(usr, request.session['whichweek'])), key=lambda event: event.start)
 
-    events = events.extra(order_by=['start'])
-
+    print events
     d = getArrayofWeeklyEvents(events)
-    print getRecurringWeeklyEvents(usr, request.session['whichweek'])
 
     return HttpResponse(simplejson.dumps(d))
 
@@ -545,13 +548,15 @@ def gcal(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events['items']:
         for event in events['items']:
+            print event
+
             recurring = False;
             recurrence = '';
+            recurringEventId = ''
             if event.has_key('iCalUID'):
                 existentEvent = usr.events.filter(gid=event['iCalUID'])
                 if(len(existentEvent) != 0):
-                    #continue
-                    i = 0;
+                    continue
             if not event.has_key('summary'):
                 event['summary'] = 'No-Title'
             if not event.has_key('description'):
@@ -572,10 +577,11 @@ def gcal(request):
             endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
             endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
 
+
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
                 recurring = True;
-                recurrence = event['recurrence']
-                print  event['recurrence']
+                recurrence = event['recurrence'][0]
+
 
             e = Event(title=event['summary'],
                       description=event['description'],
@@ -630,16 +636,33 @@ def deleteCookie(request):
         del request.session['fbid']
     return HttpResponse()
 
-def getRecurringWeeklyEvents(usr, whichweek):
-
-
+def getWeeklyRecurringEvents(usr, whichweek):
+    print "hiiiiiii"
     events = usr.events.filter(repeat=True)
-    mycal = icalendar.ics()
-    mycal.local_load("socialcalendar/testfile")
-    mycal.parse_loaded()
-    dates = mycal.get_event_instances("20130414", "20130420")
-    print dates
+    totalForWeek = []
+    for event in events:
+        print "inloop"
+        print str(event.recurrence.replace('u\'', '\'').replace("[\'", "").replace('\']', ''))
+        rule = rrulestr(str(event.recurrence.replace('u\'', '\'').replace("[\'", "").replace('\']', '')), ignoretz=True, dtstart = datetime(event.start.year, event.start.month, event.start.day))
+        print rule, event.start
+        
+        today = datetime.today() + timedelta(whichweek*7)
+        today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        delta = timedelta((today.weekday()+1) % 7)
+        first = today - delta
+        last = first + timedelta(7)
+        
+        times = rule.between(first, last, inc=True)
 
-    return getArrayofWeeklyEvents(events)
-
-
+        print times
+        for time in times:
+            e = Event(
+            title=event.title,
+            description=event.description,
+            location=event.location,
+            start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
+            end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
+            )
+            totalForWeek.append(e)
+    print totalForWeek
+    return totalForWeek
