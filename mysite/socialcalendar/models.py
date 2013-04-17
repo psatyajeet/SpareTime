@@ -2,10 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class ExceptionDate(models.Model):
-    exception = models.DateTimeField()
+    exceptionTime = models.DateTimeField()
     
     def __unicode__(self):
-        return self.exception    
+        return self.exceptionTime    
         
 class Event(models.Model):
     title = models.CharField(max_length=30, default = 'No-Title')

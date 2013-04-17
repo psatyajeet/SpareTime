@@ -13,6 +13,8 @@ from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
+from socialcalendar.models import ExceptionDate
+
 from itertools import chain
 
 import json  
@@ -319,7 +321,7 @@ def populateEvents(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
     
-    events = sorted(chain(events, getWeeklyRecurringEvents(usr, request.session['whichweek'])), key=lambda event: event.start)
+    events = sorted(chain(events, getWeeklyRecurringEvents(usr, request.session['whichweek'], first.replace(tzinfo=None), last.replace(tzinfo=None))), key=lambda event: event.start)
 
     d = getArrayofWeeklyEvents(events)
 
@@ -543,17 +545,31 @@ def heatMap(request):
 
 @csrf_protect
 def gcal(request):
+
     events = json.loads(request.POST['responseJSON'])
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events['items']:
         for event in events['items']:
-            print event
 
             recurring = False;
             recurrence = '';
-            recurringEventId = ''
-            if event.has_key('iCalUID'):
-                existentEvent = usr.events.filter(gid=event['iCalUID'])
+            
+            if event.has_key('status') and event['status'] == 'cancelled' :
+                print "------status cancelled"
+                if event.has_key('recurringEventId') and event.has_key('originalStartTime'):
+                    print "----recurring and startime", event['originalStartTime']['dateTime']
+                    ev = usr.events.filter(gid=event['recurringEventId'])
+                    if len(ev) > 0 :
+                        print "-----", event['originalStartTime']['dateTime']
+                        ex = ExceptionDate(exceptionTime=datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString).replace(tzinfo=tz.gettz('UTC')))
+                        ex.save()
+                        print ev[0]
+                        ev[0].exceptions.add(ex)
+                    continue
+
+
+            if event.has_key('id'):
+                existentEvent = usr.events.filter(gid=event['id'])
                 if(len(existentEvent) != 0):
                     continue
             if not event.has_key('summary'):
@@ -566,8 +582,8 @@ def gcal(request):
                 continue
             if not event.has_key('end'):
                 continue
-            if not event.has_key('iCalUID'):
-                event['iCalUID'] = ''
+            if not event.has_key('id'):
+                event['id'] = ''
             if event['end'].has_key('date') and len(event['end']['date']) <=10 :
                 continue
 
@@ -579,15 +595,14 @@ def gcal(request):
 
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
                 recurring = True;
-                recurrence = event['recurrence'][0]
-
+                recurrence = event['recurrence'][0] #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
 
             e = Event(title=event['summary'],
                       description=event['description'],
                       location=event['location'],
                       start=startTime,
                       end=endTime,
-                      gid=event['iCalUID'],
+                      gid=event['id'],
                       repeat=recurring,
                       recurrence=recurrence,
                       ) 
@@ -635,32 +650,30 @@ def deleteCookie(request):
         del request.session['fbid']
     return HttpResponse()
 
-def getWeeklyRecurringEvents(usr, whichweek):
-    print "hiiiiiii"
+def getWeeklyRecurringEvents(usr, whichweek, first, last):
     events = usr.events.filter(repeat=True)
     totalForWeek = []
     for event in events:
-        print "inloop"
-        print str(event.recurrence.replace('u\'', '\'').replace("[\'", "").replace('\']', ''))
+      #  print str(event.recurrence)
         startDateTime = datetime(event.start.year, event.start.month, event.start.day, 0,0,1);
-        rule = rrulestr(str(event.recurrence.replace('u\'', '\'').replace("[\'", "").replace('\']', '')), ignoretz=True, dtstart = startDateTime)
-        print rule, event.start
-        print "------"
-        print startDateTime, event.title
-        print "-----"
-        
-        today = datetime.today() + timedelta(whichweek*7)
-        today = today.replace(hour=0, minute=0, second=0, microsecond=0)
-        delta = timedelta((today.weekday()+1) % 7)
-        first = today - delta
-        last = first + timedelta(7)
+        rule = rrulestr(event.recurrence, ignoretz=True, dtstart = startDateTime)
+
+#        today = datetime.today() + timedelta(whichweek*7)
+ #       today = today.replace(hour=0, minute=0, second=0, microsecond=0)
+  #      delta = timedelta((today.weekday()+1) % 7)
+   #     first = today - delta
+    #    last = first + timedelta(7)
         
         times = rule.between(first, last, inc=True)
 
-        print first, last, times
+      #  print first, last, times
 
-        print times
+        print times 
+       
         for time in times:
+            if len(event.exceptions.filter(exceptionTime__startswith=time)) > 0:
+                print "hereeeee"
+                continue
             e = Event(
             title=event.title,
             description=event.description,
@@ -668,7 +681,9 @@ def getWeeklyRecurringEvents(usr, whichweek):
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
             )
-            e.save()
+            e.id = event.id
+            #e.save()
+            #usr.events.add(e)
             totalForWeek.append(e)
     print first, last
     print totalForWeek
