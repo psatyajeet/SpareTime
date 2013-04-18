@@ -298,8 +298,10 @@ def removeNotification(user, e) :
 @csrf_protect
 def getNotificationsRequest(request):
     if request.method == "GET":
+        usr = UserProfile.objects.get(user=request.session['fbid'])
         notifs = getNotifications(usr);
-        return simplejson.dumps(notifs);
+        print len(notifs)
+        return HttpResponse(simplejson.dumps(notifs));
     else :
         return HttpResponseNotFound()
 
@@ -608,13 +610,24 @@ def gcal(request):
 
 @csrf_protect
 def acceptNotification(request):    
-    if(request.method == POST):
-        usr = UserProfile.objects.filter(user=request.session['fbid'])
-        event = Event.objects.get(id=request.POST['id'])
+    if(request.method == 'POST'):
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+        event = Event.objects.get(id=request.POST['eventID'])
         removeNotification(usr, event)
-        usr.events.add(e)
+        usr.events.add(event)
+        return HttpResponse();
     else:
         HttpResponseNotFound();
+
+@csrf_protect
+def rejectNotification(request):
+    if(request.method == 'POST'):
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+        event = Event.objects.get(id=request.POST['eventID'])
+        removeNotification(usr, event)
+        return HttpResponse();
+    else:
+        HttpResponseNotFound();    
 
 @csrf_protect
 def makeUser(request):
@@ -630,7 +643,8 @@ def makeUser(request):
         usr = UserProfile.objects.filter(user=fbid)
 
         if(len(usr) != 0):
-            print  usr[0].name
+            print usr[0].name
+            print fbid
             return HttpResponse(simplejson.dumps(d))
         
         prof = UserProfile(user=fbid,name=name) 

@@ -36,6 +36,43 @@ $.ajaxSetup({
     }
 });
 
+
+var getNotifications = function() {
+    var $notifications = $("#notificationLocation");
+
+
+    $.get('getNotificationsRequest', function (data, status) {
+        $.each(data, function (index, dat) {
+            var $notify = $('<div class="alert alert-info"> '+
+                '<p>You have a new event request: '+dat.title+'</p> '+
+                '<div class="row-fluid"> '+
+                '<div class="span4"></div> '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-success acceptRequest" type="button">Accept</button> '+
+                '</div> '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-danger rejectRequest" type="button">Reject</button>      '+
+                '</div> '+
+                '<div class="span4"></div> '+
+                '</div> '+
+                '</div>');
+            $notifications.append($notify);
+            var $acceptButtons = $('.acceptRequest').last();
+            var $rejectButtons = $('.rejectRequest').last();
+            $($acceptButtons.get(index)).on('click', function(e) {
+                acceptNotification(dat.id);
+                $notify.remove();
+            });
+            $($rejectButtons.get(index)).on('click', function(e) {
+                rejectNotification(dat.id);
+                $notify.remove();
+            });
+        });
+
+
+    }, "json");
+};
+
 var populateEvents = function() {
     if (format == "weekly")
         populateWeekEvents();
@@ -179,9 +216,9 @@ var populateWeekEvents = function() {
 
         $cells.each(function(index) {
             if (y >= $(this).offset().top && 
-                y <= $(this).offset().top + $(this).height() &&
+                y <= $(this).offset().top + $(this).height() + borderWidth&&
                 x >= $(this).offset().left && 
-                x <= $(this).offset().left + $(this).width()) {
+                x <= $(this).offset().left + $(this).width() + borderWidth) {
                 currentlyClicking = -1;
                 tableOver($(this), event);
             }
@@ -194,13 +231,13 @@ var populateWeekEvents = function() {
     });
     $('.event').on('mouseup', function (event){
         var x = event.pageX;
-        var y = event.pageY-currentlyMovingY;
+        var y = Math.max(event.pageY-currentlyMovingY, $cells.offset().top);
         var called = false;
         $cells.each(function(index) {
             if (y >= $(this).offset().top && 
-                y <= $(this).offset().top + $(this).height() &&
+                y <= $(this).offset().top + $(this).height() + borderWidth &&
                 x >= $(this).offset().left && 
-                x <= $(this).offset().left + $(this).width()) {
+                x <= $(this).offset().left + $(this).width() + borderWidth) {
                 tableUp($(this), event);
                 called = true;
             }
@@ -243,6 +280,7 @@ var openID = function(id) {
 
 $(document).ready(function(){
     populateEvents();
+    getNotifications();
 });
 
 var updateCalendar = function(amount) {
@@ -335,7 +373,7 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 
 var createEvent = function() {
-    d = [];
+    d = invitedFriendsID;
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
@@ -481,10 +519,11 @@ var tableOver = function(cell, eventObject) {
 
 $cells.on("mouseover", function(eventObject) {
     var index = ($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7);
-    if (index >= 0) { 
-        var $cell = $($cells.get(index));
-        tableOver($cell, eventObject);
+    if (index < 0) { 
+        index = $cells.index($(this)) % 7;
     }
+    var $cell = $($cells.get(index));
+    tableOver($cell, eventObject);
 });
 
 var formatTime = function(date) {
@@ -530,7 +569,6 @@ var tableUp = function($cell, eventObject) {
             $('#eventName').focus();
         });
     }
-    console.log("moving " + currentlyMoving);
     if (currentlyMoving != -1) {
         var index = $cells.index($cell);
         var x = index%7;
@@ -550,7 +588,6 @@ var tableUp = function($cell, eventObject) {
             y = 0;
         }
 
-        console.log(y);
 
         dates[x].setHours(y/2);
         dates[x].setMinutes(30*(y%2));
@@ -564,8 +601,13 @@ var tableUp = function($cell, eventObject) {
 }
 
 $cells.on("mouseup", function(eventObject) {
-    var $cell = $($cells.get($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7));
+    var index = $cells.index($(this)) - Math.floor(currentlyMovingY/$cells.height())*7;
+    if (index < 0) { 
+        index = $cells.index($(this)) % 7;
+    }
+    var $cell = $($cells.get(index));
     tableUp($cell, eventObject);
+
     return false;
 });
 
@@ -577,9 +619,18 @@ $(document).on("mouseup", function(eventObject) {
     }
     tableUp($(this), eventObject);
 });
+
+
      
 var acceptNotification = function(eventID) {
-    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {populateEvents();});
+    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
+    });
 }
 
+var rejectNotification = function(eventID) {
+    $.post('rejectNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
+    });
+}
 
