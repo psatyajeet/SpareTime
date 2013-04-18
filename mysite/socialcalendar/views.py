@@ -321,9 +321,8 @@ def populateEvents(request):
         return HttpResponse(simplejson.dumps(d))
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
     
-    events = sorted(chain(events, getWeeklyRecurringEvents(usr, request.session['whichweek'], first, last)), key=lambda event: event.start)
+    events = getAllEvents(usr, first, last)
 
     d = getArrayofWeeklyEvents(events)
 
@@ -393,8 +392,7 @@ def populateMonthEvents(request):
             return HttpResponse(simplejson.dumps(d))    
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    events = usr.events.filter(start__gte=first).filter(end__lt=last)
-    events = events.extra(order_by=['start'])
+    events = getAllEvents(usr, first, last)
     d = []
     if (len(events) == 0):
         return HttpResponse(simplejson.dumps(d))
@@ -517,15 +515,13 @@ def heatMap(request):
             if(len(usr) == 0):
                 continue
             total = total+1.0;
-            events = usr[0].events.filter(start__gte=first).filter(end__lt=last)
-            events = events.extra(order_by=['start'])
+            events = getAllEvents(usr[0], first, last)
             
             for event in events:
                 start = event.start;
                 end = event.end;
                 day = (start.weekday()+1) % 7
                 for i in range(start.hour*2+start.minute/30, end.hour*2+end.minute/30):
-                    print i, day
                     if not timeSlotConsider[day][i]:
                         ratio[day][i] += 1;
                     timeSlotConsider[day][i] = True
@@ -535,7 +531,6 @@ def heatMap(request):
             
         for j in range(len(hours)*2):
             for i in range(len(days)):
-                print i, j, ratio[i][j]
                 d.append({
                     'ratios': (1-ratio[i][j]/total),
                 })
@@ -660,7 +655,7 @@ def deleteCookie(request):
         del request.session['fbid']
     return HttpResponse()
 
-def getWeeklyRecurringEvents(usr, whichweek, first, last):
+def getWeeklyRecurringEvents(usr, first, last):
     events = usr.events.filter(repeat=True)
     totalForWeek = []
     for event in events:
@@ -683,3 +678,8 @@ def getWeeklyRecurringEvents(usr, whichweek, first, last):
 
     return totalForWeek
 
+
+def getAllEvents(usr, first, last):
+    events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
+    events = sorted(chain(events, getWeeklyRecurringEvents(usr, first, last)), key=lambda event: event.start)
+    return events
