@@ -7,7 +7,6 @@ from datetime import date, timedelta, datetime
 from dateutil.rrule import *
 from dateutil.parser import *
 
-import icalendar
 from dateutil import tz
 from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
@@ -545,8 +544,9 @@ def gcal(request):
 
     events = json.loads(request.POST['responseJSON'])
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    if events['items']:
+    if events.has_key('items') and events['items']:
         for event in events['items']:
+            print event
             recurring = False;
             recurrence = '';
 
@@ -661,7 +661,8 @@ def getWeeklyRecurringEvents(usr, first, last):
     for event in events:
         rule = rrulestr(event.recurrence, dtstart = event.start)
         times = rule.between(first, last, inc=True)
-       
+        print event.title
+
         for time in times:
             if len(event.exceptions.filter(exceptionTime=time)) > 0:
                 continue

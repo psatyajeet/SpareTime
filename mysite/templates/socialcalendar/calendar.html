@@ -67,14 +67,24 @@
 
       // Load the API and make an API call.  Display the results on the screen.
     function getGoogleEvents() {
-         var restRequest = gapi.client.request({
-            'path': '/calendar/v3/calendars/primary/events',
-            'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-01-01T16:00:00-04:00'}  
 
+        var request = gapi.client.request({
+            'path': '/calendar/v3/users/me/calendarList',
         });
-        restRequest.execute(function(resp) { 
+        request.execute(function (resp) { 
+            $.each(resp.items, function (index, dat){
+            if(dat.id.indexOf("#") == -1){
+            var restRequest = gapi.client.request({
+                'path': '/calendar/v3/calendars/'+dat.id+'/events',
+                'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-01-01T16:00:00-04:00'}  
+            });
+    
+            restRequest.execute(function(resp) { 
             gcal(resp); 
-        });       
+        });
+        }       
+        });
+        });
     }
 
     </script>
