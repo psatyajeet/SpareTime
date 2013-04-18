@@ -269,10 +269,11 @@ def submitEvent(request):
                 start=startDate,
                 end=endDate,
             )
-
         e.save()
         usr = UserProfile.objects.get(user=request.session['fbid'])
+        usr.creators.add(e)
         usr.events.add(e)
+
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
             storeNotificationForFriends(friendIDs, e)
@@ -282,7 +283,7 @@ def submitEvent(request):
         return HttpResponseNotFound()
 
 def getNotifications(user):
-    events = user.notifications.all();
+    events = user.notifications.all();        
     return getArrayofWeeklyEvents(events);
 
 def storeNotificationForFriends(friendIDs, e):
@@ -299,7 +300,6 @@ def getNotificationsRequest(request):
     if request.method == "GET":
         usr = UserProfile.objects.get(user=request.session['fbid'])
         notifs = getNotifications(usr);
-        print len(notifs)
         return HttpResponse(simplejson.dumps(notifs));
     else :
         return HttpResponseNotFound()
@@ -358,7 +358,7 @@ def getArrayofWeeklyEvents(events):
         e = events[i]
         endhour = e.end.hour
         if (e.end.hour == 0):
-            endhour = 24
+            endhour = 24    
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
@@ -367,6 +367,7 @@ def getArrayofWeeklyEvents(events):
             'id': e.id,
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
+            'creators' : e.creators.all()[0].name,
         })
     return d;
 
@@ -546,7 +547,6 @@ def gcal(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events.has_key('items') and events['items']:
         for event in events['items']:
-            print event
             recurring = False;
             recurrence = '';
 
@@ -599,6 +599,7 @@ def gcal(request):
                       repeat=recurring,
                       recurrence=recurrence,
                       ) 
+            usr.creators.add(e);
             e.save()
             usr.events.add(e)
     return HttpResponse()

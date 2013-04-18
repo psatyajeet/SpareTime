@@ -44,7 +44,7 @@ var getNotifications = function() {
     $.get('getNotificationsRequest', function (data, status) {
         $.each(data, function (index, dat) {
             var $notify = $('<div class="alert alert-info"> '+
-                '<p>You have a new event request: '+dat.title+'</p> '+
+                '<p>You have a new event request: '+dat.title+ ' from :' + dat.creators + '</p> '+
                 '<div class="row-fluid"> '+
                 '<div class="span4"></div> '+
                 '<div class="span2"> '+

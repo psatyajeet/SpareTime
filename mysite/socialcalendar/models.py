@@ -6,6 +6,7 @@ class ExceptionDate(models.Model):
     
     def __unicode__(self):
         return self.exceptionTime    
+
         
 class Event(models.Model):
     title = models.CharField(max_length=30, default = 'No-Title')
@@ -25,14 +26,13 @@ class Event(models.Model):
     class Meta:
         ordering = ('title',)
 
-
 class UserProfile(models.Model):
     #home_address = models.TextField()
     user = models.CharField(max_length=100, unique=True) #models.ForeignKey(User, unique=True)
     events = models.ManyToManyField(Event, related_name = 'events')
     name = models.CharField(max_length=30)
     notifications = models.ManyToManyField(Event, related_name = 'notification')
+    creators = models.ManyToManyField(Event, related_name = 'creators') 
 
     def __unicode__(self):
         return self.user
-
