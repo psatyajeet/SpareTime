@@ -321,7 +321,7 @@ def populateEvents(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
     
-    events = sorted(chain(events, getWeeklyRecurringEvents(usr, request.session['whichweek'], first.replace(tzinfo=None), last.replace(tzinfo=None))), key=lambda event: event.start)
+    events = sorted(chain(events, getWeeklyRecurringEvents(usr, request.session['whichweek'], first, last)), key=lambda event: event.start)
 
     d = getArrayofWeeklyEvents(events)
 
@@ -550,23 +550,19 @@ def gcal(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events['items']:
         for event in events['items']:
-
             recurring = False;
             recurrence = '';
-            
-            if event.has_key('status') and event['status'] == 'cancelled' :
-                print "------status cancelled"
-                if event.has_key('recurringEventId') and event.has_key('originalStartTime'):
-                    print "----recurring and startime", event['originalStartTime']['dateTime']
-                    ev = usr.events.filter(gid=event['recurringEventId'])
-                    if len(ev) > 0 :
-                        print "-----", event['originalStartTime']['dateTime']
-                        ex = ExceptionDate(exceptionTime=datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString).replace(tzinfo=tz.gettz('UTC')))
-                        ex.save()
-                        print ev[0]
-                        ev[0].exceptions.add(ex)
-                    continue
 
+
+            if event.has_key('originalStartTime') and event.has_key('recurringEventId') :
+                ev = usr.events.filter(gid=event['recurringEventId'])
+
+                if len(ev) > 0 and len(ev[0].exceptions.filter(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))) == 0:                   
+                    ex = ExceptionDate(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))
+                    ex.save()
+                    ev[0].exceptions.add(ex)
+                    if not event.has_key('start'):
+                        continue
 
             if event.has_key('id'):
                 existentEvent = usr.events.filter(gid=event['id'])
@@ -595,7 +591,7 @@ def gcal(request):
 
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
                 recurring = True;
-                recurrence = event['recurrence'][0] #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
+                recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
 
             e = Event(title=event['summary'],
                       description=event['description'],
@@ -654,25 +650,13 @@ def getWeeklyRecurringEvents(usr, whichweek, first, last):
     events = usr.events.filter(repeat=True)
     totalForWeek = []
     for event in events:
-      #  print str(event.recurrence)
-        startDateTime = datetime(event.start.year, event.start.month, event.start.day, 0,0,1);
-        rule = rrulestr(event.recurrence, ignoretz=True, dtstart = startDateTime)
-
-#        today = datetime.today() + timedelta(whichweek*7)
- #       today = today.replace(hour=0, minute=0, second=0, microsecond=0)
-  #      delta = timedelta((today.weekday()+1) % 7)
-   #     first = today - delta
-    #    last = first + timedelta(7)
-        
+        rule = rrulestr(event.recurrence, dtstart = event.start)
         times = rule.between(first, last, inc=True)
-
-      #  print first, last, times
-
-        print times 
        
         for time in times:
-            if len(event.exceptions.filter(exceptionTime__startswith=time)) > 0:
-                print "hereeeee"
+    #        if len(event.exceptions.filter(exceptionTime__gte=datetime(time.year, time.month, time.day, 0,0,0).replace(tzinfo=tz.gettz('UTC'))).filter(exceptionTime__lt=datetime(time.year, time.month, time.day, 11, 59, 59).replace(tzinfo=tz.gettz('UTC')))) > 0:
+   #             continue
+            if len(event.exceptions.filter(exceptionTime=time)) > 0:
                 continue
             e = Event(
             title=event.title,
@@ -682,9 +666,7 @@ def getWeeklyRecurringEvents(usr, whichweek, first, last):
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
             )
             e.id = event.id
-            #e.save()
-            #usr.events.add(e)
+
             totalForWeek.append(e)
-    print first, last
-    print totalForWeek
+
     return totalForWeek
