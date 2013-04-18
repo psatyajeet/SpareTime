@@ -4,13 +4,18 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 import calendar
 from datetime import date, timedelta, datetime
-import time
+from dateutil.rrule import *
+from dateutil.parser import *
+
+import icalendar
 from dateutil import tz
 from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
-
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
+from socialcalendar.models import ExceptionDate
+
+from itertools import chain
 
 import json  
 
@@ -316,11 +321,11 @@ def populateEvents(request):
         return HttpResponse(simplejson.dumps(d))
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    events = usr.events.filter(start__gte=first).filter(end__lt=last)
-
-    events = events.extra(order_by=['start'])
+    
+    events = getAllEvents(usr, first, last)
 
     d = getArrayofWeeklyEvents(events)
+
     return HttpResponse(simplejson.dumps(d))
 
 def getArrayofWeeklyEvents(events):
@@ -387,8 +392,7 @@ def populateMonthEvents(request):
             return HttpResponse(simplejson.dumps(d))    
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    events = usr.events.filter(start__gte=first).filter(end__lt=last)
-    events = events.extra(order_by=['start'])
+    events = getAllEvents(usr, first, last)
     d = []
     if (len(events) == 0):
         return HttpResponse(simplejson.dumps(d))
@@ -511,15 +515,13 @@ def heatMap(request):
             if(len(usr) == 0):
                 continue
             total = total+1.0;
-            events = usr[0].events.filter(start__gte=first).filter(end__lt=last)
-            events = events.extra(order_by=['start'])
+            events = getAllEvents(usr[0], first, last)
             
             for event in events:
                 start = event.start;
                 end = event.end;
                 day = (start.weekday()+1) % 7
                 for i in range(start.hour*2+start.minute/30, end.hour*2+end.minute/30):
-                    print i, day
                     if not timeSlotConsider[day][i]:
                         ratio[day][i] += 1;
                     timeSlotConsider[day][i] = True
@@ -529,7 +531,6 @@ def heatMap(request):
             
         for j in range(len(hours)*2):
             for i in range(len(days)):
-                print i, j, ratio[i][j]
                 d.append({
                     'ratios': (1-ratio[i][j]/total),
                 })
@@ -541,12 +542,27 @@ def heatMap(request):
 
 @csrf_protect
 def gcal(request):
+
     events = json.loads(request.POST['responseJSON'])
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events['items']:
         for event in events['items']:
-            if event.has_key('iCalUID'):
-                existentEvent = usr.events.filter(gid=event['iCalUID'])
+            recurring = False;
+            recurrence = '';
+
+
+            if event.has_key('originalStartTime') and event.has_key('recurringEventId') :
+                ev = usr.events.filter(gid=event['recurringEventId'])
+
+                if len(ev) > 0 and len(ev[0].exceptions.filter(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))) == 0:                   
+                    ex = ExceptionDate(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))
+                    ex.save()
+                    ev[0].exceptions.add(ex)
+                    if not event.has_key('start'):
+                        continue
+
+            if event.has_key('id'):
+                existentEvent = usr.events.filter(gid=event['id'])
                 if(len(existentEvent) != 0):
                     continue
             if not event.has_key('summary'):
@@ -559,21 +575,30 @@ def gcal(request):
                 continue
             if not event.has_key('end'):
                 continue
-            if not event.has_key('iCalUID'):
-                event['iCalUID'] = ''
+            if not event.has_key('id'):
+                event['id'] = ''
             if event['end'].has_key('date') and len(event['end']['date']) <=10 :
                 continue
+
             startTime = datetime.strptime(event['start']['dateTime'][:-6], googleDateString)
             startTime = startTime.replace(tzinfo=tz.gettz('UTC'))
             endTime = datetime.strptime(event['end']['dateTime'][:-6], googleDateString)
             endTime = endTime.replace(tzinfo=tz.gettz('UTC'))
+
+
+            if event.has_key('recurrence') and len(event['recurrence']) > 0:
+                recurring = True;
+                recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
+
             e = Event(title=event['summary'],
                       description=event['description'],
                       location=event['location'],
                       start=startTime,
                       end=endTime,
-                      gid=event['iCalUID']
-                      )
+                      gid=event['id'],
+                      repeat=recurring,
+                      recurrence=recurrence,
+                      ) 
             e.save()
             usr.events.add(e)
     return HttpResponse()
@@ -629,3 +654,32 @@ def deleteCookie(request):
     if not request.session.get('fbid')==None:
         del request.session['fbid']
     return HttpResponse()
+
+def getWeeklyRecurringEvents(usr, first, last):
+    events = usr.events.filter(repeat=True)
+    totalForWeek = []
+    for event in events:
+        rule = rrulestr(event.recurrence, dtstart = event.start)
+        times = rule.between(first, last, inc=True)
+       
+        for time in times:
+            if len(event.exceptions.filter(exceptionTime=time)) > 0:
+                continue
+            e = Event(
+            title=event.title,
+            description=event.description,
+            location=event.location,
+            start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
+            end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
+            )
+            e.id = event.id
+
+            totalForWeek.append(e)
+
+    return totalForWeek
+
+
+def getAllEvents(usr, first, last):
+    events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
+    events = sorted(chain(events, getWeeklyRecurringEvents(usr, first, last)), key=lambda event: event.start)
+    return events
