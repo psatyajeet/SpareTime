@@ -668,8 +668,6 @@ def getWeeklyRecurringEvents(usr, whichweek, first, last):
         times = rule.between(first, last, inc=True)
        
         for time in times:
-    #        if len(event.exceptions.filter(exceptionTime__gte=datetime(time.year, time.month, time.day, 0,0,0).replace(tzinfo=tz.gettz('UTC'))).filter(exceptionTime__lt=datetime(time.year, time.month, time.day, 11, 59, 59).replace(tzinfo=tz.gettz('UTC')))) > 0:
-   #             continue
             if len(event.exceptions.filter(exceptionTime=time)) > 0:
                 continue
             e = Event(
@@ -684,3 +682,4 @@ def getWeeklyRecurringEvents(usr, whichweek, first, last):
             totalForWeek.append(e)
 
     return totalForWeek
+
