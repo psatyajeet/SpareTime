@@ -25,7 +25,6 @@ import re
 dateString = "%m/%d/%Y %I:%M %p"
 googleDateString = "%Y-%m-%dT%H:%M:%S"
 
-
 def getDays(offset=0):
     calendar.setfirstweekday(calendar.SUNDAY)
     # Days contains the abbrevations for the days of the week
@@ -363,7 +362,9 @@ def getArrayofWeeklyEvents(events, usr):
         eID = e.id;
         if e.repeat:
             eID = None;
-
+        creator0 = None;
+        if(len(e.creators.all()) > 0):
+            creator0=e.creators.all()[0].name 
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
@@ -372,7 +373,7 @@ def getArrayofWeeklyEvents(events, usr):
             'id': eID,
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
-            'creators' : e.creators.all()[0].name,
+            'creators' : creator0,
             'canEdit' : canEdit(usr, e),
             'repeat' : e.repeat,
         })
@@ -422,6 +423,7 @@ def getEventData(request):
 
     if request.method == "POST":
         events = Event.objects.filter(id=request.POST['id'])
+
         if (len(events) != 1):
             return HttpResponseNotFound()
         else:
@@ -460,7 +462,6 @@ def deleteEvent(request):
 @csrf_protect
 def editEvent(request):
     if request.method == "POST":
-        print "editEvent"
         event = Event.objects.get(id=request.POST['id'])
        
 
@@ -700,7 +701,6 @@ def getWeeklyRecurringEvents(usr, first, last):
             repeat = True,
             )
             e.id = event.id
-
             totalForWeek.append(e)
 
     return totalForWeek
