@@ -197,7 +197,6 @@ var populateWeekEvents = function() {
 
         currentlyMoving = parseInt($(this).attr("id"));
         $.post('getEventData', {"id": currentlyMoving}, function (data, status) {
-
             currentlyMovingEnd = new Date(data.endms);
             currentlyMovingStart = new Date(data.startms);
         }, 'json');
@@ -266,8 +265,15 @@ var openID = function(id) {
         $("#endTime").val(data.end);
 
         $('#createEvent').hide();
-        $('#deleteEvent').show();
-        $('#editEvent').show();
+
+        if(data.canEdit) {
+           $('#editEvent').show();
+           $('#deleteEvent').show();
+
+        } else {
+           $('#editEvent').hide();
+            $('#deleteEvent').show();
+        }
         $('#eventModal').modal();
         $('#eventModal').on('shown', function(){                    
             $('#eventName').focus();

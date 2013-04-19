@@ -20,6 +20,8 @@ import json
 
 import random
 
+import re
+
 dateString = "%m/%d/%Y %I:%M %p"
 googleDateString = "%Y-%m-%dT%H:%M:%S"
 
@@ -284,7 +286,7 @@ def submitEvent(request):
 
 def getNotifications(user):
     events = user.notifications.all();        
-    return getArrayofWeeklyEvents(events);
+    return getArrayofWeeklyEvents(events, user);
 
 def storeNotificationForFriends(friendIDs, e):
     for friendID in friendIDs:
@@ -322,12 +324,12 @@ def populateEvents(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     
     events = getAllEvents(usr, first, last)
-
-    d = getArrayofWeeklyEvents(events)
+    print events
+    d = getArrayofWeeklyEvents(events, usr)
 
     return HttpResponse(simplejson.dumps(d))
 
-def getArrayofWeeklyEvents(events):
+def getArrayofWeeklyEvents(events, usr):
     d = []
     x = 0
     last = 0
@@ -368,6 +370,7 @@ def getArrayofWeeklyEvents(events):
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
             'creators' : e.creators.all()[0].name,
+            'canEdit' : canEdit(usr, e)
         })
     return d;
 
@@ -428,6 +431,7 @@ def getEventData(request):
                 'startms': calendar.timegm(event.start.timetuple())*1000,
                 'endms': calendar.timegm(event.end.timetuple())*1000,
                 'id': event.id,
+                'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
             }
             return HttpResponse(simplejson.dumps(d))
     else:
@@ -438,8 +442,12 @@ def getEventData(request):
 def deleteEvent(request):
 
     if request.method == "POST":
+        usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['id'])
-        event.delete()
+        if canEdit(usr, event):
+            event.delete()
+        else:
+            usr.events.remove(event)
         return HttpResponse()
     else:
         return HttpResponseNotFound()
@@ -588,7 +596,12 @@ def gcal(request):
 
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
                 recurring = True;
-                recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
+                if not 'RRULE' in event['recurrence'][0] and len(event['recurrence']) > 0 and 'RRULE' in event['recurrence'][1]: 
+                    until = re.match(".*UNTIL=........", event['recurrence'][1]);
+                    if until is not None:
+                        recurrence = event['recurrence'][1].replace(until.group(0), until.group(0)+"T000000Z"); 
+                else:    
+                    recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
 
             e = Event(title=event['summary'],
                       description=event['description'],
@@ -599,8 +612,9 @@ def gcal(request):
                       repeat=recurring,
                       recurrence=recurrence,
                       ) 
-            usr.creators.add(e);
+            print e
             e.save()
+            usr.creators.add(e);
             usr.events.add(e)
     return HttpResponse()
 
@@ -658,6 +672,7 @@ def deleteCookie(request):
 
 def getWeeklyRecurringEvents(usr, first, last):
     events = usr.events.filter(repeat=True)
+    print events
     totalForWeek = []
     for event in events:
         rule = rrulestr(event.recurrence, dtstart = event.start)
@@ -685,3 +700,7 @@ def getAllEvents(usr, first, last):
     events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
     events = sorted(chain(events, getWeeklyRecurringEvents(usr, first, last)), key=lambda event: event.start)
     return events
+
+def canEdit(usr, event):
+    return (usr in event.creators.all())
+
