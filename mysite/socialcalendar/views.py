@@ -324,7 +324,6 @@ def populateEvents(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     
     events = getAllEvents(usr, first, last)
-    print events
     d = getArrayofWeeklyEvents(events, usr)
 
     return HttpResponse(simplejson.dumps(d))
@@ -361,16 +360,21 @@ def getArrayofWeeklyEvents(events, usr):
         endhour = e.end.hour
         if (e.end.hour == 0):
             endhour = 24    
+        eID = e.id;
+        if e.repeat:
+            eID = None;
+
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
             'end': endhour+e.end.minute/60.0,
             'day': ((e.start.weekday()+1) % 7),
-            'id': e.id,
+            'id': eID,
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
             'creators' : e.creators.all()[0].name,
-            'canEdit' : canEdit(usr, e)
+            'canEdit' : canEdit(usr, e),
+            'repeat' : e.repeat,
         })
     return d;
 
@@ -456,7 +460,10 @@ def deleteEvent(request):
 @csrf_protect
 def editEvent(request):
     if request.method == "POST":
+        print "editEvent"
         event = Event.objects.get(id=request.POST['id'])
+       
+
         startDate = datetime.strptime(request.POST['startTime'],
                                       dateString)
         endDate = datetime.strptime(request.POST['endTime'],
@@ -612,7 +619,6 @@ def gcal(request):
                       repeat=recurring,
                       recurrence=recurrence,
                       ) 
-            print e
             e.save()
             usr.creators.add(e);
             usr.events.add(e)
@@ -672,12 +678,11 @@ def deleteCookie(request):
 
 def getWeeklyRecurringEvents(usr, first, last):
     events = usr.events.filter(repeat=True)
-    print events
     totalForWeek = []
     for event in events:
+        print event, event.repeat
         rule = rrulestr(event.recurrence, dtstart = event.start)
         times = rule.between(first, last, inc=True)
-        print event.title
 
         for time in times:
             if len(event.exceptions.filter(exceptionTime=time)) > 0:
@@ -688,6 +693,7 @@ def getWeeklyRecurringEvents(usr, first, last):
             location=event.location,
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
+            repeat = True
             )
             e.id = event.id
 
