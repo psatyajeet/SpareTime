@@ -278,7 +278,8 @@ var openID = function(id) {
         $('#eventModal').on('shown', function(){                    
             $('#eventName').focus();
         });
-
+        document.getElementById(data.kind).checked = true
+        
         currentlyViewing = data.id;
 
     }, "json");
@@ -380,12 +381,21 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 
 var createEvent = function() {
     d = invitedFriendsID;
+    var radios = document.getElementsByName('optionsRadios');
+    var kind = 'PR'
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            kind = (radios[i].value);
+        }
+    }
+
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val(), 
-        "friendIDs": JSON.stringify(d)},
+        "friendIDs": JSON.stringify(d),
+        "kind" : kind},
         "json").done(function (data, status) {
         uncolorCells();
         populateEvents();
