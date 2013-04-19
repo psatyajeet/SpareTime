@@ -20,6 +20,8 @@ import json
 
 import random
 
+import re
+
 dateString = "%m/%d/%Y %I:%M %p"
 googleDateString = "%Y-%m-%dT%H:%M:%S"
 
@@ -269,10 +271,11 @@ def submitEvent(request):
                 start=startDate,
                 end=endDate,
             )
-
         e.save()
         usr = UserProfile.objects.get(user=request.session['fbid'])
+        usr.creators.add(e)
         usr.events.add(e)
+
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
             storeNotificationForFriends(friendIDs, e)
@@ -282,13 +285,14 @@ def submitEvent(request):
         return HttpResponseNotFound()
 
 def getNotifications(user):
-    events = user.notifications.all();
-    return getArrayofWeeklyEvents(events);
+    events = user.notifications.all();        
+    return getArrayofWeeklyEvents(events, user);
 
 def storeNotificationForFriends(friendIDs, e):
     for friendID in friendIDs:
         usr = UserProfile.objects.filter(user=friendID)
         if (len(usr) != 0):
+            usr[0].unanswered.add(e)
             usr[0].notifications.add(e)
 
 def removeNotification(user, e) :
@@ -299,7 +303,6 @@ def getNotificationsRequest(request):
     if request.method == "GET":
         usr = UserProfile.objects.get(user=request.session['fbid'])
         notifs = getNotifications(usr);
-        print len(notifs)
         return HttpResponse(simplejson.dumps(notifs));
     else :
         return HttpResponseNotFound()
@@ -322,12 +325,11 @@ def populateEvents(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     
     events = getAllEvents(usr, first, last)
-
-    d = getArrayofWeeklyEvents(events)
+    d = getArrayofWeeklyEvents(events, usr)
 
     return HttpResponse(simplejson.dumps(d))
 
-def getArrayofWeeklyEvents(events):
+def getArrayofWeeklyEvents(events, usr):
     d = []
     x = 0
     last = 0
@@ -358,15 +360,22 @@ def getArrayofWeeklyEvents(events):
         e = events[i]
         endhour = e.end.hour
         if (e.end.hour == 0):
-            endhour = 24
+            endhour = 24    
+        eID = e.id;
+        if e.repeat:
+            eID = None;
+
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
             'end': endhour+e.end.minute/60.0,
             'day': ((e.start.weekday()+1) % 7),
-            'id': e.id,
+            'id': eID,
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
+            'creators' : e.creators.all()[0].name,
+            'canEdit' : canEdit(usr, e),
+            'repeat' : e.repeat,
         })
     return d;
 
@@ -427,6 +436,7 @@ def getEventData(request):
                 'startms': calendar.timegm(event.start.timetuple())*1000,
                 'endms': calendar.timegm(event.end.timetuple())*1000,
                 'id': event.id,
+                'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
             }
             return HttpResponse(simplejson.dumps(d))
     else:
@@ -437,8 +447,12 @@ def getEventData(request):
 def deleteEvent(request):
 
     if request.method == "POST":
+        usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['id'])
-        event.delete()
+        if canEdit(usr, event):
+            event.delete()
+        else:
+            usr.events.remove(event)
         return HttpResponse()
     else:
         return HttpResponseNotFound()
@@ -447,7 +461,10 @@ def deleteEvent(request):
 @csrf_protect
 def editEvent(request):
     if request.method == "POST":
+        print "editEvent"
         event = Event.objects.get(id=request.POST['id'])
+       
+
         startDate = datetime.strptime(request.POST['startTime'],
                                       dateString)
         endDate = datetime.strptime(request.POST['endTime'],
@@ -527,12 +544,12 @@ def heatMap(request):
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
         d = []
-            
-        for j in range(len(hours)*2):
-            for i in range(len(days)):
-                d.append({
-                    'ratios': (1-ratio[i][j]/total),
-                })
+        if not total == 0:            
+            for j in range(len(hours)*2):
+                for i in range(len(days)):
+                    d.append({
+                        'ratios': (1-ratio[i][j]/total),
+                    })
 
         return HttpResponse(simplejson.dumps(d))
     else:
@@ -546,7 +563,6 @@ def gcal(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events.has_key('items') and events['items']:
         for event in events['items']:
-            print event
             recurring = False;
             recurrence = '';
 
@@ -576,7 +592,7 @@ def gcal(request):
             if not event.has_key('end'):
                 continue
             if not event.has_key('id'):
-                event['id'] = ''
+                event['id'] = 'googleEvent'
             if event['end'].has_key('date') and len(event['end']['date']) <=10 :
                 continue
 
@@ -588,7 +604,12 @@ def gcal(request):
 
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
                 recurring = True;
-                recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
+                if not 'RRULE' in event['recurrence'][0] and len(event['recurrence']) > 0 and 'RRULE' in event['recurrence'][1]: 
+                    until = re.match(".*UNTIL=........", event['recurrence'][1]);
+                    if until is not None:
+                        recurrence = event['recurrence'][1].replace(until.group(0), until.group(0)+"T000000Z"); 
+                else:    
+                    recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
 
             e = Event(title=event['summary'],
                       description=event['description'],
@@ -600,6 +621,7 @@ def gcal(request):
                       recurrence=recurrence,
                       ) 
             e.save()
+            usr.creators.add(e);
             usr.events.add(e)
     return HttpResponse()
 
@@ -608,6 +630,9 @@ def acceptNotification(request):
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['eventID'])
+
+        event.unanswered.remove(usr)
+        usr.accepted.add(event)
         removeNotification(usr, event)
         usr.events.add(event)
         return HttpResponse();
@@ -619,7 +644,11 @@ def rejectNotification(request):
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['eventID'])
+        event.unanswered.remove(usr)
+        usr.unanswered.remove(event)
+        usr.rejected.add(event)
         removeNotification(usr, event)
+
         return HttpResponse();
     else:
         HttpResponseNotFound();    
@@ -638,8 +667,6 @@ def makeUser(request):
         usr = UserProfile.objects.filter(user=fbid)
 
         if(len(usr) != 0):
-            print usr[0].name
-            print fbid
             return HttpResponse(simplejson.dumps(d))
         
         prof = UserProfile(user=fbid,name=name) 
@@ -661,7 +688,6 @@ def getWeeklyRecurringEvents(usr, first, last):
     for event in events:
         rule = rrulestr(event.recurrence, dtstart = event.start)
         times = rule.between(first, last, inc=True)
-        print event.title
 
         for time in times:
             if len(event.exceptions.filter(exceptionTime=time)) > 0:
@@ -672,6 +698,7 @@ def getWeeklyRecurringEvents(usr, first, last):
             location=event.location,
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
+            repeat = True,
             )
             e.id = event.id
 
@@ -684,3 +711,7 @@ def getAllEvents(usr, first, last):
     events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
     events = sorted(chain(events, getWeeklyRecurringEvents(usr, first, last)), key=lambda event: event.start)
     return events
+
+def canEdit(usr, event):
+    return (usr in event.creators.all())
+
