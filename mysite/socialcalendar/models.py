@@ -33,6 +33,10 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=30)
     notifications = models.ManyToManyField(Event, related_name = 'notification')
     creators = models.ManyToManyField(Event, related_name = 'creators') 
+    accepted = models.ManyToManyField(Event, related_name='accepted')
+    rejected = models.ManyToManyField(Event, related_name ='rejected')
+    unanswered = models.ManyToManyField(Event, related_name='unanswered')
+
 
     def __unicode__(self):
-        return self.user
+        return self.name

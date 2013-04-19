@@ -292,6 +292,7 @@ def storeNotificationForFriends(friendIDs, e):
     for friendID in friendIDs:
         usr = UserProfile.objects.filter(user=friendID)
         if (len(usr) != 0):
+            usr[0].unanswered.add(e)
             usr[0].notifications.add(e)
 
 def removeNotification(user, e) :
@@ -543,12 +544,12 @@ def heatMap(request):
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
         d = []
-            
-        for j in range(len(hours)*2):
-            for i in range(len(days)):
-                d.append({
-                    'ratios': (1-ratio[i][j]/total),
-                })
+        if not total == 0:            
+            for j in range(len(hours)*2):
+                for i in range(len(days)):
+                    d.append({
+                        'ratios': (1-ratio[i][j]/total),
+                    })
 
         return HttpResponse(simplejson.dumps(d))
     else:
@@ -591,7 +592,7 @@ def gcal(request):
             if not event.has_key('end'):
                 continue
             if not event.has_key('id'):
-                event['id'] = ''
+                event['id'] = 'googleEvent'
             if event['end'].has_key('date') and len(event['end']['date']) <=10 :
                 continue
 
@@ -629,6 +630,9 @@ def acceptNotification(request):
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['eventID'])
+
+        event.unanswered.remove(usr)
+        usr.accepted.add(event)
         removeNotification(usr, event)
         usr.events.add(event)
         return HttpResponse();
@@ -640,7 +644,11 @@ def rejectNotification(request):
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['eventID'])
+        event.unanswered.remove(usr)
+        usr.unanswered.remove(event)
+        usr.rejected.add(event)
         removeNotification(usr, event)
+
         return HttpResponse();
     else:
         HttpResponseNotFound();    
@@ -659,8 +667,6 @@ def makeUser(request):
         usr = UserProfile.objects.filter(user=fbid)
 
         if(len(usr) != 0):
-            print usr[0].name
-            print fbid
             return HttpResponse(simplejson.dumps(d))
         
         prof = UserProfile(user=fbid,name=name) 
@@ -680,7 +686,6 @@ def getWeeklyRecurringEvents(usr, first, last):
     events = usr.events.filter(repeat=True)
     totalForWeek = []
     for event in events:
-        print event, event.repeat
         rule = rrulestr(event.recurrence, dtstart = event.start)
         times = rule.between(first, last, inc=True)
 
@@ -693,7 +698,7 @@ def getWeeklyRecurringEvents(usr, first, last):
             location=event.location,
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
-            repeat = True
+            repeat = True,
             )
             e.id = event.id
 
