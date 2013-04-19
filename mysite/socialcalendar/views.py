@@ -247,6 +247,9 @@ def changeMonth(request):
 @csrf_protect
 def submitEvent(request):
     if request.method == "POST":
+        if(not request.POST.has_key('startTime')) :
+            return HttpResponse()
+
         startDate = datetime.strptime(request.POST['startTime'],
                                       dateString)
         endDate = datetime.strptime(request.POST['endTime'],
@@ -255,12 +258,14 @@ def submitEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
+
         if(len(request.POST['title']) == 0):
             e = Event(
             description=request.POST['description'],
             location=request.POST['location'],
             start=startDate,
             end=endDate,
+            kind = request.POST['kind'],
         ) 
         else:    
             e = Event(
@@ -269,8 +274,10 @@ def submitEvent(request):
                 location=request.POST['location'],
                 start=startDate,
                 end=endDate,
+                kind = request.POST['kind'],
             )
         e.save()
+        print e.kind
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.creators.add(e)
         usr.events.add(e)
@@ -322,7 +329,7 @@ def populateEvents(request):
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
     
-    events = getAllEvents(usr, first, last)
+    events = getAllEvents(usr, first, last, ['PU', 'PR', 'FL'])
     d = getArrayofWeeklyEvents(events, usr)
 
     return HttpResponse(simplejson.dumps(d))
@@ -400,7 +407,7 @@ def populateMonthEvents(request):
             return HttpResponse(simplejson.dumps(d))    
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    events = getAllEvents(usr, first, last)
+    events = getAllEvents(usr, first, last, ['PR', 'PU', 'FL'])
     d = []
     if (len(events) == 0):
         return HttpResponse(simplejson.dumps(d))
@@ -438,6 +445,7 @@ def getEventData(request):
                 'endms': calendar.timegm(event.end.timetuple())*1000,
                 'id': event.id,
                 'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
+                'kind' : event.kind,
             }
             return HttpResponse(simplejson.dumps(d))
     else:
@@ -531,7 +539,7 @@ def heatMap(request):
             if(len(usr) == 0):
                 continue
             total = total+1.0;
-            events = getAllEvents(usr[0], first, last)
+            events = getAllEvents(usr[0], first, last, ['PR', 'PU'])
             
             for event in events:
                 start = event.start;
@@ -630,7 +638,6 @@ def acceptNotification(request):
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=request.POST['eventID'])
-
         event.unanswered.remove(usr)
         usr.accepted.add(event)
         removeNotification(usr, event)
@@ -705,9 +712,9 @@ def getWeeklyRecurringEvents(usr, first, last):
 
     return totalForWeek
 
-
-def getAllEvents(usr, first, last):
-    events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False)
+# change getAllEvents to add kinds array parameter
+def getAllEvents(usr, first, last, kinds):
+    events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False).filter(kind__in = kinds)
     events = sorted(chain(events, getWeeklyRecurringEvents(usr, first, last)), key=lambda event: event.start)
     return events
 
