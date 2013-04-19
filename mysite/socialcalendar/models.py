@@ -9,6 +9,15 @@ class ExceptionDate(models.Model):
 
         
 class Event(models.Model):
+
+    TYPE_CHOICES = (
+        ('FL', 'Flexible'),
+        ('PR', 'Private'),
+        ('PU', 'Public'),
+    )
+    kind = models.CharField(max_length=2,
+                                      choices=TYPE_CHOICES,
+                                      default='PR')
     title = models.CharField(max_length=30, default = 'No-Title')
     location = models.CharField(max_length=30)
     description = models.TextField()
@@ -18,7 +27,6 @@ class Event(models.Model):
     repeat = models.BooleanField(default = False)
     recurrence = models.CharField(max_length = 100)
     exceptions = models.ManyToManyField(ExceptionDate, related_name = 'ExceptionDate')
-    kind = models.CharField(max_length = 30)
 
     def __unicode__(self):
         return self.title
