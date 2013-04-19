@@ -289,11 +289,10 @@ def getNotifications(user):
     return getArrayofWeeklyEvents(events, user);
 
 def storeNotificationForFriends(friendIDs, e):
-    for friendID in friendIDs:
-        usr = UserProfile.objects.filter(user=friendID)
-        if (len(usr) != 0):
-            usr[0].unanswered.add(e)
-            usr[0].notifications.add(e)
+        usr = UserProfile.objects.filter(user__in=friendIDs)
+        for user in usr:
+            user.unanswered.add(e)
+            user.notifications.add(e)
 
 def removeNotification(user, e) :
     user.notifications.remove(e);
@@ -714,4 +713,8 @@ def getAllEvents(usr, first, last):
 
 def canEdit(usr, event):
     return (usr in event.creators.all())
+
+def addCreators(event, creatorsArray):
+    for creator in creatorsArray:
+        creator.creators.add(event)
 
