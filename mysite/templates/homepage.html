@@ -3,7 +3,7 @@
 <script>
 homepage = true;
 </script>
-<link href="{{ STATIC_URL}}css/homepage.css" rel="stylesheet" media="screen">
+<link href="{{STATIC_URL}}css/homepage.css" rel="stylesheet" media="screen">
 
 <div class="container">
     <div class="main-info">
@@ -20,11 +20,11 @@ homepage = true;
       <!-- Carousel items -->
 
       <div class="carousel-inner">
-        <div class="active item"><img src="img/slider/1.jpg" /></div>
+        <div class="active item"><img src="{{STATIC_URL}}img/slider/1.png" /></div>
 
-        <div class="item"><img src="img/slider/2.jpg" /></div>
+        <div class="item"><img src="{{STATIC_URL}}img/slider/2.jpg" /></div>
 
-        <div class="item"><img src="img/slider/3.jpg" /></div>
+        <div class="item"><img src="{{STATIC_URL}}img/slider/3.png"  /></div>
       </div><!-- Carousel nav -->
       <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
       <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
@@ -32,7 +32,7 @@ homepage = true;
 
     <div class="row" id="call-to-action">
       <div class="span9">
-        <h2>View All Of Our Products Now!</h2>
+        <h2>See What You Can Do with SpareTime Now!</h2>
       </div><!-- end text -->
       <a class="btn btn-large btn-success offset1">Get Started!</a>
     </div><!-- end cta -->
