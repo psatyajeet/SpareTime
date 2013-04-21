@@ -693,9 +693,11 @@ def getWeeklyRecurringEvents(usr, first, last):
     events = usr.events.filter(repeat=True)
     totalForWeek = []
     for event in events:
-        rule = rrulestr(event.recurrence, dtstart = event.start)
-        times = rule.between(first, last, inc=True)
-
+        try:    
+            rule = rrulestr(event.recurrence, dtstart = event.start)
+            times = rule.between(first, last, inc=True)
+        except:            
+            continue
         for time in times:
             if len(event.exceptions.filter(exceptionTime=time)) > 0:
                 continue
