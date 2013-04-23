@@ -431,7 +431,6 @@ def getEventData(request):
 
     if request.method == "POST":
         events = Event.objects.filter(id=findIdOfEvent(request.POST['id']))
-
         if (len(events) != 1):
             return HttpResponseNotFound()
         else:
@@ -444,7 +443,7 @@ def getEventData(request):
                 'end': event.end.strftime(dateString),
                 'startms': calendar.timegm(event.start.timetuple())*1000,
                 'endms': calendar.timegm(event.end.timetuple())*1000,
-                'id': event.id,
+                'id': request.POST['id'],
                 'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind' : event.kind,
             }
@@ -499,7 +498,38 @@ def editEvent(request):
 @csrf_protect
 def changeStart(request):
     if request.method == "POST":
-        event = Event.objects.get(id=request.POST['id'])
+        eid = request.POST['id']
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+        event = Event.objects.get(id=findIdOfEvent(eid))
+
+        if(event.repeat):
+            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], dateString)).replace(tzinfo=tz.gettz('UTC')))
+            ex.save()
+            event.exceptions.add(ex)
+
+            startDate = datetime.strptime(request.POST['startTime'], dateString)
+
+            startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+            startDate = startDate.astimezone(tz.tzlocal())
+
+            eventLength = event.end - event.start
+            start = startDate
+            end = startDate + eventLength
+
+
+            e = Event(
+                title=event.title,
+                description=event.description,
+                location=event.location,
+                start=start,
+                end=end,
+                kind = event.kind,
+            )
+
+            e.save()
+            usr.events.add(e)
+            return HttpResponse()
+
         startDate = datetime.strptime(request.POST['startTime'],
                                       dateString)
 
@@ -710,7 +740,7 @@ def getWeeklyRecurringEvents(usr, first, last):
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
             repeat = True,
-            repeatID = str(event.id) + '_' + str(time),
+            repeatID = str(event.id) + '_' + time.strftime(dateString),
             eid = event.id,
             creators = event.creators.all()
             )
@@ -735,7 +765,7 @@ def addCreators(event, creatorsArray):
 def findIdOfEvent(idToSearch):
     if idToSearch.rfind("_") == -1:
         return idToSearch
-    return idToSearch[0, idToSearch.rfind("_")]
+    return idToSearch[0: idToSearch.rfind("_")]
 
 class tempEvent:
     def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators):
