@@ -379,7 +379,6 @@ def getArrayofWeeklyEvents(events, usr):
             creator0 = list(e.creators.values())
         elif (len(e.creators.all()) > 0):
             creator0 = list(e.creators.all().values())        
-        print creator0
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
