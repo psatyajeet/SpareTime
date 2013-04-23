@@ -406,6 +406,87 @@ function ShowMyName() {
                     <input id="eventLocation" class="input-block-level" type="text" placeholder="Event Location">
                 </div>
             </div>
+            <div>
+                <label class="checkbox">
+                    <input type="checkbox" name="repeatEvents" id="repeatEventsCheckbox" value="repeat">
+                    Repeat...
+                </label>
+                <div class="hide" id="modal-repeat">
+                    Repeats: 
+                    <select id="repeat-option-time-period">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    </select>
+                
+                    <div class="" id="repeat-daily">
+                        <div>
+                        Repeats every : 
+                            <select class="span1">
+                            {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                            <option>{{forloop.counter}}</option>
+                            {% endfor  %}
+                            </select>
+                        days
+                        </div>
+                        <div>
+                        Repeat on: 
+                            <label class="checkbox inline">
+                                <input type="checkbox" name="repeatOn" id="Su" value="Su"> Su
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" name="repeatOn" id="M" value="M"> M
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" name="repeatOn" id="T" value="T"> T
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" name="repeatOn" id="W" value="W"> W
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" name="repeatOn" id="Th" value="Th"> Th
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" name="repeatOn" id="F" value="F"> F
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" name="repeatOn" id="Sa" value="Sa"> Sa
+                            </label>
+                        </div>
+                        <div>
+                            Starts on:
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                        </div>
+                        <div>
+                            Ends: 
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="Never" checked>
+                            Never
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="After">
+                            After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="On">
+                            On 
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
 
             <div>
@@ -424,6 +505,7 @@ function ShowMyName() {
             </div>
 
         </div>
+
     </form>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -435,6 +517,34 @@ function ShowMyName() {
 
 
 <script type="text/javascript">
+
+$(document).ready(function(){ 
+    if($(this).is(':checked')){
+            $('#modal-repeat').show()
+        }
+        else{
+            $('#modal-repeat').hide()
+        }
+
+    $('#repeatEventsCheckbox').change(function (){
+        if($(this).is(':checked')){
+            $('#modal-repeat').show()
+        }
+        else{
+            $('#modal-repeat').hide()
+        }
+    });
+
+    $('#repeat-option-time-period').change(function (){
+        if($(this).val()=="daily"){
+            $('#repeat-daily').show()
+        }
+        else{
+            $('#repeat-daily').hide()
+        }
+    });
+
+});
 
     var format = "{{format}}";
 

@@ -2,6 +2,15 @@ html, body {
 height: 100%;
 }
 
+.hide {
+    display: none;
+}
+
+.modal .modal-body {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
 #header
 {
     position: fixed;
