@@ -283,7 +283,6 @@ def submitEvent(request):
                 kind = request.POST['kind'],
             )
         e.save()
-        print e.kind
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.creators.add(e)
         usr.events.add(e)
@@ -372,13 +371,15 @@ def getArrayofWeeklyEvents(events, usr):
         if (e.end.hour == 0):
             endhour = 24    
         eID = e.id;
+
+        creator0 = None
+
         if e.repeat:
             eID = e.repeatID;
-            creator0 = e.creators[0].name
+            creator0 = list(e.creators.values())
         elif (len(e.creators.all()) > 0):
-            creator0 = e.creators.all()[0].name 
-        else:
-            creator0 = None
+            creator0 = list(e.creators.all().values())        
+        print creator0
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
@@ -452,6 +453,7 @@ def getEventData(request):
                 'id': request.POST['id'],
                 'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind' : event.kind,
+                'coming':list(event.events.all().values()),                
             }
             return HttpResponse(simplejson.dumps(d))
     else:
@@ -535,6 +537,7 @@ def changeStart(request):
 
             usr = UserProfile.objects.get(user=request.session['fbid'])
             usr.events.add(e)
+            e.creators.add(usr)
             return HttpResponse()
 
         startDate = datetime.strptime(request.POST['startTime'],
@@ -773,8 +776,9 @@ def canEdit(usr, event):
     return (usr in event.creators.all())
 
 def addCreators(event, creatorsArray):
-    for creator in creatorsArray:
-        creator.creators.add(event)
+    usrs = UserProfile.objects.filter(user__in=creatorsArray)
+    for user in usrs:
+        event.creators.add(user)
 
 def findIdOfEvent(idToSearch):
     if idToSearch.rfind("_") == -1:
