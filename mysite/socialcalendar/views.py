@@ -331,7 +331,6 @@ def populateEvents(request):
     
     events = getAllEvents(usr, first, last, ['PU', 'PR', 'FL'])
     d = getArrayofWeeklyEvents(events, usr)
-
     return HttpResponse(simplejson.dumps(d))
 
 def getArrayofWeeklyEvents(events, usr):
@@ -368,10 +367,12 @@ def getArrayofWeeklyEvents(events, usr):
             endhour = 24    
         eID = e.id;
         if e.repeat:
-            eID = None;
-        creator0 = None;
-        if(len(e.creators.all()) > 0):
-            creator0=e.creators.all()[0].name 
+            eID = e.repeatID;
+            creator0 = e.creators[0].name
+        elif (len(e.creators.all()) > 0):
+            creator0 = e.creators.all()[0].name 
+        else:
+            creator0 = None
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
@@ -429,8 +430,7 @@ def populateMonthEvents(request):
 def getEventData(request):
 
     if request.method == "POST":
-        events = Event.objects.filter(id=request.POST['id'])
-
+        events = Event.objects.filter(id=findIdOfEvent(request.POST['id']))
         if (len(events) != 1):
             return HttpResponseNotFound()
         else:
@@ -443,7 +443,7 @@ def getEventData(request):
                 'end': event.end.strftime(dateString),
                 'startms': calendar.timegm(event.start.timetuple())*1000,
                 'endms': calendar.timegm(event.end.timetuple())*1000,
-                'id': event.id,
+                'id': request.POST['id'],
                 'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind' : event.kind,
             }
@@ -498,7 +498,39 @@ def editEvent(request):
 @csrf_protect
 def changeStart(request):
     if request.method == "POST":
-        event = Event.objects.get(id=request.POST['id'])
+        eid = request.POST['id']
+        event = Event.objects.get(id=findIdOfEvent(eid))
+
+        if(event.repeat):
+            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], dateString)).replace(tzinfo=tz.gettz('UTC')))
+            ex.save()
+            event.exceptions.add(ex)
+
+            startDate = datetime.strptime(request.POST['startTime'], dateString)
+
+            startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+            startDate = startDate.astimezone(tz.tzlocal())
+
+            eventLength = event.end - event.start
+            start = startDate
+            end = startDate + eventLength
+
+
+            e = Event(
+                title=event.title,
+                description=event.description,
+                location=event.location,
+                start=start,
+                end=end,
+                kind = event.kind,
+            )
+
+            e.save()
+
+            usr = UserProfile.objects.get(user=request.session['fbid'])
+            usr.events.add(e)
+            return HttpResponse()
+
         startDate = datetime.strptime(request.POST['startTime'],
                                       dateString)
 
@@ -701,15 +733,19 @@ def getWeeklyRecurringEvents(usr, first, last):
         for time in times:
             if len(event.exceptions.filter(exceptionTime=time)) > 0:
                 continue
-            e = Event(
+
+            e = tempEvent(
             title=event.title,
             description=event.description,
             location=event.location,
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
             repeat = True,
+            repeatID = str(event.id) + '_' + time.strftime(dateString),
+            eid = event.id,
+            creators = event.creators.all()
             )
-            e.id = event.id
+
             totalForWeek.append(e)
 
     return totalForWeek
@@ -727,3 +763,19 @@ def addCreators(event, creatorsArray):
     for creator in creatorsArray:
         creator.creators.add(event)
 
+def findIdOfEvent(idToSearch):
+    if idToSearch.rfind("_") == -1:
+        return idToSearch
+    return idToSearch[0: idToSearch.rfind("_")]
+
+class tempEvent:
+    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators):
+        self.title = title
+        self.description = description
+        self.location = location,
+        self.start = start
+        self.end = end
+        self.repeat = repeat
+        self.repeatID = repeatID
+        self.id = eid
+        self.creators = creators

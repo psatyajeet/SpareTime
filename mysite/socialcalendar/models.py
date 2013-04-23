@@ -27,7 +27,7 @@ class Event(models.Model):
     repeat = models.BooleanField(default = False)
     recurrence = models.CharField(max_length = 100)
     exceptions = models.ManyToManyField(ExceptionDate, related_name = 'ExceptionDate')
-
+    repeatID = models.CharField(max_length=20, default = "")
     def __unicode__(self):
         return self.title
 
