@@ -561,7 +561,8 @@ def heatMap(request):
         first = first.replace(tzinfo=tz.gettz('UTC'))
         last = last.replace(tzinfo=tz.gettz('UTC'))
         ratio = [[0 for x in xrange(48)] for x in xrange(7)]         
-
+        busy = [[[] for j in range(48)] for i in range(7)]       
+        noApp = []
         total = 0.0;
 
         for friend in friendIDs :
@@ -569,7 +570,9 @@ def heatMap(request):
 
             usr = UserProfile.objects.filter(user=friend)     
             if(len(usr) == 0):
+                noApp.append(friend)
                 continue
+
             total = total+1.0;
             events = getAllEvents(usr[0], first, last, ['PR', 'PU'])
             
@@ -580,6 +583,7 @@ def heatMap(request):
                 for i in range(start.hour*2+start.minute/30, end.hour*2+end.minute/30):
                     if not timeSlotConsider[day][i]:
                         ratio[day][i] += 1;
+                        busy[day][i].append(friend)
                     timeSlotConsider[day][i] = True
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
@@ -589,7 +593,10 @@ def heatMap(request):
                 for i in range(len(days)):
                     d.append({
                         'ratios': (1-ratio[i][j]/total),
+                        'busy': busy[i][j],
                     })
+
+        d.append({'noApp':noApp});
 
         return HttpResponse(simplejson.dumps(d))
     else:
@@ -779,3 +786,6 @@ class tempEvent:
         self.repeatID = repeatID
         self.id = eid
         self.creators = creators
+
+
+
