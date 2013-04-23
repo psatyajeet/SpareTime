@@ -431,6 +431,47 @@ function ShowMyName() {
                         days
                         </div>
                         <div>
+                            Starts on:
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                        </div>
+                        <div>
+                            Ends: 
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="Never" checked>
+                            Never
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="After">
+                            After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="On">
+                            On 
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="" id="repeat-weekly">
+                        <div>
+                        Repeats every : 
+                            <select class="span1">
+                            {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                            <option>{{forloop.counter}}</option>
+                            {% endfor  %}
+                            </select>
+                        weeks
+                        </div>
+                        <div>
                         Repeat on: 
                             <label class="checkbox inline">
                                 <input type="checkbox" name="repeatOn" id="Su" value="Su"> Su
@@ -485,6 +526,100 @@ function ShowMyName() {
                             </label>
                         </div>
                     </div>
+                    <div class="" id="repeat-monthly">
+                        <div>
+                        Repeats every : 
+                            <select class="span1">
+                            {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                            <option>{{forloop.counter}}</option>
+                            {% endfor  %}
+                            </select>
+                        days
+                        </div>
+                        <div>
+                            Repeat by:
+                            <label class="radio inline">
+                            <input type="radio" name="monthly-repeat-by" id="daymonth" value="daymonth" checked>
+                            day of the month
+                            </label>
+                            <label class="radio inline">
+                            <input type="radio" name="monthly-repeat-by" id="dayweek" value="dayweek">
+                            day of the week
+                            </label>
+                        </div>
+
+                        <div>
+                            Starts on:
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                        </div>
+                        <div>
+                            Ends: 
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="Never" checked>
+                            Never
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="After">
+                            After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="On">
+                            On 
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="" id="repeat-yearly">
+                        <div>
+                        Repeats every : 
+                            <select class="span1">
+                            {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                            <option>{{forloop.counter}}</option>
+                            {% endfor  %}
+                            </select>
+                        years
+                        </div>
+                        <div>
+                            Starts on:
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                        </div>
+                        <div>
+                            Ends: 
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="Never" checked>
+                            Never
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="After">
+                            After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> occurrences
+                            </label>
+                            <label class="radio">
+                            <input type="radio" name="endRadios" value="On">
+                            On 
+                            <div id="datetimepicker2" class="input-append">
+                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                            </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
@@ -519,14 +654,9 @@ function ShowMyName() {
 <script type="text/javascript">
 
 $(document).ready(function(){ 
-    if($(this).is(':checked')){
-            $('#modal-repeat').show()
-        }
-        else{
-            $('#modal-repeat').hide()
-        }
 
     $('#repeatEventsCheckbox').change(function (){
+        $('#modal-repeat').hide()
         if($(this).is(':checked')){
             $('#modal-repeat').show()
         }
@@ -536,11 +666,21 @@ $(document).ready(function(){
     });
 
     $('#repeat-option-time-period').change(function (){
+        $('#repeat-daily').hide()
+        $('#repeat-weekly').hide()
+        $('#repeat-monthly').hide()
+        $('#repeat-yearly').hide()
         if($(this).val()=="daily"){
             $('#repeat-daily').show()
         }
-        else{
-            $('#repeat-daily').hide()
+        else if($(this).val()=="weekly"){
+            $('#repeat-weekly').show()
+        }
+        else if($(this).val()=="monthly"){
+            $('#repeat-monthly').show()
+        }
+        else if($(this).val()=="yearly"){
+            $('#repeat-yearly').show()
         }
     });
 
