@@ -196,7 +196,8 @@ var populateWeekEvents = function() {
         currentlyClicking = 1;
 
         currentlyMoving = parseInt($(this).attr("id"));
-        $.post('getEventData', {"id": currentlyMoving}, function (data, status) {
+        currentlyMovingID = $(this).attr("id")
+        $.post('getEventData', {"id": currentlyMovingID}, function (data, status) {
             currentlyMovingEnd = new Date(data.endms);
             currentlyMovingStart = new Date(data.startms);
         }, 'json');
@@ -609,7 +610,7 @@ var tableUp = function($cell, eventObject) {
         dates[x].setMinutes(30*(y%2));
         var startTime = formatTime(dates[x]);
 
-        $.post('changeStart', {"id": currentlyMoving, "startTime": startTime}, "json");
+        $.post('changeStart', {"id": currentlyMovingID, "startTime": startTime}, "json");
         populateEvents()
     }
     currentlyMoving = -1;
