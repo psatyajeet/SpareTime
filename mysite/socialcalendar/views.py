@@ -499,7 +499,6 @@ def editEvent(request):
 def changeStart(request):
     if request.method == "POST":
         eid = request.POST['id']
-        usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=findIdOfEvent(eid))
 
         if(event.repeat):
@@ -527,6 +526,8 @@ def changeStart(request):
             )
 
             e.save()
+
+            usr = UserProfile.objects.get(user=request.session['fbid'])
             usr.events.add(e)
             return HttpResponse()
 
