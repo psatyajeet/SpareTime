@@ -163,7 +163,7 @@ def index(request):
             'start': e.start.strftime(dateString),  
             'end': e.end.strftime(dateString),
             'creators' : creators,
-            'coming' : list(e.linkedEvent.all().values())+list(e.events.all().values()),
+            'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
             'rejected' : list(e.rejected.all().values()),
             'id':e.id,
             }
