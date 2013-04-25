@@ -36,41 +36,48 @@ $.ajaxSetup({
     }
 });
 
+var notifications = "";
 
 var getNotifications = function() {
-    var $notifications = $("#notificationLocation");
-
-
+    notifications = "";
     $.get('getNotificationsRequest', function (data, status) {
+        $popover = $('#notificationButton');
+
         $.each(data, function (index, dat) {
-            var $notify = $('<div class="alert alert-info"> '+
+            var notify = '<div class="alert alert-info"> '+
                 '<p>You have a new event request: '+dat.title+ ' from :' + dat.creators + '</p> '+
                 '<div class="row-fluid"> '+
-                '<div class="span4"></div> '+
-                '<div class="span2"> '+
+                '<div class="span6"> '+
                 '<button class="btn btn-block btn-success acceptRequest" type="button">Accept</button> '+
                 '</div> '+
-                '<div class="span2"> '+
+                '<div class="span6"> '+
                 '<button class="btn btn-block btn-danger rejectRequest" type="button">Reject</button>      '+
                 '</div> '+
-                '<div class="span4"></div> '+
                 '</div> '+
-                '</div>');
-            $notifications.append($notify);
-            var $acceptButtons = $('.acceptRequest').last();
-            var $rejectButtons = $('.rejectRequest').last();
-            $($acceptButtons.get(index)).on('click', function(e) {
-                acceptNotification(dat.id);
-                $notify.remove();
-            });
-            $($rejectButtons.get(index)).on('click', function(e) {
-                rejectNotification(dat.id);
-                $notify.remove();
-            });
+                '</div>';
+            notifications += notify;
+//            var $acceptButtons = $('.acceptRequest').last();
+//            var $rejectButtons = $('.rejectRequest').last();
+//            $($acceptButtons.get(index)).on('click', function(e) {
+//                acceptNotification(dat.id);
+//                $notify.remove();
+//            });
+//            $($rejectButtons.get(index)).on('click', function(e) {
+//                rejectNotification(dat.id);
+//                $notify.remove();
+//            });
+            console.log(notifications);
+            
         });
 
 
-    }, "json");
+    }, "json")
+};
+
+var latestNotification = function() {
+    console.log(notifications);
+    console.log("in function!");
+    return notifications;
 };
 
 var populateEvents = function() {
@@ -101,6 +108,7 @@ var populateMonthEvents = function() {
 
         for (i = 0; i < $monthEntries.length; i++) {
             
+            console.log(numEvents[i].length);
             if (numEvents[i].length > 0) {
                     $popover = $('<a href="#" onclick="return false" class="popoverMonthlyEvent" rel="popover" data-title="More Events" data-toggle="popover" data-placement="right" title="">+ '+numEvents[i].length+' More</a>');
                     $extra = $('<div class="monthExtra"></div>');
@@ -287,7 +295,11 @@ var openID = function(id) {
 
 $(document).ready(function(){
     populateEvents();
+
     getNotifications();
+    $popover = $('#notificationButton');
+    $popover.popover({title: "Notifications", placement: "bottom", html: true, content: function() {return latestNotification()} });
+
 });
 
 var updateCalendar = function(amount) {
@@ -649,4 +661,5 @@ var rejectNotification = function(eventID) {
         populateEvents();
     });
 }
+
 
