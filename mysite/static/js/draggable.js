@@ -197,7 +197,7 @@ var populateWeekEvents = function() {
         event.preventDefault();
         currentlyClicking = 1;
 
-        currentlyMoving = parseInt($(this).attr("id"));
+        currentlyMoving = $(this).attr("id");
         currentlyMovingID = $(this).attr("id")
         $.post('getEventData', {"id": currentlyMovingID}, function (data, status) {
             currentlyMovingEnd = new Date(data.endms);
@@ -225,7 +225,7 @@ var populateWeekEvents = function() {
                 tableOver($(this), event);
             }
         });
-        if (currentlyClicking == -1 && currentlyMoving == parseInt($(this).attr("id"))) {
+        if (currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
             $(this).width($cells.width());
             $(this).attr("class", "event movingEvent");
         }
