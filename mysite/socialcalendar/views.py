@@ -13,6 +13,8 @@ from dateutil.relativedelta import relativedelta
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 from socialcalendar.models import ExceptionDate
+from socialcalendar.models import Name
+
 
 from itertools import chain
 
@@ -149,9 +151,22 @@ def getWeeks(offset=0):
 def index(request):
     if request.GET.has_key('id'):
         event = Event.objects.filter(id=request.GET['id'])
-        if len(event) != 0 and event[0].kind == 'PU':   
+        if len(event) != 0:
             e = event[0]
-            context = {'title':e.title}
+
+            creators = list(e.creators.all().values())  
+            if e.description == '':
+                e.description = "No-Description"         
+            context = {
+            'title': e.title,
+            'description':e.description,
+            'start': e.start.strftime(dateString),  
+            'end': e.end.strftime(dateString),
+            'creators' : creators,
+            'coming' : list(e.linkedEvent.all().values())+list(e.events.all().values()),
+            'rejected' : list(e.rejected.all().values()),
+            'id':e.id,
+            }
             return render(request, 'socialcalendar/event.html', context)
     
     if request.session.get('fbid')==None:
@@ -186,7 +201,6 @@ def index(request):
     }
 
     return render(request, 'socialcalendar/calendar.html', context)
-
 
 @csrf_protect
 def changeFormat(request):
@@ -639,7 +653,7 @@ def gcal(request):
             if not event.has_key('summary'):
                 event['summary'] = 'No-Title'
             if not event.has_key('description'):
-                event['description'] = ''
+                event['description'] = 'No-Description'
             if not event.has_key('location'):
                 event['location'] = ''
             if not event.has_key('start'):
@@ -795,6 +809,21 @@ class tempEvent:
         self.repeatID = repeatID
         self.id = eid
         self.creators = creators
+
+
+@csrf_protect
+def addName(request):
+    if request.method == "GET":
+        if request.GET['name'] == '':
+            return HttpResponse()
+        e = Event.objects.get(id = request.GET['id'])
+        n = Name(name = request.GET['name'], linkedEvent=e)
+        n.save()
+        return HttpResponse()
+    else:
+        return HttpResponseNotFound()
+
+
 
 
 

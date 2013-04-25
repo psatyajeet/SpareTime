@@ -1,6 +1,50 @@
-<html>
-	<div>
-        {{ title }}
+{% extends "template.html" %}
+{% block main %}
 
-	</div>
-</html>
+<body>
+	 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+<div class="row-fluid">
+  <div>Title: {{title}}</div>
+  <div>Description: {{description}}</div>
+  <div>Start: {{start}}</div>
+  <div>End: {{end}}</div>
+  <div id = "coming">Coming: {% for p in coming %} {{p.name}} {% endfor %}</div>
+  <div>Creators: {% for creator in creators %} {{creator.name}} {% endfor %}
+</div>
+
+<div class="row-fluid">
+<div class = "span1"></div>
+<div class = "span2">  
+<form class="form-search">
+  <input type="text" class="input-medium search-query" id = "inputBox">
+</div>
+        <div class="span2">
+            <button class="btn btn-block btn-success" type="button" id="accept">Add Name</button>
+        </div>
+        <div class="span5"></div>
+    </div>
+</div>
+</form>
+
+<script>
+eventPage = true
+var id = {{id}}
+function addName(){
+	var name = $("#inputBox").val()
+	$.get('addName',{'name' : $("#inputBox").val(), 'id': id}, function (data, status) {
+    	$("#coming").append(name)
+    })
+
+    $("#inputBox").val("")
+
+}
+$("#accept").click(addName)
+</script>
+
+
+
+
+</body>
+
+{% endblock main %}

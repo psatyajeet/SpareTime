@@ -27,4 +27,5 @@ urlpatterns = patterns(
     url(r'^changeMonth', views.changeMonth, name='changeMonth'),
     url(r'^populateMonthEvents', views.populateMonthEvents, name='populateMonthEvents'),
     url(r'^heatMap', views.heatMap, name='heatMap'),
+    url(r'^addName', views.addName, name='addName'),
 )
