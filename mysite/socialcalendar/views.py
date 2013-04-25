@@ -21,7 +21,7 @@ import json
 import random
 
 import re
-
+idfeDateString = "%m%d%Y%I%M%p"
 dateString = "%m/%d/%Y %I:%M %p"
 googleDateString = "%Y-%m-%dT%H:%M:%S"
 
@@ -151,6 +151,8 @@ def index(request):
         event = Event.objects.filter(id=request.GET['id'])
         if len(event) != 0 and event[0].kind == 'PU':   
             e = event[0]
+            context = {'title':e.title}
+            return render(request, 'socialcalendar/event.html', context)
     
     if request.session.get('fbid')==None:
         return render(request, 'homepage.html')
@@ -506,7 +508,7 @@ def changeStart(request):
         event = Event.objects.get(id=findIdOfEvent(eid))
 
         if(event.repeat):
-            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], dateString)).replace(tzinfo=tz.gettz('UTC')))
+            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
             ex.save()
             event.exceptions.add(ex)
 
@@ -745,7 +747,7 @@ def getWeeklyRecurringEvents(usr, first, last):
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
             repeat = True,
-            repeatID = str(event.id) + '_' + time.strftime(dateString),
+            repeatID = str(event.id) + '_' + time.strftime(idfeDateString),
             eid = event.id,
             creators = event.creators.all()
             )
