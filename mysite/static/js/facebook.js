@@ -1,5 +1,5 @@
 var homepage = false;
-
+var eventPage = false;
 window.fbAsyncInit = function() {
     FB.init({
       appId      : '329753420461644', // Local App ID
@@ -17,7 +17,9 @@ FB.getLoginStatus(function(response) {
                     makeUser(response.name, response.id);
                 return;
             })        
-        } else {
+        } else if(eventPage) {
+
+        }else {
             FB.api('/me', function(response) {
               $.get('makeUser', {'name' : response.name, 'fbid': response.id}, function (data, status) {
                 if(JSON.parse(data)[0]) {populateEvents();}})
@@ -31,14 +33,14 @@ FB.getLoginStatus(function(response) {
     } else if (response.status === 'not_authorized') {
         $.get('deleteCookie', function (data, status) {}).done(function() {
         }).done(function() {
-            if(!homepage) {
+            if(!homepage && !eventPage) {
                 location.reload(true);
             }
         });
     } else {
         $.get('deleteCookie', function (data, status) {}).done(function() {
         }).done(function() {
-            if(!homepage) {
+            if(!homepage && !eventPage) {
                 location.reload(true);
             }
         });
@@ -49,12 +51,11 @@ FB.getLoginStatus(function(response) {
 function login() {
     FB.login(function(response) {
         if (response.authResponse) {
+            $("#loginButton").html("Logout");
+            $("#loginButton").attr("id", "logoutButton");
             FB.api('/me', function(response) {
                 makeUser(response.name, response.id);
             })
-            $("#loginButton").html("Logout");
-            $("#loginButton").attr("id", "logoutButton");
-
         } else {
             // cancelled
         }
@@ -83,7 +84,7 @@ var changeFormat = function(newFormat) {
 function makeUser(name, id) {
     $.get('makeUser', {'name' : name, 'fbid': id}, function (data, status) {
     }).done(function() {
-                location.reload(true);
+                window.open('http://127.0.0.1:8000/', '_self');
                 });
 }
   // Load the SDK Asynchronously

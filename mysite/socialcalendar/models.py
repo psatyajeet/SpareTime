@@ -20,14 +20,14 @@ class Event(models.Model):
                                       default='PR')
     title = models.CharField(max_length=30, default = 'No-Title')
     location = models.CharField(max_length=30)
-    description = models.TextField()
+    description = models.TextField(default='No-Description')
     start = models.DateTimeField('Event start')
     end = models.DateTimeField('Event end')
     gid = models.CharField(max_length=100)
     repeat = models.BooleanField(default = False)
     recurrence = models.CharField(max_length = 100)
     exceptions = models.ManyToManyField(ExceptionDate, related_name = 'ExceptionDate')
-
+    repeatID = models.CharField(max_length=20, default = "")
     def __unicode__(self):
         return self.title
 
@@ -48,3 +48,10 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class Name(models.Model):
+    name = models.CharField(max_length=30)
+    linkedEvent = models.ForeignKey(Event,related_name = 'linkedEvent')
+    
+    def __unicode__(self):
+        return self.name      

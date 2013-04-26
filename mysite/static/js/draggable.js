@@ -49,6 +49,10 @@ var getNotifications = function() {
         $popover = $('#notificationButton');
 
         $.each(data, function (index, dat) {
+            creators = ''
+            $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
+            var $notify = $('<div class="alert alert-info"> '+
+                '<p>You have a new event request: '+dat.title+ ' from ' + creators + '</p> '+
             var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
                 '<p>You have a new event request: '+dat.title+ ' from :' + dat.creators + '</p> '+
                 '<div class="row-fluid"> '+
@@ -112,7 +116,6 @@ var populateMonthEvents = function() {
 
         for (i = 0; i < $monthEntries.length; i++) {
             
-            console.log(numEvents[i].length);
             if (numEvents[i].length > 0) {
                     $popover = $('<a href="#" onclick="return false" class="popoverMonthlyEvent" rel="popover" data-title="More Events" data-toggle="popover" data-placement="right" title="">+ '+numEvents[i].length+' More</a>');
                     $extra = $('<div class="monthExtra"></div>');
@@ -214,8 +217,9 @@ var populateWeekEvents = function() {
         event.preventDefault();
         currentlyClicking = 1;
 
-        currentlyMoving = parseInt($(this).attr("id"));
-        $.post('getEventData', {"id": currentlyMoving}, function (data, status) {
+        currentlyMoving = $(this).attr("id");
+        currentlyMovingID = $(this).attr("id")
+        $.post('getEventData', {"id": currentlyMovingID}, function (data, status) {
             currentlyMovingEnd = new Date(data.endms);
             currentlyMovingStart = new Date(data.startms);
         }, 'json');
@@ -247,6 +251,7 @@ var populateWeekEvents = function() {
                 tableOver($(this), event);
             }
         });
+        if (currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
         if (canEdit && currentlyClicking == -1 && currentlyMoving == parseInt($(this).attr("id"))) {
             $(this).width($cells.width());
             $(this).attr("class", "event movingEvent");
@@ -709,7 +714,7 @@ var tableUp = function($cell, eventObject) {
         dates[x].setMinutes(30*(y%2));
         var startTime = formatTime(dates[x]);
 
-        $.post('changeStart', {"id": currentlyMoving, "startTime": startTime}, "json");
+        $.post('changeStart', {"id": currentlyMovingID, "startTime": startTime}, "json");
         populateEvents()
     }
     currentlyMoving = -1;

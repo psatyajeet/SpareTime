@@ -13,6 +13,8 @@ from dateutil.relativedelta import relativedelta
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 from socialcalendar.models import ExceptionDate
+from socialcalendar.models import Name
+
 
 from itertools import chain
 
@@ -21,7 +23,7 @@ import json
 import random
 
 import re
-
+idfeDateString = "%m%d%Y%I%M%p"
 dateString = "%m/%d/%Y %I:%M %p"
 googleDateString = "%Y-%m-%dT%H:%M:%S"
 
@@ -147,7 +149,26 @@ def getWeeks(offset=0):
 
 @ensure_csrf_cookie
 def index(request):
+    if request.GET.has_key('id'):
+        event = Event.objects.filter(id=request.GET['id'])
+        if len(event) != 0:
+            e = event[0]
 
+            creators = list(e.creators.all().values())  
+            if e.description == '':
+                e.description = "No-Description"         
+            context = {
+            'title': e.title,
+            'description':e.description,
+            'start': e.start.strftime(dateString),  
+            'end': e.end.strftime(dateString),
+            'creators' : creators,
+            'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
+            'rejected' : list(e.rejected.all().values()),
+            'id':e.id,
+            }
+            return render(request, 'socialcalendar/event.html', context)
+    
     if request.session.get('fbid')==None:
         return render(request, 'homepage.html')
         
@@ -293,7 +314,6 @@ def submitEvent(request):
                 kind = request.POST['kind'],
             )
         e.save()
-        print e.kind
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.creators.add(e)
         usr.events.add(e)
@@ -353,7 +373,6 @@ def populateEvents(request):
     
     events = getAllEvents(usr, first, last, ['PU', 'PR', 'FL'])
     d = getArrayofWeeklyEvents(events, usr)
-
     return HttpResponse(simplejson.dumps(d))
 
 
@@ -390,11 +409,14 @@ def getArrayofWeeklyEvents(events, usr, notif=False):
         if (e.end.hour == 0 and e.end.minute == 0):
             endhour = 24    
         eID = e.id;
+
+        creator0 = None
+
         if e.repeat:
-            eID = None;
-        creator0 = None;
-        if(len(e.creators.all()) > 0):
-            creator0=e.creators.all()[0].name 
+            eID = e.repeatID;
+            creator0 = list(e.creators.values())
+        elif (len(e.creators.all()) > 0):
+            creator0 = list(e.creators.all().values())        
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
@@ -459,6 +481,7 @@ def getEventData(request):
         events = Event.objects.filter(id=request.POST['id'])
         usr = UserProfile.objects.get(user=request.session['fbid'])
 
+        events = Event.objects.filter(id=findIdOfEvent(request.POST['id']))
         if (len(events) != 1):
             return HttpResponseNotFound()
         else:
@@ -475,6 +498,10 @@ def getEventData(request):
                 'canEdit': canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind': event.kind,
                 'notif': len(usr.notifications.filter(id=event.id)) >= 1,
+                'id': request.POST['id'],
+                'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
+                'kind' : event.kind,
+                'coming':list(event.events.all().values()),                
             }
             return HttpResponse(simplejson.dumps(d))
     else:
@@ -527,7 +554,40 @@ def editEvent(request):
 @csrf_protect
 def changeStart(request):
     if request.method == "POST":
-        event = Event.objects.get(id=request.POST['id'])
+        eid = request.POST['id']
+        event = Event.objects.get(id=findIdOfEvent(eid))
+
+        if(event.repeat):
+            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
+            ex.save()
+            event.exceptions.add(ex)
+
+            startDate = datetime.strptime(request.POST['startTime'], dateString)
+
+            startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+            startDate = startDate.astimezone(tz.tzlocal())
+
+            eventLength = event.end - event.start
+            start = startDate
+            end = startDate + eventLength
+
+
+            e = Event(
+                title=event.title,
+                description=event.description,
+                location=event.location,
+                start=start,
+                end=end,
+                kind = event.kind,
+            )
+
+            e.save()
+
+            usr = UserProfile.objects.get(user=request.session['fbid'])
+            usr.events.add(e)
+            e.creators.add(usr)
+            return HttpResponse()
+
         startDate = datetime.strptime(request.POST['startTime'],
                                       dateString)
 
@@ -558,7 +618,8 @@ def heatMap(request):
         first = first.replace(tzinfo=tz.gettz('UTC'))
         last = last.replace(tzinfo=tz.gettz('UTC'))
         ratio = [[0 for x in xrange(48)] for x in xrange(7)]         
-
+        busy = [[[] for j in range(48)] for i in range(7)]       
+        noApp = []
         total = 0.0;
 
         for friend in friendIDs :
@@ -566,7 +627,9 @@ def heatMap(request):
 
             usr = UserProfile.objects.filter(user=friend)     
             if(len(usr) == 0):
+                noApp.append(friend)
                 continue
+
             total = total+1.0;
             events = getAllEvents(usr[0], first, last, ['PR', 'PU'])
             
@@ -577,6 +640,7 @@ def heatMap(request):
                 for i in range(start.hour*2+start.minute/30, end.hour*2+end.minute/30):
                     if not timeSlotConsider[day][i]:
                         ratio[day][i] += 1;
+                        busy[day][i].append(friend)
                     timeSlotConsider[day][i] = True
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
@@ -586,7 +650,10 @@ def heatMap(request):
                 for i in range(len(days)):
                     d.append({
                         'ratios': (1-ratio[i][j]/total),
+                        'busy': busy[i][j],
                     })
+
+        d.append({'noApp':noApp});
 
         return HttpResponse(simplejson.dumps(d))
     else:
@@ -621,7 +688,7 @@ def gcal(request):
             if not event.has_key('summary'):
                 event['summary'] = 'No-Title'
             if not event.has_key('description'):
-                event['description'] = ''
+                event['description'] = 'No-Description'
             if not event.has_key('location'):
                 event['location'] = ''
             if not event.has_key('start'):
@@ -730,13 +797,17 @@ def getWeeklyRecurringEvents(usr, first, last):
         for time in times:
             if len(event.exceptions.filter(exceptionTime=time)) > 0:
                 continue
-            e = Event(
+
+            e = tempEvent(
             title=event.title,
             description=event.description,
             location=event.location,
             start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
             end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
             repeat = True,
+            repeatID = str(event.id) + '_' + time.strftime(idfeDateString),
+            eid = event.id,
+            creators = event.creators.all()
             )
             e.id = event.id
             totalForWeek.append(e)
@@ -755,6 +826,41 @@ def canEdit(usr, event):
     return (usr in event.creators.all())
 
 def addCreators(event, creatorsArray):
-    for creator in creatorsArray:
-        creator.creators.add(event)
+    usrs = UserProfile.objects.filter(user__in=creatorsArray)
+    for user in usrs:
+        event.creators.add(user)
+
+def findIdOfEvent(idToSearch):
+    if idToSearch.rfind("_") == -1:
+        return idToSearch
+    return idToSearch[0: idToSearch.rfind("_")]
+
+class tempEvent:
+    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators):
+        self.title = title
+        self.description = description
+        self.location = location,
+        self.start = start
+        self.end = end
+        self.repeat = repeat
+        self.repeatID = repeatID
+        self.id = eid
+        self.creators = creators
+
+
+@csrf_protect
+def addName(request):
+    if request.method == "GET":
+        if request.GET['name'] == '':
+            return HttpResponse()
+        e = Event.objects.get(id = request.GET['id'])
+        n = Name(name = request.GET['name'], linkedEvent=e)
+        n.save()
+        return HttpResponse()
+    else:
+        return HttpResponseNotFound()
+
+
+
+
 
