@@ -54,14 +54,4 @@ class Name(models.Model):
     linkedEvent = models.ForeignKey(Event,related_name = 'linkedEvent')
     
     def __unicode__(self):
-        return self.name     
-
-class Comment(models.Model):
-    comment = models.TextField(default='')
-    commenter = models.ForeignKey(UserProfile, related_name = 'commenter')
-    name = models.CharField(max_length=30)
-    date = models.DateTimeField('Comment Time')
-    event = models.ForeignKey(Event, related_name = 'event')
-
-    def __unicode__(self):
-        return self.comment 
+        return self.name      
