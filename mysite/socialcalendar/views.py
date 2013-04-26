@@ -870,7 +870,7 @@ def addName(request):
 @csrf_exempt
 def comment(request):
     if request.method == "POST":
-        event = Event.objects.get(id=request.POST['id'])
+        event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
         usr = None
         name = None
         if request.POST.has_key('name'):
@@ -915,7 +915,7 @@ def getListOfComments(e):
 @csrf_protect
 def getComments(request):
     if request.method == "GET":
-        event = Event.objects.get(id=request.GET['id']);
+        event = Event.objects.get(id=findIdOfEvent(request.GET['id']));
         return HttpResponse(simplejson.dumps(getListOfComments(event)))
     else:
         return HttpResponseNotFound()
