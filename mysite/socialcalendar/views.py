@@ -208,6 +208,7 @@ def index(request):
 
     return render(request, 'socialcalendar/calendar.html', context)
 
+
 @csrf_protect
 def changeFormat(request):
     if request.method == "GET":
@@ -231,6 +232,22 @@ def changeFormat(request):
             days, hours, dates, header = getDays(request.session['whichweek'])
 
             d = {'header': header, 'days': days, 'dates': dates}
+        return HttpResponse(simplejson.dumps(d))
+    else:
+        return HttpResponseNotFound()
+
+
+@csrf_protect
+def goToEvent(request):
+    if request.method == "POST":
+        event = Event.objects.get(id=request.POST['id'])
+
+        today = datetime.today()
+        today = today.replace(tzinfo=tz.gettz('UTC'))
+        request.session['whichweek'] = int((event.start - today).days/7.0)
+
+        days, hours, dates, header = getDays(request.session['whichweek'])
+        d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
@@ -314,9 +331,11 @@ def submitEvent(request):
     else:
         return HttpResponseNotFound()
 
+
 def getNotifications(user):
     events = user.notifications.all();        
-    return getArrayofWeeklyEvents(events, user);
+    return getArrayofWeeklyEvents(events, user, True);
+
 
 def storeNotificationForFriends(friendIDs, e):
         usr = UserProfile.objects.filter(user__in=friendIDs)
@@ -324,8 +343,10 @@ def storeNotificationForFriends(friendIDs, e):
             user.unanswered.add(e)
             user.notifications.add(e)
 
+
 def removeNotification(user, e) :
     user.notifications.remove(e);
+
 
 @csrf_protect
 def getNotificationsRequest(request):
@@ -336,8 +357,10 @@ def getNotificationsRequest(request):
     else :
         return HttpResponseNotFound()
 
+
 @csrf_protect
 def populateEvents(request):
+    
     today = datetime.today() + timedelta(request.session['whichweek']*7)
     today = today.replace(hour=0, minute=0, second=0, microsecond=0)
     delta = timedelta((today.weekday()+1) % 7)
@@ -357,7 +380,8 @@ def populateEvents(request):
     d = getArrayofWeeklyEvents(events, usr)
     return HttpResponse(simplejson.dumps(d))
 
-def getArrayofWeeklyEvents(events, usr):
+
+def getArrayofWeeklyEvents(events, usr, notif=False):
     d = []
     x = 0
     last = 0
@@ -387,7 +411,7 @@ def getArrayofWeeklyEvents(events, usr):
     for i in range(len(events)):
         e = events[i]
         endhour = e.end.hour
-        if (e.end.hour == 0):
+        if (e.end.hour == 0 and e.end.minute == 0):
             endhour = 24    
         eID = e.id;
 
@@ -406,11 +430,15 @@ def getArrayofWeeklyEvents(events, usr):
             'id': eID,
             'x': xs[i]/float(widths[i]),
             'width': 1.0/float(widths[i]),
-            'creators' : creator0,
-            'canEdit' : canEdit(usr, e),
-            'repeat' : e.repeat,
+            'creators': creator0,
+            'canEdit': canEdit(usr, e),
+            'repeat': e.repeat,
+            'kind': e.kind,
+            'notif': len(usr.notifications.filter(id=e.id)) >= 1,
         })
     return d;
+
+
 
 @csrf_protect
 def populateMonthEvents(request):
@@ -456,6 +484,8 @@ def getEventData(request):
 
     if request.method == "POST":
         events = Event.objects.filter(id=findIdOfEvent(request.POST['id']))
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+
         if (len(events) != 1):
             return HttpResponseNotFound()
         else:
@@ -468,6 +498,10 @@ def getEventData(request):
                 'end': event.end.strftime(dateString),
                 'startms': calendar.timegm(event.start.timetuple())*1000,
                 'endms': calendar.timegm(event.end.timetuple())*1000,
+                'id': event.id,
+                'canEdit': canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
+                'kind': event.kind,
+                'notif': len(usr.notifications.filter(id=event.id)) >= 1,
                 'id': request.POST['id'],
                 'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind' : event.kind,
@@ -779,7 +813,7 @@ def getWeeklyRecurringEvents(usr, first, last):
             eid = event.id,
             creators = event.creators.all()
             )
-
+            e.id = event.id
             totalForWeek.append(e)
 
     return totalForWeek
@@ -787,8 +821,10 @@ def getWeeklyRecurringEvents(usr, first, last):
 # change getAllEvents to add kinds array parameter
 def getAllEvents(usr, first, last, kinds):
     events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False).filter(kind__in = kinds)
+    events = chain(events, usr.notifications.filter(start__gte=first).filter(end__lt=last).filter(repeat=False).filter(kind__in = kinds))
     events = sorted(chain(events, getWeeklyRecurringEvents(usr, first, last)), key=lambda event: event.start)
     return events
+
 
 def canEdit(usr, event):
     return (usr in event.creators.all())
