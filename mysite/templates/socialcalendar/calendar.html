@@ -430,6 +430,8 @@ function ShowMyName() {
         <button class="btn btn-danger" id="deleteEvent">Delete</button>
         <button class="btn btn-primary" id="editEvent">Edit</button>
         <button class="btn btn-primary" id="createEvent">Create</button>
+        <button class="btn btn-success" id="acceptEvent">Accept</button>
+        <button class="btn btn-danger" id="rejectEvent">Reject</button>
     </div>
 </div>
 
@@ -444,6 +446,10 @@ function ShowMyName() {
         $("#eventName").val("");
         $("#eventDescription").val("");
         $("#eventLocation").val("");
+        $('#editEvent').hide();
+        $('#deleteEvent').hide();
+        $('#acceptEvent').hide();
+        $('#rejectEvent').hide();
     }
 
     var dates = new Array();
