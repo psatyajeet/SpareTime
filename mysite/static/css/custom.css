@@ -149,6 +149,16 @@ tr.calendarRow td:last-child {
     cursor: default;
 }
 
+.notif {
+    background-color: #FF8E00;
+    border: 2px solid #FF6C00; 
+    position: absolute;
+    z-index: 10;
+    opacity: 0.7;
+    overflow: hidden;
+    cursor: default;
+}
+
 .movingEvent {
     opacity: 0.6;
     filter: alpha(opacity=60);
