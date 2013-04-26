@@ -912,7 +912,7 @@ def getListOfComments(e):
         })
     return d
 
-
+@csrf_protect
 def getComments(request):
     if request.method == "GET":
         event = Event.objects.get(id=request.GET['id']);
