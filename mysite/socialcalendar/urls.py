@@ -13,6 +13,8 @@ urlpatterns = patterns(
     url(r'^editEvent', views.editEvent, name='editEvent'),
     url(r'^changeStart', views.changeStart, name='changeStart'),
     url(r'^gcal', views.gcal, name='gcal'),
+    url(r'^comment', views.comment, name='comment'),
+
 
     url(r'^rejectNotification', views.rejectNotification, name='rejectNotification'),
     url(r'^acceptNotification', views.acceptNotification, name='acceptNotification'),

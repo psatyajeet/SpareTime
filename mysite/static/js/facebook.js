@@ -49,15 +49,25 @@ FB.getLoginStatus(function(response) {
 };
 
 function login() {
-    FB.login(function(response) {
-        if (response.authResponse) {
+    FB.getLoginStatus(function(response){
+        if (response.status === 'connected') {
             $("#loginButton").html("Logout");
             $("#loginButton").attr("id", "logoutButton");
             FB.api('/me', function(response) {
                 makeUser(response.name, response.id);
             })
         } else {
+            FB.login(function(response) {
+            if (response.authResponse) {
+                $("#loginButton").html("Logout");
+                $("#loginButton").attr("id", "logoutButton");
+                FB.api('/me', function(response) {
+                    makeUser(response.name, response.id);
+                })
+            } else {
             // cancelled
+            }
+        });
         }
     });
 }

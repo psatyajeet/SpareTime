@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
+
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 import calendar
 from datetime import date, timedelta, datetime
@@ -14,6 +16,8 @@ from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 from socialcalendar.models import ExceptionDate
 from socialcalendar.models import Name
+from socialcalendar.models import Comment
+
 
 
 from itertools import chain
@@ -156,7 +160,8 @@ def index(request):
 
             creators = list(e.creators.all().values())  
             if e.description == '':
-                e.description = "No-Description"         
+                e.description = "No-Description"   
+            print getListOfComments(e)      
             context = {
             'title': e.title,
             'description':e.description,
@@ -164,6 +169,7 @@ def index(request):
             'end': e.end.strftime(dateString),
             'creators' : creators,
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
+            'comments':getListOfComments(e),
             'rejected' : list(e.rejected.all().values()),
             'id':e.id,
             }
@@ -300,7 +306,6 @@ def submitEvent(request):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.creators.add(e)
         usr.events.add(e)
-
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
             storeNotificationForFriends(friendIDs, e)
@@ -822,6 +827,45 @@ def addName(request):
         return HttpResponse()
     else:
         return HttpResponseNotFound()
+
+
+@csrf_exempt
+def comment(request):
+    if request.method == "POST":
+        event = Event.objects.get(id=request.POST['id'])
+        usr = None
+        name = None
+        if request.POST.has_key('name'):
+            name = request.POST['name']
+
+        if request.session['fbid']:
+            usr = UserProfile.objects.get(user=request.session['fbid'])
+            name = usr.name
+        if name == None:
+            return HttpResponse()
+
+        addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')))
+        d = []
+        
+        d.append({
+            'commenter': name,
+            'date':  datetime.today().replace(tzinfo=tz.gettz('UTC')).strftime(dateString)
+        })
+
+        return HttpResponse(simplejson.dumps(d))
+    else:
+        return HttpResponseNotFound()
+
+def addComment(commenter, name, date, event, comment):
+    if commenter == None:
+        c = Comment(event=event, comment = comment, name = name, date = date);
+    else :
+        c = Comment(commenter = commenter, event=event, comment = comment, name = name, date = date);
+    c.save()
+
+def getListOfComments(e):
+    comments = sorted(e.event.all(), key = lambda comment:comment.date);
+    return comments
 
 
 
