@@ -6,6 +6,7 @@ urlpatterns = patterns(
     '',
     url(r'^$', views.index, name='index'),
     url(r'^changeWeek', views.changeWeek, name='changeWeek'),
+    url(r'^goToEvent', views.goToEvent, name='goToEvent'),
     url(r'^submitEvent', views.submitEvent, name='submitEvent'),
     url(r'^populateEvents', views.populateEvents, name='populateEvents'),
     url(r'^getEventData', views.getEventData, name='getEventData'),
