@@ -18,7 +18,9 @@ FB.getLoginStatus(function(response) {
                 return;
             })        
         } else if(eventPage) {
-
+            $loginButton = $("#loginButton");
+            $loginButton.html("Logout");
+            $loginButton.attr("id", "logoutButton");  
         }else {
             FB.api('/me', function(response) {
               $.get('makeUser', {'name' : response.name, 'fbid': response.id}, function (data, status) {

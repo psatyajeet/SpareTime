@@ -169,7 +169,7 @@ def index(request):
             'end': e.end.strftime(dateString),
             'creators' : creators,
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
-            'comments':getListOfComments(e),
+            'comments': getListOfComments(e),
             'rejected' : list(e.rejected.all().values()),
             'id':e.id,
             }
@@ -902,7 +902,7 @@ def addComment(commenter, name, date, event, comment):
     c.save()
 
 def getListOfComments(e):
-    comments = sorted(e.event.all(), key = lambda comment:comment.date);
+    comments = e.event.all().values('name', 'date','comment').order_by('date')
     return comments
 
 

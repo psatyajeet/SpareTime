@@ -10,7 +10,7 @@
   <div>Start: {{start}}</div>
   <div>End: {{end}}</div>
   <div>Coming: <ul id = "coming">{% for p in coming %}<li> {{p.name}}</li> {% endfor %}</ul></div>
-  <div>Comments: <ul id = "comments">{% for p in comments %}<li> {{p.commenter}} says: {{p.comment}} </br> -{{p.date}}</li> {% endfor %}</ul></div>
+  <div>Comments: <ul id = "comments">{% for p in comments %}<li> {{p.name}} says: {{p.comment}} </br> -{{p.date}}</li> {% endfor %}</ul></div>
   <div>Creators: {% for creator in creators %} {{creator.name}} {% endfor %}
 </div>
 
