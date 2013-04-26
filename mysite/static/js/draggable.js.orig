@@ -49,10 +49,15 @@ var getNotifications = function() {
         $popover = $('#notificationButton');
 
         $.each(data, function (index, dat) {
+<<<<<<< HEAD
+            var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
+                '<p>You have a new event request: '+dat.title+ ' from :' + dat.creators + '</p> '+
+=======
             creators = ''
             $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
-            var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
-                '<p>You have a new event request: '+dat.title+ ' from :' + creators + '</p> '+
+            var $notify = $('<div class="alert alert-info"> '+
+                '<p>You have a new event request: '+dat.title+ ' from ' + creators + '</p> '+
+>>>>>>> d7fb6a6b5a936264835107cbb6e5df146001ee7f
                 '<div class="row-fluid"> '+
                 '<div class="span6"> '+
                 '<button class="btn btn-block btn-success acceptRequest eventID'+dat.id+'" type="button">Accept</button> '+
@@ -114,6 +119,7 @@ var populateMonthEvents = function() {
 
         for (i = 0; i < $monthEntries.length; i++) {
             
+            console.log(numEvents[i].length);
             if (numEvents[i].length > 0) {
                     $popover = $('<a href="#" onclick="return false" class="popoverMonthlyEvent" rel="popover" data-title="More Events" data-toggle="popover" data-placement="right" title="">+ '+numEvents[i].length+' More</a>');
                     $extra = $('<div class="monthExtra"></div>');
@@ -249,7 +255,11 @@ var populateWeekEvents = function() {
                 tableOver($(this), event);
             }
         });
-        if (canEdit && currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
+<<<<<<< HEAD
+        if (canEdit && currentlyClicking == -1 && currentlyMoving == parseInt($(this).attr("id"))) {
+=======
+        if (currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
+>>>>>>> d7fb6a6b5a936264835107cbb6e5df146001ee7f
             $(this).width($cells.width());
             $(this).attr("class", "event movingEvent");
         }
