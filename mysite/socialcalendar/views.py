@@ -806,7 +806,8 @@ def getWeeklyRecurringEvents(usr, first, last):
             repeat = True,
             repeatID = str(event.id) + '_' + time.strftime(idfeDateString),
             eid = event.id,
-            creators = event.creators.all()
+            creators = event.creators.all(), 
+            kind = event.kind,
             )
             e.id = event.id
             totalForWeek.append(e)
@@ -835,7 +836,7 @@ def findIdOfEvent(idToSearch):
     return idToSearch[0: idToSearch.rfind("_")]
 
 class tempEvent:
-    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators):
+    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators, kind):
         self.title = title
         self.description = description
         self.location = location,
@@ -845,6 +846,7 @@ class tempEvent:
         self.repeatID = repeatID
         self.id = eid
         self.creators = creators
+        self.kind = kind
 
 
 @csrf_protect
