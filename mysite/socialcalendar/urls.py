@@ -15,6 +15,7 @@ urlpatterns = patterns(
     url(r'^changeStart', views.changeStart, name='changeStart'),
     url(r'^gcal', views.gcal, name='gcal'),
     url(r'^comment', views.comment, name='comment'),
+    url(r'^getComments', views.getComments, name='getComments'),
 
 
     url(r'^rejectNotification', views.rejectNotification, name='rejectNotification'),

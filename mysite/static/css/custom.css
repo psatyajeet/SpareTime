@@ -235,4 +235,20 @@ td.otherMonth {
     cursor:pointer;
 }
 
+#commentSpace {
+    padding-top: 20px;
+}
 
+.comment {
+    color: #666666;
+    margin: 4px;
+}
+
+.commentName {
+    color: #222222;
+}
+
+.commentDate {
+    font-size: 8pt;
+    text-align: right;
+}

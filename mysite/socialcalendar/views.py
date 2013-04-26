@@ -903,9 +903,26 @@ def addComment(commenter, name, date, event, comment):
 
 def getListOfComments(e):
     comments = e.event.all().values('name', 'date','comment').order_by('date')
-    return comments
+    return comments.reverse()
 
 
+def getComments(request):
+    if request.method == "GET":
+        event = Event.objects.get(id=request.GET['id'])
+
+        d = []
+        
+        for comment in getListOfComments(event):
+            print comment
+            d.append({
+                'name': comment['name'],
+                'date': comment['date'].strftime(dateString),  
+                'comment': comment['comment'],
+            })
+
+        return HttpResponse(simplejson.dumps(d))
+    else:
+        return HttpResponseNotFound()
 
 
 

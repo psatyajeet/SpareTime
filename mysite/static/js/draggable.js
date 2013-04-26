@@ -366,6 +366,7 @@ var openID = function(id) {
             }
         }
         $('#eventModal').modal();
+        $('a[href=#eventInformationTab]').tab('show');
         $('#eventModal').on('shown', function(){                    
             $('#eventName').focus();
         });
@@ -376,7 +377,16 @@ var openID = function(id) {
     }, "json");
 }
 
-
+var refreshComments = function () {
+    $.get('getComments',{'id': currentlyViewing}, function(data, status) {
+        $commentSpace = $('#commentSpace');
+        insideComments = "";
+        $.each(data, function(index, dat) {
+            insideComments += '<div class="comment alert alert-info"><span class="commentName">'+dat.name+'</span>: '+dat.comment+'</br><div class="commentDate">'+dat.date+'</div></div>';
+        });
+        $commentSpace.html(insideComments);
+    }, "json");
+};
 
 
 $(document).ready(function(){
@@ -385,6 +395,24 @@ $(document).ready(function(){
     getNotifications();
     $popover = $('#notificationButton');
     $popover.popover({title: "Notifications", placement: "bottom", html: true, content: function() {return latestNotification()} });
+
+    $('#modalComments').hide();
+    $('a[href=#eventInformationTab]').on('shown', function (e) {
+        $('#modalEventInformation').show();
+        $('#modalComments').hide();
+    })
+    $('a[href=#commentsTab]').on('shown', function (e) {
+        $('#modalEventInformation').hide();
+        $('#commentTextBox').val("");
+        $('#modalComments').show();
+        refreshComments();
+
+        })
+    $('#postComment').on('click', function (e) {
+        $.post('comment',{'id': currentlyViewing, 'comment': $('#commentTextBox').val()}, function(data, status) {
+            refreshComments();
+        }, "json");
+        });
 
 });
 
@@ -680,6 +708,8 @@ var tableUp = function($cell, eventObject) {
         currentlyViewing = -1;
 
         $('#createEvent').show();
+
+        $('a[href=#eventInformationTab]').tab('show');
         $('#deleteEvent').hide();
         $('#editEvent').hide();
         $('#eventModal').modal();
