@@ -15,7 +15,6 @@ urlpatterns = patterns(
     url(r'^gcal', views.gcal, name='gcal'),
     url(r'^comment', views.comment, name='comment'),
 
-
     url(r'^rejectNotification', views.rejectNotification, name='rejectNotification'),
     url(r'^acceptNotification', views.acceptNotification, name='acceptNotification'),
 
