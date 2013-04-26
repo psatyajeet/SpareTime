@@ -902,25 +902,21 @@ def addComment(commenter, name, date, event, comment):
     c.save()
 
 def getListOfComments(e):
-    comments = e.event.all().values('name', 'date','comment').order_by('date')
-    return comments.reverse()
+    comments = e.event.all().values('name', 'date','comment').order_by('date').reverse()
+    d = []
+    for comment in comments:
+        d.append({
+            'name': comment['name'],
+            'date': comment['date'].strftime(dateString),  
+            'comment': comment['comment'],
+        })
+    return d
 
 
 def getComments(request):
     if request.method == "GET":
-        event = Event.objects.get(id=request.GET['id'])
-
-        d = []
-        
-        for comment in getListOfComments(event):
-            print comment
-            d.append({
-                'name': comment['name'],
-                'date': comment['date'].strftime(dateString),  
-                'comment': comment['comment'],
-            })
-
-        return HttpResponse(simplejson.dumps(d))
+        event = Event.objects.get(id=request.GET['id']);
+        return HttpResponse(simplejson.dumps(getListOfComments(event)))
     else:
         return HttpResponseNotFound()
 
