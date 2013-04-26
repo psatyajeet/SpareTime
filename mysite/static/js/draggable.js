@@ -2,7 +2,6 @@ var currentlyViewing = -1;
 var currentlyMoving = -1;
 var currentlyMovingY = 0;
 var currentlyClicking = -1;
-var canEdit = true;
 var currentlyMovingStart = new Date();
 var currentlyMovingEnd = new Date();
 
@@ -37,53 +36,43 @@ $.ajaxSetup({
     }
 });
 
-var notifications = "";
 
 var getNotifications = function() {
-    notifications = "";
-    $.ajax({
-        type: "GET",
-        url: 'getNotificationsRequest',
-        async: false,
-        success: function (data, status) {
-        $popover = $('#notificationButton');
+    var $notifications = $("#notificationLocation");
 
+
+    $.get('getNotificationsRequest', function (data, status) {
         $.each(data, function (index, dat) {
             creators = ''
             $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
-            var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
-                '<p>You have a new event request: '+dat.title+ ' from :' + creators + '</p> '+
+            var $notify = $('<div class="alert alert-info"> '+
+                '<p>You have a new event request: '+dat.title+ ' from ' + creators + '</p> '+
                 '<div class="row-fluid"> '+
-                '<div class="span6"> '+
-                '<button class="btn btn-block btn-success acceptRequest eventID'+dat.id+'" type="button">Accept</button> '+
+                '<div class="span4"></div> '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-success acceptRequest" type="button">Accept</button> '+
                 '</div> '+
-                '<div class="span6"> '+
-                '<button class="btn btn-block btn-danger rejectRequest eventID'+dat.id+'" type="button">Reject</button>      '+
+                '<div class="span2"> '+
+                '<button class="btn btn-block btn-danger rejectRequest" type="button">Reject</button>      '+
                 '</div> '+
+                '<div class="span4"></div> '+
                 '</div> '+
-                '</div>';
-            notifications += notify;
-//            var $acceptButtons = $('.acceptRequest').last();
-//            var $rejectButtons = $('.rejectRequest').last();
-//            $($acceptButtons.get(index)).on('click', function(e) {
-//                acceptNotification(dat.id);
-//                $notify.remove();
-//            });
-//            $($rejectButtons.get(index)).on('click', function(e) {
-//                rejectNotification(dat.id);
-//                $notify.remove();
-//            });
-            
+                '</div>');
+            $notifications.append($notify);
+            var $acceptButtons = $('.acceptRequest').last();
+            var $rejectButtons = $('.rejectRequest').last();
+            $($acceptButtons.get(index)).on('click', function(e) {
+                acceptNotification(dat.id);
+                $notify.remove();
+            });
+            $($rejectButtons.get(index)).on('click', function(e) {
+                rejectNotification(dat.id);
+                $notify.remove();
+            });
         });
 
 
-    }, 
-    dataType: "json"});
-};
-
-var latestNotification = function() {
-    getNotifications();
-    return notifications;
+    }, "json");
 };
 
 var populateEvents = function() {
@@ -169,7 +158,7 @@ var populateMonthEvents = function() {
 };
 
 var populateWeekEvents = function() {
-    processEvents = function(data, status) {
+    $.get('populateEvents', function (data, status) {
         $('.event').remove();
         $overview = $('.overview');
         var x = $('.hourEntry').width();
@@ -189,14 +178,7 @@ var populateWeekEvents = function() {
         var cellBorderWidth = 1;
         var bufferWidth = 4;
         $.each(data, function(index, dat) {
-            if (dat.notif)
-                $div = $('<div class="event notif" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-            else {
-                if (dat.canEdit)
-                    $div = $('<div class="event canEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-                else
-                    $div = $('<div class="event" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-            }
+            $div = $('<div class="event" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
             $div.height((height+cellBorderWidth)*(dat.end - dat.start)*2-bufferWidth-eventBorderWidth);
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
             $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
@@ -223,12 +205,6 @@ var populateWeekEvents = function() {
         }, 'json');
         currentlyMovingY = event.pageY - $(this).offset().top;
 
-        if (-1 == $(this).attr("class").indexOf("notif")) {
-            canEdit = true;
-        } else {
-            canEdit = false;
-        }
-
     });
     $('.event').on('click', function (){
         if (currentlyClicking == 1) {
@@ -249,7 +225,7 @@ var populateWeekEvents = function() {
                 tableOver($(this), event);
             }
         });
-        if (canEdit && currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
+        if (currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
             $(this).width($cells.width());
             $(this).attr("class", "event movingEvent");
         }
@@ -276,70 +252,10 @@ var populateWeekEvents = function() {
         currentlyMovingY = 0
         return false;
     });
-    };
 
 
-    $.get('populateEvents', function (data, status) {
-        /*$.get('getNotificationsRequests', function (data2, status) {
-            data = data2.concat(data);
-            processEvents(data, status)
-        }, "json");*/
-        processEvents(data, status)
-    }, "json");
-
+}, "json");
 };
-
-$(document).on('click', '.requestAlert', function(e) {
-    var classes = $(this).attr('class');
-    var eventID = "eventID"
-    var substr = classes.substr(classes.indexOf(eventID) + eventID.length);
-    var first = substr.split()[0];
-
-    $.post('goToEvent', {"id": first}, function (data, status) {
-        formatCalendar("weekly", data);
-    }, "json").done(function() {
-        populateEvents();
-    });
-});
-
-var acceptRequest = function($object) {
-    var classes = $object.attr('class');
-    var eventID = "eventID"
-    var substr = classes.substr(classes.indexOf(eventID) + eventID.length);
-    var first = substr.split()[0];
-    acceptNotification(first);
-    var container = $object.parent().parent().parent();
-    container.slideUp();
-};
-
-$(document).on('click', '.acceptRequest', function(e) {
-    acceptRequest($(this));
-});
-
-$(document).on('click', '#acceptEvent', function(e) {
-    $('#eventModal').modal('hide');
-    acceptNotification(currentlyViewing);
-});
-
-
-var rejectRequest = function($object) {
-    var classes = $object.attr('class');
-    var eventID = "eventID"
-    var substr = classes.substr(classes.indexOf(eventID) + eventID.length);
-    var first = substr.split()[0];
-    rejectNotification(first);
-    var container = $object.parent().parent().parent();
-    container.slideUp();
-}
-
-$(document).on('click', '.rejectRequest', function(e) {
-    rejectRequest($(this));
-});
-
-$(document).on('click', '#rejectEvent', function(e) {
-    $('#eventModal').modal('hide');
-    rejectNotification(currentlyViewing);
-});
 
 var openID = function(id) {
     clearModal();
@@ -358,12 +274,8 @@ var openID = function(id) {
            $('#deleteEvent').show();
 
         } else {
-            if (data.notif) {
-                $('#acceptEvent').show();
-                $('#rejectEvent').show();
-            }else{
-                $('#deleteEvent').show();
-            }
+           $('#editEvent').hide();
+            $('#deleteEvent').show();
         }
         $('#eventModal').modal();
         $('#eventModal').on('shown', function(){                    
@@ -376,16 +288,9 @@ var openID = function(id) {
     }, "json");
 }
 
-
-
-
 $(document).ready(function(){
     populateEvents();
-
     getNotifications();
-    $popover = $('#notificationButton');
-    $popover.popover({title: "Notifications", placement: "bottom", html: true, content: function() {return latestNotification()} });
-
 });
 
 var updateCalendar = function(amount) {
@@ -585,8 +490,6 @@ $cells.on("mousedown", function(eventObject) {
 });
 
 var tableOver = function(cell, eventObject) {
-    if (!canEdit)
-        return;
     if (starty != -1) {
         eventObject.preventDefault();
         var index = $cells.index(cell);
@@ -660,8 +563,6 @@ var formatTime = function(date) {
 }
 
 var tableUp = function($cell, eventObject) {
-    if (!canEdit)
-        return;
     if (starty != -1) {
         eventObject.preventDefault();
         $dragged.hide();
@@ -741,15 +642,14 @@ $(document).on("mouseup", function(eventObject) {
 
      
 var acceptNotification = function(eventID) {
-    $.post('acceptNotification', {"eventID": eventID}, "json").done(function (data, status) {
-        setTimeout(function() { populateEvents();}, 250);
+    $.post('acceptNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
     });
-};
+}
 
 var rejectNotification = function(eventID) {
-    $.post('rejectNotification', {"eventID": eventID}, "json").done( function (data, status) {
-        setTimeout(function() { populateEvents();}, 250);
+    $.post('rejectNotification', {"eventID": eventID}, function (data, status) {
+        populateEvents();
     });
-};
-
+}
 

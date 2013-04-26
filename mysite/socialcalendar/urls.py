@@ -6,7 +6,6 @@ urlpatterns = patterns(
     '',
     url(r'^$', views.index, name='index'),
     url(r'^changeWeek', views.changeWeek, name='changeWeek'),
-    url(r'^goToEvent', views.goToEvent, name='goToEvent'),
     url(r'^submitEvent', views.submitEvent, name='submitEvent'),
     url(r'^populateEvents', views.populateEvents, name='populateEvents'),
     url(r'^getEventData', views.getEventData, name='getEventData'),
@@ -14,6 +13,8 @@ urlpatterns = patterns(
     url(r'^editEvent', views.editEvent, name='editEvent'),
     url(r'^changeStart', views.changeStart, name='changeStart'),
     url(r'^gcal', views.gcal, name='gcal'),
+    url(r'^comment', views.comment, name='comment'),
+
 
     url(r'^rejectNotification', views.rejectNotification, name='rejectNotification'),
     url(r'^acceptNotification', views.acceptNotification, name='acceptNotification'),
