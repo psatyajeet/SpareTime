@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.decorators.csrf import csrf_exempt
-
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 import calendar
 from datetime import date, timedelta, datetime
@@ -16,8 +14,6 @@ from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 from socialcalendar.models import ExceptionDate
 from socialcalendar.models import Name
-from socialcalendar.models import Comment
-
 
 
 from itertools import chain
@@ -160,8 +156,7 @@ def index(request):
 
             creators = list(e.creators.all().values())  
             if e.description == '':
-                e.description = "No-Description"   
-            print getListOfComments(e)      
+                e.description = "No-Description"         
             context = {
             'title': e.title,
             'description':e.description,
@@ -169,7 +164,6 @@ def index(request):
             'end': e.end.strftime(dateString),
             'creators' : creators,
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
-            'comments':getListOfComments(e),
             'rejected' : list(e.rejected.all().values()),
             'id':e.id,
             }
@@ -207,7 +201,6 @@ def index(request):
     }
 
     return render(request, 'socialcalendar/calendar.html', context)
-
 
 @csrf_protect
 def changeFormat(request):
@@ -323,6 +316,7 @@ def submitEvent(request):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.creators.add(e)
         usr.events.add(e)
+
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
             storeNotificationForFriends(friendIDs, e)
@@ -483,9 +477,13 @@ def populateMonthEvents(request):
 def getEventData(request):
 
     if request.method == "POST":
-        events = Event.objects.filter(id=findIdOfEvent(request.POST['id']))
+<<<<<<< HEAD
+        events = Event.objects.filter(id=request.POST['id'])
         usr = UserProfile.objects.get(user=request.session['fbid'])
 
+=======
+        events = Event.objects.filter(id=findIdOfEvent(request.POST['id']))
+>>>>>>> d7fb6a6b5a936264835107cbb6e5df146001ee7f
         if (len(events) != 1):
             return HttpResponseNotFound()
         else:
@@ -498,14 +496,17 @@ def getEventData(request):
                 'end': event.end.strftime(dateString),
                 'startms': calendar.timegm(event.start.timetuple())*1000,
                 'endms': calendar.timegm(event.end.timetuple())*1000,
+<<<<<<< HEAD
                 'id': event.id,
                 'canEdit': canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind': event.kind,
                 'notif': len(usr.notifications.filter(id=event.id)) >= 1,
+=======
                 'id': request.POST['id'],
                 'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind' : event.kind,
                 'coming':list(event.events.all().values()),                
+>>>>>>> d7fb6a6b5a936264835107cbb6e5df146001ee7f
             }
             return HttpResponse(simplejson.dumps(d))
     else:
@@ -811,10 +812,9 @@ def getWeeklyRecurringEvents(usr, first, last):
             repeat = True,
             repeatID = str(event.id) + '_' + time.strftime(idfeDateString),
             eid = event.id,
-            creators = event.creators.all(), 
-            kind = event.kind,
+            creators = event.creators.all()
             )
-            e.id = event.id
+
             totalForWeek.append(e)
 
     return totalForWeek
@@ -841,7 +841,7 @@ def findIdOfEvent(idToSearch):
     return idToSearch[0: idToSearch.rfind("_")]
 
 class tempEvent:
-    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators, kind):
+    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators):
         self.title = title
         self.description = description
         self.location = location,
@@ -851,7 +851,6 @@ class tempEvent:
         self.repeatID = repeatID
         self.id = eid
         self.creators = creators
-        self.kind = kind
 
 
 @csrf_protect
@@ -865,45 +864,6 @@ def addName(request):
         return HttpResponse()
     else:
         return HttpResponseNotFound()
-
-
-@csrf_exempt
-def comment(request):
-    if request.method == "POST":
-        event = Event.objects.get(id=request.POST['id'])
-        usr = None
-        name = None
-        if request.POST.has_key('name'):
-            name = request.POST['name']
-
-        if request.session['fbid']:
-            usr = UserProfile.objects.get(user=request.session['fbid'])
-            name = usr.name
-        if name == None:
-            return HttpResponse()
-
-        addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')))
-        d = []
-        
-        d.append({
-            'commenter': name,
-            'date':  datetime.today().replace(tzinfo=tz.gettz('UTC')).strftime(dateString)
-        })
-
-        return HttpResponse(simplejson.dumps(d))
-    else:
-        return HttpResponseNotFound()
-
-def addComment(commenter, name, date, event, comment):
-    if commenter == None:
-        c = Comment(event=event, comment = comment, name = name, date = date);
-    else :
-        c = Comment(commenter = commenter, event=event, comment = comment, name = name, date = date);
-    c.save()
-
-def getListOfComments(e):
-    comments = sorted(e.event.all(), key = lambda comment:comment.date);
-    return comments
 
 
 
