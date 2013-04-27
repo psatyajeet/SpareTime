@@ -13,7 +13,7 @@
 -->
 
  <!--Add a button for the user to click to initiate auth sequence -->
-     <button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
+    <button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
     <button id="lgoutgcal" onclick="acceptNotification()">Accept</button>
 
     <script>
@@ -90,131 +90,6 @@
     </script>
     <script src="https://apis.google.com/js/client.js"></script>
 
-
-<!--
->>>>>>> Tried to separate FB js
-<script language="javascript" type="text/javascript">
-window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '329753420461644', // Local App ID
-      status     : true, // check login status
-      cookie     : true, // enable cookies to allow the server to access the session
-      xfbml      : true  // parse XFBML
-    });
-
-FB.getLoginStatus(function(response) {
-    if (response.status === 'connected') {
-        $loginButton = $("#loginButton");
-        $loginButton.html("Logout");
-        $loginButton.attr("id", "logoutButton");   
-    } else if (response.status === 'not_authorized') {
-    } else {
-    }
-});
-};
-
-function login() {
-    FB.login(function(response) {
-        if (response.authResponse) {
-            FB.api('/me', function(response) {
-                makeUser(response.name, response.id);
-            })
-        } else {
-            // cancelled
-        }
-    });
-}
-
-function logout() {    
-    $.get('deleteCookie', function (data, status) {}).done(function() {
-                populateEvents();
-                });
-    
-    FB.logout(function(response) {
-    });
-}
-
-var changeFormat = function(newFormat) {
-    $.get('changeFormat', {'format': newFormat}, function (data, status) {
-            format = newFormat;
-            formatCalendar(format, data);
-            }, "json").done( function() {
-                populateEvents();
-
-                });};
-
-function makeUser(name, id) {
-    $.get('makeUser', {'name' : name, 'fbid': id}, function (data, status) {
-    }).done(function() {
-                populateEvents();
-                ShowMyName();
-
-                });
-}
-  // Load the SDK Asynchronously
-  (function(d){
-     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement('script'); js.id = id; js.async = true;
-     js.src = "//connect.facebook.net/en_US/all.js";
-     ref.parentNode.insertBefore(js, ref);
-   }(document));
-
-</script>
--->
-<!--
-<button name="my_full_name" onclick="ShowMyName()" value="My Name" />
--->
-<!--
-<script language="javascript" type="text/javascript">
-
-var friends;
-var friendNames = [];
-
-function ShowMyName() {
-    FB.api('/me/friends', function(response) {
-        if(response.data) {
-            friends = response.data;
-            $.each(response.data, function(index, friend) {
-                friendNames.push(friend.name);
-                });
-        } else {
-            alert("Error!");
-        }
-    });         
-    }
-</script>
--->
-
-
-<!---
-<div class="alert alert-info">
-    <p>You have a new event request from:</p>
-    <div class="row-fluid">
-        <div class="span4"></div>
-        <div class="span2">
-            <button class="btn btn-block btn-success" type="button">Accept</button>
-        </div>
-        <div class="span2">
-            <button class="btn btn-block btn-danger" type="button">Reject</button>     
-        </div>
-        <div class="span4"></div>
-    </div>
-</div>
-<div class="alert alert-info">
-    <p>You have a new event request from:</p>
-    <div class="row-fluid">
-        <div class="span4"></div>
-        <div class="span2">
-            <button class="btn btn-block btn-success" type="button">Accept</button>
-        </div>
-        <div class="span2">
-            <button class="btn btn-block btn-danger" type="button">Reject</button>     
-        </div>
-        <div class="span4"></div>
-    </div>
-</div>
--->
 
 <div id="notificationLocation">
 </div>
@@ -426,8 +301,8 @@ function ShowMyName() {
                             <option value="monthly">Monthly</option>
                             <option value="yearly">Yearly</option>
                         </select>
-
-                        <div class="" id="repeat-daily">
+                    </div>
+                    <div class="hide" id="repeat-daily">
                             <div>
                                 Repeats every : 
                                 <select class="span1">
@@ -467,8 +342,8 @@ function ShowMyName() {
                                     </div>
                                 </label>
                             </div>
-                        </div>
-                        <div class="" id="repeat-weekly">
+                    </div>
+                    <div class="hide" id="repeat-weekly">
                             <div>
                                 Repeats every : 
                                 <select class="span1">
@@ -532,8 +407,8 @@ function ShowMyName() {
                                     </div>
                                 </label>
                             </div>
-                        </div>
-                        <div class="" id="repeat-monthly">
+                    </div>
+                    <div class="hide" id="repeat-monthly">
                             <div>
                                 Repeats every : 
                                 <select class="span1">
@@ -541,7 +416,7 @@ function ShowMyName() {
                                     <option>{{forloop.counter}}</option>
                                     {% endfor  %}
                                 </select>
-                                days
+                                months
                             </div>
                             <div>
                                 Repeat by:
@@ -585,8 +460,8 @@ function ShowMyName() {
                                     </div>
                                 </label>
                             </div>
-                        </div>
-                        <div class="" id="repeat-yearly">
+                    </div>
+                    <div class="hide" id="repeat-yearly">
                             <div>
                                 Repeats every : 
                                 <select class="span1">
@@ -626,8 +501,8 @@ function ShowMyName() {
                                     </div>
                                 </label>
                             </div>
-                        </div>
                     </div>
+                    
                 </div>
                 <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
 
@@ -681,9 +556,25 @@ $(document).ready(function(){
         $('#modal-repeat').hide()
         if($(this).is(':checked')){
             $('#modal-repeat').show()
+            if($('#repeat-option-time-period').val()=="daily"){
+                $('#repeat-daily').show()
+            }
+            else if($('#repeat-option-time-period').val()=="weekly"){
+                $('#repeat-weekly').show()
+            }
+            else if($('#repeat-option-time-period').val()=="monthly"){
+                $('#repeat-monthly').show()
+            }
+            else if($('#repeat-option-time-period').val()=="yearly"){
+                $('#repeat-yearly').show()
+            }
         }
         else{
             $('#modal-repeat').hide()
+            $('#repeat-daily').hide()
+            $('#repeat-weekly').hide()
+            $('#repeat-monthly').hide()
+            $('#repeat-yearly').hide()            
         }
     });
 
@@ -763,7 +654,7 @@ var changeFormat = function(newFormat) {
 
                 populateEvents();
 
-                });};
+            });};
 
 
 $("#weeklyButton").click(function() {
@@ -772,13 +663,14 @@ $("#weeklyButton").click(function() {
         $("#weeklyCalendar").show();
         format = "weekly";
         changeFormat("weekly");
-        });
+    });
+
 $("#monthlyButton").click(function() {
         format = "monthly";
         changeFormat("monthly");
         $("#monthlyCalendar").show();
         $("#weeklyCalendar").hide();
-        });
+    });
 
 
 
@@ -878,20 +770,6 @@ var uncolorCells = function() {
     $cells.css("background-color", "white");
     invitedFriendsID = [];
 }
-
-
-/*
-$(document).on("click", "#loginButton", function() {
-    login();
-});
-
-$(document).on("click", "#logoutButton", function() {
-    logout();
-    $(this).html("Login");
-    $(this).attr("id", "loginButton");
-});
-*/
-
 
 
 </script>
