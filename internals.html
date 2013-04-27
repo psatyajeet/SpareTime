@@ -1,0 +1,196 @@
+<html>
+<head>
+<title> SpareTime Internals</title>
+
+<body bgcolor="ffffff">
+
+<h1> SpareTime </h1>
+
+<P> This application was built using the Django framework using the MVC (or Model-View-Template in Django) architecture. The entire applicationn is wrapped in a virtual environment (venv) so that the installed plug-ins are contained within the application. The requirements for this project can be found in requirements.txt and can be installed via pip. Django itself can also be installed with pip. 
+
+<P>
+Our entire codebase can be find within the mysite folder. We will go folder-by-folder and file by file to describe how the system is built. 
+
+<P>
+<ul>
+
+<li>
+	folder: database
+
+	This folder holds our sqlite database (called data) that is used in during our local development. 
+</li> 
+
+<li>
+	file: manage.py
+
+	This file is a django-generated file that holds the code for various django-python functions such as how to sync the database (python manage.py syncdb) and how to run the localhost server (python manage.py runserver).
+</li>
+
+<li>
+	folder: mysite
+
+	<ul>
+		<li>
+			file: __init__.py <br>
+
+			This file is a django-generated file that was unaltered.
+		</li>
+		<li>
+			file: settings.py <br>
+
+			This file is the main file that holds the django settings for the sparetime application. These settings include the database information, directory for static files, directory for templates, installed django apps, and heroku settings at the bottom. 
+		</li>
+		<li>
+			file: urls.py <br>
+
+			This file is the top level url re-routing file. Any url essentially re-routes to the url file in the socialcalendar app
+		</li>
+		<li>
+			file: wsgi.py <br>
+
+			This is a django-generated file that was unaltered. 
+		</li>
+	</ul>
+</li>
+
+<li>
+	folder: socialcalendar
+
+	<ul>
+		<li>
+			file: __init__.py <br>
+
+			This file is a django-generated file that was unaltered.
+		</li>
+		<li>
+			file: models.py <br>
+
+			This is the the main model file. It holds the information for our five database tables: ExceptionDate, Event, UserProfile, Name, and Comment. 
+		</li>
+		<li>
+			file: tests.py <br>
+
+			This file is a django-generated file that was unaltered.
+		</li>
+		<li>
+			file: urls.py <br>
+
+			This is the url re-routing file for socialcalendar. 
+		</li>
+		<li>
+			file: views.py <br>
+
+			This is the main view file for our application. It contains all of the django-python methods that are the base of the functionality 
+		</li>
+	</ul>
+</li>
+
+<li>
+	folder: static
+
+	<ul>
+		<li>
+			folder: bootstrap <br>
+
+			A downloaded copy of all bootstrap templating files.
+		</li>
+		<li>
+			folder: css 
+
+			<ul>
+				<li> 
+					file: custom.css <br>
+
+					The main css file for the application
+				</li>
+				<li>
+					file: homepage.css <br>
+
+					The css for the homepage (not logged-in)
+				</li>
+				<li>
+					file: tinyscrollbar.css <br>
+
+					The css for the scrollbar used in our calendar
+				</li>
+			</ul>
+		</li>
+		<li>
+			folder: img <br>
+
+			Contains all of the images used in our application.
+		</li>
+		<li>
+			folder: js 
+
+			<ul>
+				<li>
+					file: draggable.js <br>
+
+					Contains most of the javascript for our application.
+				</li> 
+				<li>
+					file: facebook.js <br>
+
+					Contains the facebook javascript 
+				</li>
+				<li>
+					file: jquery.tinyscrollbar.min.js <br>
+
+					Contains the jquery code for the scrollbar in our calendar
+				</li>
+			</ul>		
+		</li>
+		<li>
+			folder: timePicker <br>
+
+			Contains the css and js files for the default date and time picker. 
+		</li>
+	</ul>
+</li>
+
+<li>
+	folder: templates
+
+	<ul>
+		<li>
+			file: homepage.html <br>
+
+			This is the html file for our default (not logged-in) homepage
+		</li>
+		<li>
+			folder: socialcalendar
+			<ul>
+				<li>
+					file: calendar.html <br>
+
+					The html file for our calendar
+				</li>
+				<li>
+					file: event.html <br>
+
+					The html file for individual events
+				</li>
+				<li>
+					file: monthly.html <br>
+
+					The html file for the monthly view on the calendar
+				</li>
+				<li>
+					file: weekly.html <br>
+
+					The html file for the weekly view on the calendar
+				</li>
+			</ul>
+		</li>
+		<li>
+			file: template.html <br>
+
+			This is the html file that serves as the main template for our application. It contains the code for the header and footer that is the same on every page of our application. 
+		</li>
+	<ul>
+</li>
+
+</ul>
+</body>
+</html>
