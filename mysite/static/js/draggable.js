@@ -519,11 +519,29 @@ var createEvent = function() {
         var rrule='RRULE:';
         if($('#repeat-option-time-period').val()=="daily"){
             rrule+='FREQ=DAILY;';
-            rrule+=$("#interval").val();
+            if ($('#After').is(':checked')){
+                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+            }
+            else if ($('#On').is(':checked')){
+                rrule+='UNTIL='+$("onEndRepeat").val()+";";
+            }
+            rrule+='INTERVAL='+$("#interval").val();
         }
         else if($('#repeat-option-time-period').val()=="weekly"){
             rrule+='FREQ=WEEKLY;';
-            rrule+=$("#interval").val();
+            if ($('#After').is(':checked')){
+                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+            }
+            else if ($('#On').is(':checked')){
+                rrule+='UNTIL='+$("onEndRepeat").val()+";";
+            }
+            if ($("#interval").val()!=1){
+                rrule+=$("#interval").val();
+            }
+            
+
+
+
         }
         else if($('#repeat-option-time-period').val()=="monthly"){
             rrule+='FREQ=MONTHLY;';
@@ -533,7 +551,7 @@ var createEvent = function() {
             rrule+='FREQ=YEARLY;';
             rrule+=$("#interval").val();
         }
-    };
+    }
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
