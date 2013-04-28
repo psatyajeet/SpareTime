@@ -515,11 +515,31 @@ var createEvent = function() {
         }
     }
 
+    if ($("#repeatEventsCheckbox").is(':checked')){
+        var rrule='RRULE:';
+        if($('#repeat-option-time-period').val()=="daily"){
+            rrule+='FREQ=DAILY;';
+            rrule+=$("#interval").val();
+        }
+        else if($('#repeat-option-time-period').val()=="weekly"){
+            rrule+='FREQ=WEEKLY;';
+            rrule+=$("#interval").val();
+        }
+        else if($('#repeat-option-time-period').val()=="monthly"){
+            rrule+='FREQ=MONTHLY;';
+            rrule+=$("#interval").val();
+        }
+        else if($('#repeat-option-time-period').val()=="yearly"){
+            rrule+='FREQ=YEARLY;';
+            rrule+=$("#interval").val();
+        }
+    };
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val(), 
+        "RRULE": rrule,
         "friendIDs": JSON.stringify(d),
         "kind" : kind},
         "json").done(function (data, status) {
