@@ -140,18 +140,18 @@
                                 <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
                                 {% for day in days %}
                                 {% if day.today %}
-                                <td class="calendarEntry calendarToday" width="13.5%"></td>
+                                <td class="calendarEntry calendarToday" width="13.5%"><div class="toolTipDiv"></div></td>
                                 {% else %}
-                                <td class="calendarEntry" width="13.5%"></td>
+                                <td class="calendarEntry" width="13.5%"><div class="toolTipDiv"></div></td>
                                 {% endif %}
                                 {% endfor %}
                             </tr>
                             <tr class="calendarRow">
                                 {% for day in days %}
                                 {% if day.today %}
-                                <td class="calendarHalfHour calendarToday" width="13.5%"></td>
+                                <td class="calendarHalfHour calendarToday" width="13.5%"><div class="toolTipDiv"></div></td>
                                 {% else %}
-                                <td class="calendarHalfHour" width="13.5%"></td>
+                                <td class="calendarHalfHour" width="13.5%"><div class="toolTipDiv"></div></td>
                                 {% endif %}
                                 {% endfor %}
                             </tr>
@@ -728,10 +728,13 @@ $("#showFriendAvailability").on("click", function() {
         var data = JSON.stringify(invitedFriendsID);
         $.post('heatMap', {'data': {'param': data}}, function (data, status) {
             var values = [];
+            var busy = [];
             $.each(data, function(index, dat) {
                 values.push(dat.ratios);
+                busy.push(dat.busy);
                 });
             colorCells(values);
+            addToolTips(busy);
             }, "json");
     }
 });
@@ -761,8 +764,44 @@ $("#makeEvent").on("click", function() {
 var $cells = $(".calendarEntry, .calendarHalfHour");
 var colorCells = function(values) {
     $cells.each(function(index, cell) {
-
+        
         $(cell).css("background-color", "hsl("+(Math.floor(120*values[index]))+", 70%, 65%)");
+            });
+};
+
+var addToolTips = function(values) {
+    $cells.each(function(index, cell) {
+        
+            $child = $(cell).children().first();
+            var cantCome = '<em>Unavailable Friends:</em><br>';
+            var count = 0;
+            $.each(values[index], function(index2, id) {
+
+                var top = friends.length;
+                var bot = 0;
+                var i = Math.floor(top/2);
+                // Binary Search
+                while (friends[i].id != id && top!=bot) {
+                var intID1 = parseInt(friends[i].id);
+                var intID2 = parseInt(id);
+                if (intID1 > intID2) {
+                top = i;
+                i = Math.floor((bot + i) /2);
+                } else {
+                bot = i;
+                i = Math.ceil((top + i) / 2);
+                }
+                }
+
+                cantCome += (friendNames[i])+'<br>';
+                count++;
+                });
+            if (count == 0)
+                cantCome += 'None';
+            var place = 'right';
+            if (index % 7 > 3)
+                place = 'left';
+            $child.tooltip({html: true, title: cantCome, placement: place, container: "body"});
             });
 };
 

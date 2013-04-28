@@ -252,3 +252,9 @@ td.otherMonth {
     font-size: 8pt;
     text-align: right;
 }
+
+.toolTipDiv {
+    width: 100%;
+    height: 100%;
+}
+
