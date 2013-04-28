@@ -515,11 +515,82 @@ var createEvent = function() {
         }
     }
 
+    if ($("#repeatEventsCheckbox").is(':checked')){
+        var rrule='RRULE:';
+        if($('#repeat-option-time-period').val()=="daily"){
+            rrule+='FREQ=DAILY;';
+            if ($('#After').is(':checked')){
+                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+            }
+            else if ($('#On').is(':checked')){
+                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+            }
+            rrule+='INTERVAL='+$("#interval").val();
+        }
+        else if($('#repeat-option-time-period').val()=="weekly"){
+            rrule+='FREQ=WEEKLY;';
+            if ($('#After').is(':checked')){
+                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+            }
+            else if ($('#On').is(':checked')){
+                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+            }
+            if ($("#interval").val()!=1){
+                rrule+='INTERVAL='+$("#interval").val();
+            }
+            var byday='';
+            if ($('$SU').is(':checked')){
+                byday+='SU';
+            }
+            if ($('$MO').is(':checked')){
+                byday+='MO';
+            }
+            if ($('$TU').is(':checked')){
+                byday+='TU';
+            }
+            if ($('$WE').is(':checked')){
+                byday+='WE';
+            }
+            if ($('$TH').is(':checked')){
+                byday+='TH';
+            }
+            if ($('$SU').is(':checked')){
+                byday+='SU';
+            }
+            if (byday!='')
+                rrule+=';'+'BYDAY='+byday;
+        }
+        else if($('#repeat-option-time-period').val()=="monthly"){
+            rrule+='FREQ=MONTHLY;';
+            if ($('#After').is(':checked')){
+                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+            }
+            else if ($('#On').is(':checked')){
+                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+            }
+            if ($("#interval").val()!=1){
+                rrule+='INTERVAL='+$("#interval").val();
+            }
+        }
+        else if($('#repeat-option-time-period').val()=="yearly"){
+            rrule+='FREQ=YEARLY;';
+            if ($('#After').is(':checked')){
+                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+            }
+            else if ($('#On').is(':checked')){
+                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+            }
+            if ($("#interval").val()!=1){
+                rrule+='INTERVAL='+$("#interval").val();
+            }
+        }
+    }
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val(), 
+        "RRULE": rrule,
         "friendIDs": JSON.stringify(d),
         "kind" : kind},
         "json").done(function (data, status) {
