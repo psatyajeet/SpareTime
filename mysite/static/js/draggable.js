@@ -382,7 +382,7 @@ var refreshComments = function () {
         $commentSpace = $('#commentSpace');
         insideComments = "";
         $.each(data, function(index, dat) {
-            insideComments += '<div class="comment alert alert-info"><span class="commentName">'+dat.name+'</span>: '+dat.comment+'</br><div class="commentDate">'+dat.date+'</div></div>';
+            insideComments += '<div class="comment alert alert-info"><span class="commentName">'+dat.name+':</span> '+dat.comment+'</br><div class="commentDate">'+dat.date+'</div></div>';
         });
         $commentSpace.html(insideComments);
     }, "json");

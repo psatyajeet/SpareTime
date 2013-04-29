@@ -2,67 +2,96 @@
 {% block main %}
 
 <body>
-	 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-      <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
-<div class="row-fluid">
-  <h1>Event: {{title}}</h1>
-  <div>Description: {{description}}</div>
-  <div>Start: {{start}}</div>
-  <div>End: {{end}}</div>
-  <div>Coming: <ul id = "coming">{% for p in coming %}<li> {{p.name}}</li> {% endfor %}</ul></div>
-  <div>Comments: <ul id = "comments">{% for p in comments %}<li> {{p.name}} says: {{p.comment}} </br> -{{p.date}}</li> {% endfor %}</ul></div>
-  <div>Creators: {% for creator in creators %} {{creator.name}} {% endfor %}
-</div>
-
-<div class="row-fluid">
-<div class = "span2">  
-<form class="form-search">
-  <input type="text" class="input-medium search-query" id = "inputBox">
-</div>
-        <div class="span2">
-            <button class="btn btn-block btn-success" type="button" id="accept">Add Name</button>
-        </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <div class="row-fluid">
+        <span class="span12">
+            <h1>Event: {{title}}</h1>
+        </span>
     </div>
-</div>
-</form>
+    <div class="row-fluid">
+        <span class="span4">
+            <div>Creators: {% for creator in creators %} {{creator.name}} {% endfor %}</div>
+        </span>
+        <span class="span8">
+            <div>Description: {{description}}</div>
+            <div>Start: {{start}}</div>
+            <div>End: {{end}}</div>
+        </span>
 
-<div class="row-fluid">
-<div class = "span2">  
-<form class="form-search">
-  <input type="text" class="input-medium search-query" id = "commentForm">
-</div>
-        <div class="span2">
-            <button class="btn btn-primary btn-block" type="button" id="comment">Comment</button>
-        </div>
     </div>
-</div>
-</form>
-</div>
- <div class="span4">
-         <button class="btn btn-block btn-success" type="button" id="signIn">Sign in</button>
- </div>
 
+    <div class="row-fluid">
+        <span class="span4">
+            <div>Coming: <ul id = "coming">{% for p in coming %}<li> {{p.name}}</li> {% endfor %}</ul></div>
+            <form class="form-search">
+                <span>
+                    <input type="text" class="span8" id = "inputBox">
+                    <button class="btn  btn-success" type="button" id="accept">Add Name</button>
+                </span>
+            </form>
+        </span>
+        <span class="span8">
+            <div>
+                {% for p in comments %}
+                <div class = "comment alert alert-info">
+                    <span class="commentName"> {{p.name}} says:</span> 
+                    {{p.comment}}
+                    <div class="commentDate">{{p.date}}</div> 
+                </div>
+                {% endfor %}
+            </div>
+            <form class="form-search">
+                <textarea  class="span10" id = "commentForm"></textarea>
+                <button class="btn btn-primary" type="button" id="comment">Comment</button>
+            </form>
+        </span>
+    </div>
+
+    <div class="row-fluid">
+        <span class="span12">
+        </span>
+    </div>
+
+
+    <div class="row-fluid">
+
+        <span class = "span2">  
+        </span>
+        <span class="span8">
+            <button class="btn btn-block btn-success" type="button" id="signIn">Sign in</button>
+        </span>
+        <span class="span2">
+        </span>
+    </div>
+
+
+    <div class="row-fluid">
+        <span class = "span12">  
+
+        </span>
+    </div>
 <script>
-eventPage = true
-var id = {{id}}
-function addName(){
-	var name = $("#inputBox").val()
-	$.get('addName',{'name' : $("#inputBox").val(), 'id': id}, function (data, status) {
-    	$("#coming").append('<li>'+name+'</li>')
-    })
-    $("#inputBox").val("")
-}
+    eventPage = true
+    var id = {{id}}
+    function addName(){
+        var name = $("#inputBox").val()
+        $.get('addName',{'name' : $("#inputBox").val(), 'id': id}, function (data, status) {
+            $("#coming").append('<li>'+name+'</li>')
+        })
+        $("#inputBox").val("")
+    }
 
-function addComment(){
-	var comment = $("#commentForm").val()
-	$.post('comment',{'name' : $("#inputBox").val(), 'id': id, 'comment': $('#commentForm').val()}, function (data, status) {
-    	$("#comments").append('<li>'+ data[0].commenter + ' says: '+ comment+ '</br>' + '-'+data[0].date+'</li>');
-    }, "json")
-    $("#commentForm").val("")
-}
-$("#comment").click(addComment)
-$("#accept").click(addName)
-$("#signIn").click(login)
+    function addComment(){
+        var comment = $("#commentForm").val()
+        $.post('comment',{'name' : $("#inputBox").val(), 'id': id, 'comment': $('#commentForm').val()}, function (data, status) {
+            $("#comments").append('<li>'+ data[0].commenter + ' says: '+ comment+ '</br>' + '-'+data[0].date+'</li>');
+        }, "json")
+        $("#commentForm").val("")
+    }
+    $("#comment").click(addComment)
+    $("#accept").click(addName)
+    $("#signIn").click(login)
 
 </script>
 
