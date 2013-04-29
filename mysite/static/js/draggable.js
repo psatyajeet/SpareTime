@@ -683,20 +683,20 @@ var editEvent = function() {
         if($('#repeat-option-time-period').val()=="daily"){
             rrule+='FREQ=DAILY';
             if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val();
             }
             else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val();
             }
             rrule+=';INTERVAL='+$("#interval").val();
         }
         else if($('#repeat-option-time-period').val()=="weekly"){
             rrule+='FREQ=WEEKLY';
             if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val();
             }
             else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val();
             }
             if ($("#interval").val()!=1){
                 rrule+=';INTERVAL='+$("#interval").val();
@@ -729,10 +729,10 @@ var editEvent = function() {
         else if($('#repeat-option-time-period').val()=="monthly"){
             rrule+='FREQ=MONTHLY';
             if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val();
             }
             else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val();
             }
             if ($("#interval").val()!=1){
                 rrule+=';INTERVAL='+$("#interval").val();
@@ -765,10 +765,10 @@ var editEvent = function() {
         else if($('#repeat-option-time-period').val()=="yearly"){
             rrule+='FREQ=YEARLY';
             if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val();
             }
             else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val();
             }
             if ($("#interval").val()!=1){
                 rrule+=';INTERVAL='+$("#interval").val();
