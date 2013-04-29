@@ -920,5 +920,16 @@ def getComments(request):
     else:
         return HttpResponseNotFound()
 
+def getCreators(e):
+    return list(e.creators.values())
+
+def getComing(e):
+    return list(e.events.all().values())+list(e.linkedEvent.all().values())
+
+def getRejected(e):
+    return list(e.rejected.all().values())
+    
+def getUnanswered(e):
+    return list(e.unanswered.all().values())
 
 
