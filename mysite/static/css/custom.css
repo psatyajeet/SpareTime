@@ -258,3 +258,7 @@ td.otherMonth {
     height: 100%;
 }
 
+.eventHeading {
+    font-size: 14px;
+    font-weight: bold;
+}

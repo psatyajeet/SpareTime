@@ -254,11 +254,18 @@ function handleAuthClick(event) {
 <div id="eventModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <form>
         <div class="modal-header">
+
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
                 <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
             </ul>
             <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
+            <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
+            <li><a href="#peopleTab" data-toggle="tab">People</a></li>
+        </ul>
+        <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
         </div>
 
         <div class="modal-body">
@@ -521,6 +528,18 @@ function handleAuthClick(event) {
                     </label>
                 </div>
             </div>
+            <div id="modalPeople">
+
+                <div class="row-fluid">
+                    <span="span12">
+                        <div class="eventHeading">Creators</div>
+                        <div class="eventHeading">Attending</div>
+                        <div class="eventHeading">Not Attending </div>
+                    </span>
+                </div>
+            </div>
+
+            <div id="modalComments">
             <div class="hide" id="repeat-yearly">
                 <div>
                     Repeats every : 
@@ -531,6 +550,8 @@ function handleAuthClick(event) {
                     </select>
                     years
                 </div>
+
+
                 <div class="row-fluid">
                     <div class="span2">
                         Starts on: 
