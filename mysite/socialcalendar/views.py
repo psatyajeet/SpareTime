@@ -302,6 +302,12 @@ def submitEvent(request):
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
 
+        rrule = ""
+        repeat = False
+        if request.POST.has_key('RRULE'):
+            rrule = request.POST['RRULE']
+            repeat = True
+
         if(len(request.POST['title']) == 0):
             e = Event(
             description=request.POST['description'],
@@ -309,6 +315,8 @@ def submitEvent(request):
             start=startDate,
             end=endDate,
             kind = request.POST['kind'],
+            recurrence = rrule,
+            repeat = repeat,
         ) 
         else:    
             e = Event(
@@ -318,6 +326,8 @@ def submitEvent(request):
                 start=startDate,
                 end=endDate,
                 kind = request.POST['kind'],
+                recurrence = rrule,
+                repeat = repeat,
             )
         e.save()
         usr = UserProfile.objects.get(user=request.session['fbid'])
