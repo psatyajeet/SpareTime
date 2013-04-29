@@ -359,7 +359,9 @@ var openID = function(id) {
         if(data.canEdit) {
            $('#editEvent').show();
            $('#deleteEvent').show();
-
+           if(data.repeat){
+               $('#deleteEventThis').show();
+           }
         } else {
             if (data.notif) {
                 $('#acceptEvent').show();
@@ -668,14 +670,16 @@ var createEvent = function() {
 }
 $("#createEvent").click(function() {createEvent()});
 
-var deleteEvent = function() {
-    $.post('deleteEvent', {"id": currentlyViewing}, 
+var deleteEvent = function(deleteAll) {
+    $.post('deleteEvent', {"id": currentlyViewing, "all" : deleteAll}, 
             "json").done(function (data, status) {
         populateEvents();
     });
     $('#eventModal').modal('hide');
 }
-$("#deleteEvent").click(function() {deleteEvent()});
+
+$("#deleteEvent").click(function() {deleteEvent("all")});
+$("#deleteEventThis").click(function() {deleteEvent("this")});
 
 var editEvent = function() {
     if ($("#repeatEventsCheckbox").is(':checked')){
@@ -947,6 +951,7 @@ var tableUp = function($cell, eventObject) {
 
         $('a[href=#eventInformationTab]').tab('show');
         $('#deleteEvent').hide();
+        $('#deleteEventThis').hide();
         $('#editEvent').hide();
         $('#eventURL').hide();
         $('#eventModal').modal();

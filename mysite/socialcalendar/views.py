@@ -508,7 +508,8 @@ def getEventData(request):
                 'id': request.POST['id'],
                 'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind' : event.kind,
-                'coming':list(event.events.all().values()),                
+                'coming':list(event.events.all().values()), 
+                'repeat':event.repeat,               
             }
             return HttpResponse(simplejson.dumps(d))
     else:
@@ -520,15 +521,27 @@ def deleteEvent(request):
 
     if request.method == "POST":
         usr = UserProfile.objects.get(user=request.session['fbid'])
+        eid = request.POST['id']
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
+
         if canEdit(usr, event):
-            event.delete()
+            if not event.repeat or request.POST['all'] == 'all':
+                event.delete()
+            else:
+                deleteSingleRecurrence(event, (datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
         else:
             usr.events.remove(event)
         return HttpResponse()
     else:
         return HttpResponseNotFound()
 
+
+def deleteSingleRecurrence(e, time):
+    if(e.repeat):
+        ex = ExceptionDate(exceptionTime=time)
+        ex.save()
+        e.exceptions.add(ex)
+    return
 
 @csrf_protect
 def editEvent(request):
@@ -563,12 +576,7 @@ def changeStart(request):
     if request.method == "POST":
         eid = request.POST['id']
         event = Event.objects.get(id=findIdOfEvent(eid))
-
         if(event.repeat):
-            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
-            ex.save()
-            event.exceptions.add(ex)
-
             startDate = datetime.strptime(request.POST['startTime'], dateString)
 
             startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
@@ -578,6 +586,15 @@ def changeStart(request):
             start = startDate
             end = startDate + eventLength
 
+            rule = rrulestr(event.recurrence, dtstart = event.start)
+            times = rule.between(start, end, inc=True)
+
+            if len(times) > 0:
+                return HttpResponse()
+
+            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
+            ex.save()
+            event.exceptions.add(ex)
 
             e = Event(
                 title=event.title,
