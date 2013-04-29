@@ -139,7 +139,15 @@ tr.calendarRow td:last-child {
 
 .event {
     background-color: #009BFF;
-    border: 2px solid #0065A6; 
+    border: 1px solid #0065A6; 
+    font-size: 10.5px;
+    color: black;
+    font-family: "Arial", Times, serif;
+    /* font-weight: bold; */
+    opacity: 0.87;
+    font-weight: 600;
+    line-height: 130%;
+    border-radius: 3px;
     height: 100px;
     width: 100px;
     position: absolute;
