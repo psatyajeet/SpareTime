@@ -361,15 +361,16 @@ var openID = function(id) {
            $('#deleteEvent').show();
            if(data.repeat){
                $('#deleteEventThis').show();
-           }
+           } 
         } else {
             if (data.notif) {
                 $('#acceptEvent').show();
                 $('#rejectEvent').show();
             }else{
                 $('#deleteEvent').show();
+                $('#deleteEventThis').hide();
             }
-        }
+        } 
         $('#eventModal').modal();
         $('a[href=#eventInformationTab]').tab('show');
         $('#eventModal').on('shown', function(){                    
