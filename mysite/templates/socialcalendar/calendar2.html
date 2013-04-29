@@ -257,6 +257,11 @@ function handleAuthClick(event) {
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
                 <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
+            </ul>
+            <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
+                <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
                 <li><a href="#peopleTab" data-toggle="tab">People</a></li>
             </ul>
             <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
@@ -522,9 +527,70 @@ function handleAuthClick(event) {
                     </label>
                 </div>
             </div>
+            <div id="modalPeople">
+
+                <div class="row-fluid">
+                    <span="span12">
+                    <div class="eventHeading">Creators</div>
+                    <div class="eventHeading">Attending</div>
+                    <div class="eventHeading">Not Attending </div>
+                </span>
+            </div>
+        </div>
+
+        <div id="modalComments">
+            <div class="hide" id="repeat-yearly">
+                <div>
+                    Repeats every : 
+                    <select class="span1" id="interval">
+                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                        <option>{{forloop.counter}}</option>
+                        {% endfor  %}
+                    </select>
+                    years
+                </div>
+
+
+                <div class="row-fluid">
+                    <div class="span2">
+                        Starts on: 
+                    </div>
+                    <div id="datetimepicker2" class="input-append span6">
+                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                        <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    Ends: 
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="Never" checked>
+                        Never
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="After">
+                        After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                    </label>
+                    <label class="radio">
+                        <div class="row-fluid">
+                            <div class="span1">
+                                <input type="radio" name="endRadios" value="On">
+                                On 
+                            </div>
+                            <div id="datetimepicker2" class="input-append span6">
+                                <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                                <span class="add-on">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
 
         </div>
-        <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="6"></textarea>
+        <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
 
         <div>
             <label class="radio inline">
@@ -541,40 +607,18 @@ function handleAuthClick(event) {
             </label>
         </div>
 
+    </div>
+    <div id="modalComments">
+
         <div class="row-fluid">
-            <span="span12">
-            Direct Link: <span id="eventURL"></span>
-        </span>
-    </div>
-
-</div>
-<div id="modalPeople">
-
-    <div class="row-fluid">
-        <span="span12">
-        <div class="eventHeading">Creators</div>
-        <div id="createdEvent"></div><br>
-        <div class="eventHeading">Attending</div>
-        <div id="comingToEvent"></div><br>
-        <div class="eventHeading">Not Attending</div>
-        <div id="notComingToEvent"></div><br>
-        <div class="eventHeading">Awaiting Response</div>
-        <div id="needToRespondToEvent"></div><br>
-    </span>
-</div>
-</div>
-
-<div id="modalComments">
-
-    <div class="row-fluid">
-        <div class="input-append">
-            <input class="span11" id="commentTextBox" type="text" placeholder="Add a comment...">
-            <button class="btn" type="button" id="postComment">Post</button>
-        </div>
-        <div id="commentSpace">
+            <div class="input-append">
+                <input class="span11" id="commentTextBox" type="text" placeholder="Add a comment...">
+                <button class="btn" type="button" id="postComment">Post</button>
+            </div>
+            <div id="commentSpace">
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 </form>
@@ -594,7 +638,7 @@ function handleAuthClick(event) {
 
 $(document).ready(function(){ 
 
-       $('#modal-repeat').hide()
+    $('#modal-repeat').hide()
     if($("#repeatEventsCheckbox").is(':checked')){
         $('#modal-repeat').show()
         if($('#repeat-option-time-period').val()=="daily"){
@@ -734,7 +778,6 @@ $("#gcal").click(gcal);
 var changeFormat = function(newFormat) {
     $.get('changeFormat', {'format': newFormat}, function (data, status) {
         uncolorCells();
-        removeToolTips();
         format = newFormat;
         formatCalendar(format, data);
     }, "json").done( function() {
@@ -896,14 +939,6 @@ var uncolorCells = function() {
     $cells.css("background-color", "white");
     invitedFriendsID = [];
 }
-
-var removeToolTips = function(values) {
-    $cells.each(function(index, cell) {
-
-        $child = $(cell).children().first();
-        $child.tooltip('destroy');
-    });
-};
 
 
 </script>

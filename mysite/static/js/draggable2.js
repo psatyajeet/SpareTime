@@ -352,9 +352,6 @@ var openID = function(id) {
         $("#endTime").val(data.end);
 
         $('#createEvent').hide();
-        $('#eventURL').show();
-        var url = document.URL+'?id='+id;
-        $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
 
         if(data.canEdit) {
            $('#editEvent').show();
@@ -405,32 +402,6 @@ $(document).ready(function(){
         $('#modalEventInformation').hide();
         $('#modalComments').hide();
         $('#modalPeople').show();
-        $.get('getPeople', {'id': currentlyViewing}, function (data, status) {
-            var filler = '';
-            $.each(data.creators, function(index, dat) {
-                filler += dat.name + '<br>';
-            });
-            $('#createdEvent').html(filler);
-
-            filler = '';
-            $.each(data.coming, function(index, dat) {
-                filler += dat.name + '<br>';
-            });
-            $('#comingToEvent').html(filler);
-
-            filler = '';
-            $.each(data.rejected, function(index, dat) {
-                filler += dat.name + '<br>';
-            });
-            $('#notComingToEvent').html(filler);
-
-            filler = '';
-            $.each(data.unanswered, function(index, dat) {
-                filler += dat.name + '<br>';
-            });
-            $('#needToRespondToEvent').html(filler);
-
-        }, 'json');
     });
 
     $('a[href=#eventInformationTab]').on('shown', function (e) {
@@ -458,7 +429,6 @@ $(document).ready(function(){
 var updateCalendar = function(amount) {
 
     uncolorCells();
-    removeToolTips();
     if (format === "monthly") {
         $.post('changeMonth', {"amount": amount}, function (data, status) {
             formatCalendar("monthly", data);
@@ -678,109 +648,11 @@ var deleteEvent = function() {
 $("#deleteEvent").click(function() {deleteEvent()});
 
 var editEvent = function() {
-    if ($("#repeatEventsCheckbox").is(':checked')){
-        var rrule='RRULE:';
-        if($('#repeat-option-time-period').val()=="daily"){
-            rrule+='FREQ=DAILY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
-            }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
-            }
-            rrule+=';INTERVAL='+$("#interval").val();
-        }
-        else if($('#repeat-option-time-period').val()=="weekly"){
-            rrule+='FREQ=WEEKLY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
-            }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
-            }
-            if ($("#interval").val()!=1){
-                rrule+=';INTERVAL='+$("#interval").val();
-            }
-            var byday='';
-            if ($('$SU').is(':checked')){
-                byday+='SU';
-            }
-            if ($('$MO').is(':checked')){
-                byday+='MO';
-            }
-            if ($('$TU').is(':checked')){
-                byday+='TU';
-            }
-            if ($('$WE').is(':checked')){
-                byday+='WE';
-            }
-            if ($('$TH').is(':checked')){
-                byday+='TH';
-            }
-            if ($('$FR').is(':checked')){
-                byday+='FR';
-            }
-            if ($('$SA').is(':checked')){
-                byday+='SA';
-            }
-            if (byday!='')
-                rrule+=';'+'BYDAY='+byday;
-        }
-        else if($('#repeat-option-time-period').val()=="monthly"){
-            rrule+='FREQ=MONTHLY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
-            }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
-            }
-            if ($("#interval").val()!=1){
-                rrule+=';INTERVAL='+$("#interval").val();
-            }
-            if ($("#dayweek").is(':checked')){
-                rrule+=';BYDAY='+$("#weekinmonth").val();
-                if ($('$SU').is(':checked')){
-                    rrule+='SU';
-                }
-                if ($('$MO').is(':checked')){
-                    rrule+='MO';
-                }
-                if ($('$TU').is(':checked')){
-                    rrule+='TU';
-                }
-                if ($('$WE').is(':checked')){
-                    rrule+='WE';
-                }
-                if ($('$TH').is(':checked')){
-                    rrule+='TH';
-                }
-                if ($('$FR').is(':checked')){
-                    rrule+='FR';
-                }
-                if ($('$SA').is(':checked')){
-                    rrule+='SA';
-                }
-            }
-        }
-        else if($('#repeat-option-time-period').val()=="yearly"){
-            rrule+='FREQ=YEARLY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
-            }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
-            }
-            if ($("#interval").val()!=1){
-                rrule+=';INTERVAL='+$("#interval").val();
-            }
-        }
-    }
     $.post('editEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val(),
-        "RRULE": rrule,
         "id": currentlyViewing}, 
         "json").done(function (data, status) {
         populateEvents();
@@ -948,7 +820,6 @@ var tableUp = function($cell, eventObject) {
         $('a[href=#eventInformationTab]').tab('show');
         $('#deleteEvent').hide();
         $('#editEvent').hide();
-        $('#eventURL').hide();
         $('#eventModal').modal();
         $('#eventModal').on('shown', function(){                    
             $('#eventName').focus();
