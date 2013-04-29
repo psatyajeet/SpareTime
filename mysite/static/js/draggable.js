@@ -402,6 +402,32 @@ $(document).ready(function(){
         $('#modalEventInformation').hide();
         $('#modalComments').hide();
         $('#modalPeople').show();
+        $.get('getPeople', {'id': currentlyViewing}, function (data, status) {
+            var filler = '';
+            $.each(data.creators, function(index, dat) {
+                filler += dat.name + '<br>';
+            });
+            $('#createdEvent').html(filler);
+
+            filler = '';
+            $.each(data.coming, function(index, dat) {
+                filler += dat.name + '<br>';
+            });
+            $('#comingToEvent').html(filler);
+
+            filler = '';
+            $.each(data.rejected, function(index, dat) {
+                filler += dat.name + '<br>';
+            });
+            $('#notComingToEvent').html(filler);
+
+            filler = '';
+            $.each(data.unanswered, function(index, dat) {
+                filler += dat.name + '<br>';
+            });
+            $('#needToRespondToEvent').html(filler);
+
+        }, 'json');
     });
 
     $('a[href=#eventInformationTab]').on('shown', function (e) {

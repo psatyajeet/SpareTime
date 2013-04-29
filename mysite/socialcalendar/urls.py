@@ -26,6 +26,7 @@ urlpatterns = patterns(
     url(r'^deleteCookie', views.deleteCookie, name='deleteCookie'),
 
     url(r'^makeUser', views.makeUser, name='makeUser'),
+    url(r'^getPeople', views.getPeople, name='getPeople'),
 
     url(r'^changeFormat', views.changeFormat, name='changeFormat'),
     url(r'^changeMonth', views.changeMonth, name='changeMonth'),

@@ -920,6 +920,18 @@ def getComments(request):
     else:
         return HttpResponseNotFound()
 
+@csrf_protect
+def getPeople(request):
+    if request.method == "GET":
+        event = Event.objects.get(id=findIdOfEvent(request.GET['id']));
+        d = {'creators': getCreators(event),
+             'coming': getComing(event),
+             'rejected': getRejected(event),
+             'unanswered': getUnanswered(event)}
+        return HttpResponse(simplejson.dumps(d))
+    else:
+        return HttpResponseNotFound()
+
 def getCreators(e):
     return list(e.creators.values())
 
