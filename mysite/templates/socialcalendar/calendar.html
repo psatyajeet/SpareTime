@@ -12,18 +12,18 @@
 </fb:login-button>
 -->
 
- <!--Add a button for the user to click to initiate auth sequence -->
-    <button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
-    <button id="lgoutgcal" onclick="acceptNotification()">Accept</button>
+<!--Add a button for the user to click to initiate auth sequence -->
+<button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
+<button id="lgoutgcal" onclick="acceptNotification()">Accept</button>
 
-    <script>
-        var logoutGmail = function(){
-         window.open('https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://127.0.0.1:8000/', '_self');
-    }
-    </script>
+<script>
+var logoutGmail = function(){
+   window.open('https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://127.0.0.1:8000/', '_self');
+}
+</script>
 
-    <button id="authorize-button" onclick="handleClientLoad()">Authorize</button>
-    <script type="text/javascript">
+<button id="authorize-button" onclick="handleClientLoad()">Authorize</button>
+<script type="text/javascript">
       // Enter a client ID for a web application from the Google Developer Console.
       // The provided clientId will only work if the sample is run directly from
       // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
@@ -45,45 +45,45 @@
       function handleClientLoad() {
         gapi.client.setApiKey(apiKey);
         window.setTimeout(checkAuth,1);
-      }
+    }
 
-      function checkAuth() {
+    function checkAuth() {
         gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-      }
+    }
 
 
-      function handleAuthResult(authResult) {
+    function handleAuthResult(authResult) {
         if (authResult && !authResult.error) {
           getGoogleEvents();
-        } else {
-            alert("Couldn't authorize")
-        }
-      }
+      } else {
+        alert("Couldn't authorize")
+    }
+}
 
-      function handleAuthClick(event) {
-        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-        return false;
-      }
+function handleAuthClick(event) {
+    gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+    return false;
+}
 
       // Load the API and make an API call.  Display the results on the screen.
-    function getGoogleEvents() {
+      function getGoogleEvents() {
 
         var request = gapi.client.request({
             'path': '/calendar/v3/users/me/calendarList',
         });
         request.execute(function (resp) { 
             $.each(resp.items, function (index, dat){
-            if(dat.id.indexOf("#") == -1){
-            var restRequest = gapi.client.request({
-                'path': '/calendar/v3/calendars/'+dat.id+'/events',
-                'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-01-01T16:00:00-04:00'}  
+                if(dat.id.indexOf("#") == -1){
+                    var restRequest = gapi.client.request({
+                        'path': '/calendar/v3/calendars/'+dat.id+'/events',
+                        'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-01-01T16:00:00-04:00'}  
+                    });
+
+                    restRequest.execute(function(resp) { 
+                        gcal(resp); 
+                    });
+                }       
             });
-    
-            restRequest.execute(function(resp) { 
-            gcal(resp); 
-        });
-        }       
-        });
         });
     }
 
@@ -91,18 +91,18 @@
     <script src="https://apis.google.com/js/client.js"></script>
 
 
-<div id="notificationLocation">
-</div>
+    <div id="notificationLocation">
+    </div>
 
-<div class="row">
-    <div class="span1"><button type="button" id="calendarBack" class="btn btn-block btn-primary">&lt&lt</button></div>
-    <div class="span1"><button type="button" id="calendarToday" class="btn btn-block btn-primary">Today</button></div>
-    <div class="span1"><button type="button" id="calendarForward" class="btn btn-block btn-primary">&gt&gt</button></div>
-    <div class="span6"><h4 id="weekname">{{ header }}</h4></div>
-    <div class="span1"></div>
-    <div class="span1"><button type="button" id="monthlyButton" class="btn btn-block btn-primary">Monthly</button></div>
-    <div class="span1"><button type="button" id="weeklyButton" class="btn btn-block btn-primary">Weekly</button></div>
-</div>
+    <div class="row">
+        <div class="span1"><button type="button" id="calendarBack" class="btn btn-block btn-primary">&lt&lt</button></div>
+        <div class="span1"><button type="button" id="calendarToday" class="btn btn-block btn-primary">Today</button></div>
+        <div class="span1"><button type="button" id="calendarForward" class="btn btn-block btn-primary">&gt&gt</button></div>
+        <div class="span6"><h4 id="weekname">{{ header }}</h4></div>
+        <div class="span1"></div>
+        <div class="span1"><button type="button" id="monthlyButton" class="btn btn-block btn-primary">Monthly</button></div>
+        <div class="span1"><button type="button" id="weeklyButton" class="btn btn-block btn-primary">Weekly</button></div>
+    </div>
 
 <!--
 <div class="row">
@@ -131,37 +131,37 @@
         <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
         <div class="viewport">
             <div class="overview">
-               <div class='dragged'></div>
-                <div class="calendarTable">
-                    <table>
-                        <tbody>
-                            {% for hour in hours %}
-                            <tr class="calendarRow">
-                                <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
-                                {% for day in days %}
-                                {% if day.today %}
-                                <td class="calendarEntry calendarToday" width="13.5%"><div class="toolTipDiv"></div></td>
-                                {% else %}
-                                <td class="calendarEntry" width="13.5%"><div class="toolTipDiv"></div></td>
-                                {% endif %}
-                                {% endfor %}
-                            </tr>
-                            <tr class="calendarRow">
-                                {% for day in days %}
-                                {% if day.today %}
-                                <td class="calendarHalfHour calendarToday" width="13.5%"><div class="toolTipDiv"></div></td>
-                                {% else %}
-                                <td class="calendarHalfHour" width="13.5%"><div class="toolTipDiv"></div></td>
-                                {% endif %}
-                                {% endfor %}
-                            </tr>
+             <div class='dragged'></div>
+             <div class="calendarTable">
+                <table>
+                    <tbody>
+                        {% for hour in hours %}
+                        <tr class="calendarRow">
+                            <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
+                            {% for day in days %}
+                            {% if day.today %}
+                            <td class="calendarEntry calendarToday" width="13.5%"><div class="toolTipDiv"></div></td>
+                            {% else %}
+                            <td class="calendarEntry" width="13.5%"><div class="toolTipDiv"></div></td>
+                            {% endif %}
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                        </tr>
+                        <tr class="calendarRow">
+                            {% for day in days %}
+                            {% if day.today %}
+                            <td class="calendarHalfHour calendarToday" width="13.5%"><div class="toolTipDiv"></div></td>
+                            {% else %}
+                            <td class="calendarHalfHour" width="13.5%"><div class="toolTipDiv"></div></td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 </div>
 <!-- End Week Calendar -->
 
@@ -170,7 +170,7 @@
         <thead>
             <tr>
                 {% for day in monthDays %}
-                    <th class="headings monthly" width="14.3%">{{day.title}}</th>
+                <th class="headings monthly" width="14.3%">{{day.title}}</th>
                 {% endfor %}
             </tr>
         </thead>
@@ -184,17 +184,17 @@
                 <tr class="calendarRow">
                     {% for day in week %}
                     {% if day.thisMonth %}
-                        {% if day.today %}
-                            <td class="calendarMonthEntry calendarToday" width="14.3%">{{day.date}}<div></div></td>
-                        {% else %}
-                            <td class="calendarMonthEntry" width="14.3%">{{day.date}}<div></div></td>
-                        {% endif %}
+                    {% if day.today %}
+                    <td class="calendarMonthEntry calendarToday" width="14.3%">{{day.date}}<div></div></td>
                     {% else %}
-                        {% if day.today %}
-                            <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%">{{day.date}}<div></div></td>
-                        {% else %}
-                            <td class="calendarMonthEntry otherMonth" width="14.3%">{{day.date}}<div></div></td>
-                        {% endif %}
+                    <td class="calendarMonthEntry" width="14.3%">{{day.date}}<div></div></td>
+                    {% endif %}
+                    {% else %}
+                    {% if day.today %}
+                    <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%">{{day.date}}<div></div></td>
+                    {% else %}
+                    <td class="calendarMonthEntry otherMonth" width="14.3%">{{day.date}}<div></div></td>
+                    {% endif %}
                     {% endif %}
                     {% endfor %}
                 </tr>
@@ -254,17 +254,17 @@
 <div id="eventModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <form>
         <div class="modal-header">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
-            <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
-        </ul>
-        <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
+                <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
+            </ul>
+            <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
         </div>
 
         <div class="modal-body">
             <div id="modalEventInformation">
 
-            <h3 id="myModalLabel"><input id="eventName" class="input-block-level" type="text" placeholder="Event Name"></h3>
+                <h3 id="myModalLabel"><input id="eventName" class="input-block-level" type="text" placeholder="Event Name"></h3>
                 <div class="row-fluid">
                     <div class="span6">
                         <div id="datetimepicker" class="input-append">
@@ -303,277 +303,313 @@
                         </select>
                     </div>
                     <div class="hide" id="repeat-daily">
-                            <div>
-                                Repeats every : 
-                                <select class="span1" id="interval">
-                                    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-                                    <option>{{forloop.counter}}</option>
-                                    {% endfor  %}
-                                </select>
-                                days
+                        <div>
+                            Repeats every : 
+                            <select class="span1" id="interval">
+                                {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                                <option>{{forloop.counter}}</option>
+                                {% endfor  %}
+                            </select>
+                            days
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span2">
+                                Starts on: 
                             </div>
-                            <div class="row-fluid">
-                                <div class="span2">
-                                    Starts on: 
-                                </div>
-                                <div id="datetimepicker2" class="input-append span6">
-                                    <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                    <span class="add-on">
-                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                    </span>
-                                </div>
+                            <div id="datetimepicker2" class="input-append span6">
+                                <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                                <span class="add-on">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
                             </div>
-                            
-                            Ends:
-                            <div class="row-fluid"> 
-                                <label class="radio span2">
-                                    <input type="radio" name="endRadios" id="Never" value="Never" checked></input>
-                                    Never
-                                </label>
-                            </div>
-                            <div class="row-fluid"
-                                <label class="radio span2">
-                                <input type="radio" name="endRadios" id= "After" value="After">
-                                After <input id="afterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
-                                
-                                </input>
-                                </label>
-                            </div>
-                            <div class="row-fluid">
-                                <label class="radio">
-                                    <div class="row-fluid">
-                                        <div class="span1">
-                                            <input type="radio" name="endRadios" id="On"value="On"></input>
-                                            On 
-                                        </div>
-                                        <div id="datetimepicker2" class="input-append span6">
-                                            <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                            <span class="add-on">
-                                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                    </div>
-                    <div class="hide" id="repeat-weekly">
-                            <div>
-                                Repeats every : 
-                                <select class="span1" id="interval">
-                                    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-                                    <option>{{forloop.counter}}</option>
-                                    {% endfor  %}
-                                </select>
-                                weeks
-                            </div>
-                            <div>
-                                Repeat on: 
-                                <label class="checkbox inline">
-                                    <input type="checkbox" name="repeatOn" id="SU" value="SU"> Su
-                                </label>
-                                <label class="checkbox inline">
-                                    <input type="checkbox" name="repeatOn" id="MO" value="MO"> M
-                                </label>
-                                <label class="checkbox inline">
-                                    <input type="checkbox" name="repeatOn" id="TU" value="TU"> T
-                                </label>
-                                <label class="checkbox inline">
-                                    <input type="checkbox" name="repeatOn" id="WE" value="WE"> W
-                                </label>
-                                <label class="checkbox inline">
-                                    <input type="checkbox" name="repeatOn" id="TH" value="TH"> Th
-                                </label>
-                                <label class="checkbox inline">
-                                    <input type="checkbox" name="repeatOn" id="FR" value="FR"> F
-                                </label>
-                                <label class="checkbox inline">
-                                    <input type="checkbox" name="repeatOn" id="SA" value="SA"> Sa
-                                </label>
-                            </div>
-                            <div class="row-fluid">
-                                <div class="span2">
-                                    Starts on: 
-                                </div>
-                                <div id="datetimepicker2" class="input-append span6">
-                                    <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                    <span class="add-on">
-                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row-fluid">
-                                Ends: 
-                                <label class="radio">
-                                    <input type="radio" name="endRadios" value="Never" checked>
-                                    Never
-                                </label>
-                                <label class="radio">
-                                    <input type="radio" name="endRadios" value="After">
-                                    After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
-                                </label>
-                                <label class="radio">
-                                    <div class="row-fluid">
-                                        <div class="span1">
-                                            <input type="radio" name="endRadios" value="On">
-                                            On 
-                                        </div>
-                                        <div id="datetimepicker2" class="input-append span6">
-                                            <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                            <span class="add-on">
-                                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                    </div>
-                    <div class="hide" id="repeat-monthly">
-                            <div>
-                                Repeats every : 
-                                <select class="span1" id="interval">
-                                    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-                                    <option>{{forloop.counter}}</option>
-                                    {% endfor  %}
-                                </select>
-                                months
-                            </div>
-                            <div>
-                                Repeat by:
-                                <label class="radio inline">
-                                    <input type="radio" name="monthly-repeat-by" id="daymonth" value="daymonth" checked>
-                                    day of the month
-                                </label>
-                                <label class="radio inline">
-                                    <input type="radio" name="monthly-repeat-by" id="dayweek" value="dayweek">
-                                    day of the week
-                                </label>
-                            </div>
-                            <div class="row-fluid">
-                                <div class="span2">
-                                    Starts on: 
-                                </div>
-                                <div id="datetimepicker2" class="input-append span6">
-                                    <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                    <span class="add-on">
-                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row-fluid">
-                                Ends: 
-                                <label class="radio">
-                                    <input type="radio" name="endRadios" value="Never" checked>
-                                    Never
-                                </label>
-                                <label class="radio">
-                                    <input type="radio" name="endRadios" value="After">
-                                    After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
-                                </label>
-                                <label class="radio">
-                                    <div class="row-fluid">
-                                        <div class="span1">
-                                            <input type="radio" name="endRadios" value="On">
-                                            On 
-                                        </div>
-                                        <div id="datetimepicker2" class="input-append span6">
-                                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                            <span class="add-on">
-                                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                    </div>
-                    <div class="hide" id="repeat-yearly">
-                            <div>
-                                Repeats every : 
-                                <select class="span1" id="interval">
-                                    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-                                    <option>{{forloop.counter}}</option>
-                                    {% endfor  %}
-                                </select>
-                                years
-                            </div>
-                            <div class="row-fluid">
-                                <div class="span2">
-                                    Starts on: 
-                                </div>
-                                <div id="datetimepicker2" class="input-append span6">
-                                    <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                    <span class="add-on">
-                                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="row-fluid">
-                                Ends: 
-                                <label class="radio">
-                                    <input type="radio" name="endRadios" value="Never" checked>
-                                    Never
-                                </label>
-                                <label class="radio">
-                                    <input type="radio" name="endRadios" value="After">
-                                    After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
-                                </label>
-                                <label class="radio">
-                                    <div class="row-fluid">
-                                        <div class="span1">
-                                            <input type="radio" name="endRadios" value="On">
-                                            On 
-                                        </div>
-                                        <div id="datetimepicker2" class="input-append span6">
-                                            <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                                            <span class="add-on">
-                                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                    </div>
-                    
-                </div>
-                <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
+                        </div>
 
-                <div>
-                    <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="PU" value="PU" checked>
-                        Public
-                    </label>
-                    <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="PR" value="PR">
-                        Private
-                    </label>
-                    <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="FL" value="FL">
-                        Flexible
+                        Ends:
+                        <div class="row-fluid"> 
+                            <label class="radio span2">
+                                <input type="radio" name="endRadios" id="Never" value="Never" checked></input>
+                                Never
+                            </label>
+                        </div>
+                        <div class="row-fluid"
+                        <label class="radio span2">
+                            <input type="radio" name="endRadios" id= "After" value="After">
+                            After <input id="afterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
+
+                        </input>
                     </label>
                 </div>
-
-            </div>
-            <div id="modalComments">
-
                 <div class="row-fluid">
-                    <div class="input-append">
-                        <input class="span11" id="commentTextBox" type="text" placeholder="Add a comment...">
-                        <button class="btn" type="button" id="postComment">Post</button>
-                    </div>
-                    <div id="commentSpace">
-                    </div>
+                    <label class="radio">
+                        <div class="row-fluid">
+                            <div class="span1">
+                                <input type="radio" name="endRadios" id="On"value="On"></input>
+                                On 
+                            </div>
+                            <div id="datetimepicker2" class="input-append span6">
+                                <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                                <span class="add-on">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </label>
                 </div>
             </div>
+            <div class="hide" id="repeat-weekly">
+                <div>
+                    Repeats every : 
+                    <select class="span1" id="interval">
+                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                        <option>{{forloop.counter}}</option>
+                        {% endfor  %}
+                    </select>
+                    weeks
+                </div>
+                <div>
+                    Repeat on: 
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="repeatOn" id="SU" value="SU"> Su
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="repeatOn" id="MO" value="MO"> M
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="repeatOn" id="TU" value="TU"> T
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="repeatOn" id="WE" value="WE"> W
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="repeatOn" id="TH" value="TH"> Th
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="repeatOn" id="FR" value="FR"> F
+                    </label>
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="repeatOn" id="SA" value="SA"> Sa
+                    </label>
+                </div>
+                <div class="row-fluid">
+                    <div class="span2">
+                        Starts on: 
+                    </div>
+                    <div id="datetimepicker2" class="input-append span6">
+                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                        <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    Ends: 
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="Never" checked>
+                        Never
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="After">
+                        After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                    </label>
+                    <label class="radio">
+                        <div class="row-fluid">
+                            <div class="span1">
+                                <input type="radio" name="endRadios" value="On">
+                                On 
+                            </div>
+                            <div id="datetimepicker2" class="input-append span6">
+                                <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                                <span class="add-on">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <div class="hide" id="repeat-monthly">
+                <div>
+                    Repeats every : 
+                    <select class="span1" id="interval">
+                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                        <option>{{forloop.counter}}</option>
+                        {% endfor  %}
+                    </select>
+                    months
+                </div>
+                <div>
+                    Repeat by:
+                    <label class="radio inline">
+                        <input type="radio" name="monthly-repeat-by" id="daymonth" value="daymonth" checked>
+                        day of the month
+                    </label>
+                    <label class="radio inline">
+                        <input type="radio" name="monthly-repeat-by" id="dayweek" value="dayweek">
+                        day of the week
+                    </label>
+                </div>
+                <div class="hide" id="repeat-by-info">
+                    <div>
+                        Repeats on : 
+                        <select class="span2" id="weekinmonth">
+                            <option value="1">First</option>
+                            <option value="2">Second</option>
+                            <option value="3">Third</option>
+                            <option value="4">Fourth</option>
+                            <option value="5">Fifth</option>
+                        </select>
+                    </div>
+                    <div>
+                        Repeat on: 
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="repeatOn" id="SU" value="SU"> Su
+                        </label>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="repeatOn" id="MO" value="MO"> M
+                        </label>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="repeatOn" id="TU" value="TU"> T
+                        </label>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="repeatOn" id="WE" value="WE"> W
+                        </label>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="repeatOn" id="TH" value="TH"> Th
+                        </label>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="repeatOn" id="FR" value="FR"> F
+                        </label>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="repeatOn" id="SA" value="SA"> Sa
+                        </label>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span2">
+                        Starts on: 
+                    </div>
+                    <div id="datetimepicker2" class="input-append span6">
+                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                        <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    Ends: 
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="Never" checked>
+                        Never
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="After">
+                        After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                    </label>
+                    <label class="radio">
+                        <div class="row-fluid">
+                            <div class="span1">
+                                <input type="radio" name="endRadios" value="On">
+                                On 
+                            </div>
+                            <div id="datetimepicker2" class="input-append span6">
+                                <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                                <span class="add-on">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <div class="hide" id="repeat-yearly">
+                <div>
+                    Repeats every : 
+                    <select class="span1" id="interval">
+                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                        <option>{{forloop.counter}}</option>
+                        {% endfor  %}
+                    </select>
+                    years
+                </div>
+                <div class="row-fluid">
+                    <div class="span2">
+                        Starts on: 
+                    </div>
+                    <div id="datetimepicker2" class="input-append span6">
+                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                        <span class="add-on">
+                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    Ends: 
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="Never" checked>
+                        Never
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="endRadios" value="After">
+                        After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                    </label>
+                    <label class="radio">
+                        <div class="row-fluid">
+                            <div class="span1">
+                                <input type="radio" name="endRadios" value="On">
+                                On 
+                            </div>
+                            <div id="datetimepicker2" class="input-append span6">
+                                <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                                <span class="add-on">
+                                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+        </div>
+        <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
+
+        <div>
+            <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="PU" value="PU" checked>
+                Public
+            </label>
+            <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="PR" value="PR">
+                Private
+            </label>
+            <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="FL" value="FL">
+                Flexible
+            </label>
         </div>
 
-    </form>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-        <button class="btn btn-danger" id="deleteEvent">Delete</button>
-        <button class="btn btn-primary" id="editEvent">Edit</button>
-        <button class="btn btn-primary" id="createEvent">Create</button>
-        <button class="btn btn-success" id="acceptEvent">Accept</button>
-        <button class="btn btn-danger" id="rejectEvent">Reject</button>
     </div>
+    <div id="modalComments">
+
+        <div class="row-fluid">
+            <div class="input-append">
+                <input class="span11" id="commentTextBox" type="text" placeholder="Add a comment...">
+                <button class="btn" type="button" id="postComment">Post</button>
+            </div>
+            <div id="commentSpace">
+            </div>
+        </div>
+    </div>
+</div>
+
+</form>
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-danger" id="deleteEvent">Delete</button>
+    <button class="btn btn-primary" id="editEvent">Edit</button>
+    <button class="btn btn-primary" id="createEvent">Create</button>
+    <button class="btn btn-success" id="acceptEvent">Accept</button>
+    <button class="btn btn-danger" id="rejectEvent">Reject</button>
+</div>
 
 </div>
 
@@ -583,27 +619,27 @@
 $(document).ready(function(){ 
 
     $('#modal-repeat').hide()
-        if($("#repeatEventsCheckbox").is(':checked')){
-            $('#modal-repeat').show()
-            if($('#repeat-option-time-period').val()=="daily"){
-                $('#repeat-daily').show()
-            }
-            else if($('#repeat-option-time-period').val()=="weekly"){
-                $('#repeat-weekly').show()
-            }
-            else if($('#repeat-option-time-period').val()=="monthly"){
-                $('#repeat-monthly').show()
-            }
-            else if($('#repeat-option-time-period').val()=="yearly"){
-                $('#repeat-yearly').show()
-            }
+    if($("#repeatEventsCheckbox").is(':checked')){
+        $('#modal-repeat').show()
+        if($('#repeat-option-time-period').val()=="daily"){
+            $('#repeat-daily').show()
         }
-        else{
-            $('#modal-repeat').hide()
-            $('#repeat-daily').hide()
-            $('#repeat-weekly').hide()
-            $('#repeat-monthly').hide()
-            $('#repeat-yearly').hide()            
+        else if($('#repeat-option-time-period').val()=="weekly"){
+            $('#repeat-weekly').show()
+        }
+        else if($('#repeat-option-time-period').val()=="monthly"){
+            $('#repeat-monthly').show()
+        }
+        else if($('#repeat-option-time-period').val()=="yearly"){
+            $('#repeat-yearly').show()
+        }
+    }
+    else{
+        $('#modal-repeat').hide()
+        $('#repeat-daily').hide()
+        $('#repeat-weekly').hide()
+        $('#repeat-monthly').hide()
+        $('#repeat-yearly').hide()            
     }
 
     $('#repeatEventsCheckbox').change(function (){
@@ -651,47 +687,67 @@ $(document).ready(function(){
         }
     });
 
+    $('#daymonth').change(function(){
+        if($(this).is(':checked')){
+            $('#repeat-by-info').hide();
+        }
+        else
+        {
+            $('#repeat-by-info').show();
+        }
+    });
+
+    $('#dayweek').change(function(){
+        if($(this).is(':checked')){
+            $('#repeat-by-info').show();
+        }
+        else
+        {
+            $('#repeat-by-info').hide();
+        }
+    });
+
 });
 
-    var format = "{{format}}";
+var format = "{{format}}";
 
-    $("#repeatPopover").popover()
+$("#repeatPopover").popover()
 
-    var clearModal = function () {
-        $("#eventName").val("");
-        $("#eventDescription").val("");
-        $("#eventLocation").val("");
-        $('#editEvent').hide();
-        $('#deleteEvent').hide();
-        $('#acceptEvent').hide();
-        $('#rejectEvent').hide();
-    }
+var clearModal = function () {
+    $("#eventName").val("");
+    $("#eventDescription").val("");
+    $("#eventLocation").val("");
+    $('#editEvent').hide();
+    $('#deleteEvent').hide();
+    $('#acceptEvent').hide();
+    $('#rejectEvent').hide();
+}
 
-    var dates = new Array();
-    {% for date in dates %}
-    dates.push(new Date({{ date.year }},
-            {{ date.month }},
-            {{ date.day }}));
-    {% endfor %}
-    $(document).ready(function(){
+var dates = new Array();
+{% for date in dates %}
+dates.push(new Date({{ date.year }},
+    {{ date.month }},
+    {{ date.day }}));
+{% endfor %}
+$(document).ready(function(){
 
-            var scrollBar = $('#scrollbar1');
-            scrollBar.tinyscrollbar({wheel: 34});
-            scrollBar.tinyscrollbar_update(272);
+    var scrollBar = $('#scrollbar1');
+    scrollBar.tinyscrollbar({wheel: 34});
+    scrollBar.tinyscrollbar_update(272);
 
-            if (format == "weekly")
-                $("#monthlyCalendar").hide();
-            else
-                $("#weeklyCalendar").hide();
+    if (format == "weekly")
+        $("#monthlyCalendar").hide();
+    else
+        $("#weeklyCalendar").hide();
 
-            });
+});
 
 
 var gcal = function(resp) {
     $.post('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
     }).done(function() {
-                populateEvents();
-                });
+        populateEvents();
+    });
 }
 
 
@@ -701,17 +757,17 @@ $("#gcal").click(gcal);
 
 var changeFormat = function(newFormat) {
     $.get('changeFormat', {'format': newFormat}, function (data, status) {
-            uncolorCells();
-            format = newFormat;
-            formatCalendar(format, data);
-            }, "json").done( function() {
+        uncolorCells();
+        format = newFormat;
+        formatCalendar(format, data);
+    }, "json").done( function() {
 
-                populateEvents();
+        populateEvents();
 
-            });};
+    });};
 
 
-$("#weeklyButton").click(function() {
+    $("#weeklyButton").click(function() {
         $("#monthlyCalendar").hide();
         $('.event').remove();
         $("#weeklyCalendar").show();
@@ -719,7 +775,7 @@ $("#weeklyButton").click(function() {
         changeFormat("weekly");
     });
 
-$("#monthlyButton").click(function() {
+    $("#monthlyButton").click(function() {
         format = "monthly";
         changeFormat("monthly");
         $("#monthlyCalendar").show();
@@ -728,29 +784,29 @@ $("#monthlyButton").click(function() {
 
 
 
-var invitedFriendsID = [];
-var nonRemovedFriends;
+    var invitedFriendsID = [];
+    var nonRemovedFriends;
 
-var addFriend = function(item) {
-    var $invited = $('#invitedFriends');
-    var $friendComplete = $('#friendComplete');
-    $invited.html($invited.html() + '<span class="invitedFriend" ><span>' + item + '</span><span class="friendCloseBox">X</span></span>');
-    $friendComplete.val("");
-    var index = friendNames.indexOf(item);
-    invitedFriendsID.push(friends[index].id);
-    index = nonRemovedFriends.indexOf(item);
-    nonRemovedFriends.splice(index, 1);
-}
+    var addFriend = function(item) {
+        var $invited = $('#invitedFriends');
+        var $friendComplete = $('#friendComplete');
+        $invited.html($invited.html() + '<span class="invitedFriend" ><span>' + item + '</span><span class="friendCloseBox">X</span></span>');
+        $friendComplete.val("");
+        var index = friendNames.indexOf(item);
+        invitedFriendsID.push(friends[index].id);
+        index = nonRemovedFriends.indexOf(item);
+        nonRemovedFriends.splice(index, 1);
+    }
 
-$(document).on('click', '.friendCloseBox', function() {
-    var name = $(this).siblings().html();
-    var index = friendNames.indexOf(name);
-    invitedFriendsID.splice(index, 1);
-    $(this).parent().remove();
-    nonRemovedFriends.push(name);
-        });
+    $(document).on('click', '.friendCloseBox', function() {
+        var name = $(this).siblings().html();
+        var index = friendNames.indexOf(name);
+        invitedFriendsID.splice(index, 1);
+        $(this).parent().remove();
+        nonRemovedFriends.push(name);
+    });
 
-$('#friendComplete').typeahead({
+    $('#friendComplete').typeahead({
         source: function() {
             if(nonRemovedFriends.length == 0) {
                 friendNames = []
@@ -765,98 +821,98 @@ $('#friendComplete').typeahead({
         }});
 
 
-$('#friendModal').modal({'show': false, 'keyboard': false});
+    $('#friendModal').modal({'show': false, 'keyboard': false});
 
-$('#friendModal').on('shown', function() {
+    $('#friendModal').on('shown', function() {
         $('#friendComplete').focus();
-        });
+    });
 
-$("#chooseFriendsCancel").on("click", function() {
-    $('#friendModal').modal('hide');
-});
+    $("#chooseFriendsCancel").on("click", function() {
+        $('#friendModal').modal('hide');
+    });
 
-$("#showFriendAvailability").on("click", function() {
-    $('#friendModal').modal('hide');
+    $("#showFriendAvailability").on("click", function() {
+        $('#friendModal').modal('hide');
 
-    if (invitedFriendsID.length > 0) {
-        var data = JSON.stringify(invitedFriendsID);
-        $.post('heatMap', {'data': {'param': data}}, function (data, status) {
-            var values = [];
-            var busy = [];
-            $.each(data, function(index, dat) {
-                values.push(dat.ratios);
-                busy.push(dat.busy);
+        if (invitedFriendsID.length > 0) {
+            var data = JSON.stringify(invitedFriendsID);
+            $.post('heatMap', {'data': {'param': data}}, function (data, status) {
+                var values = [];
+                var busy = [];
+                $.each(data, function(index, dat) {
+                    values.push(dat.ratios);
+                    busy.push(dat.busy);
                 });
-            colorCells(values);
-            addToolTips(busy);
+                colorCells(values);
+                addToolTips(busy);
             }, "json");
-    }
-});
+        }
+    });
 
-$("#addFriends").on("click", function() {
-    $('#invitedFriends').html("");
-    invitedFriendsID = [];
-    nonRemovedFriends = friendNames.slice(0);
-    $("#friendModal").modal('show');
-});
+    $("#addFriends").on("click", function() {
+        $('#invitedFriends').html("");
+        invitedFriendsID = [];
+        nonRemovedFriends = friendNames.slice(0);
+        $("#friendModal").modal('show');
+    });
 
 // test make event button
 $("#makeEvent").on("click", function() {
-        clearModal();
-        $('#createEvent').show();
-        $('a[href=#eventInformationTab]').tab('show');
-        $('#deleteEvent').hide();
-        $('#editEvent').hide();
-        $('#eventModal').modal();
-        $('#eventModal').on('shown', function(){                    
-            $('#eventName').focus();
-        });
-        $("#startTime").val("");
-        $("#endTime").val("");
+    clearModal();
+    $('#createEvent').show();
+    $('a[href=#eventInformationTab]').tab('show');
+    $('#deleteEvent').hide();
+    $('#editEvent').hide();
+    $('#eventModal').modal();
+    $('#eventModal').on('shown', function(){                    
+        $('#eventName').focus();
+    });
+    $("#startTime").val("");
+    $("#endTime").val("");
 });
 
 var $cells = $(".calendarEntry, .calendarHalfHour");
 var colorCells = function(values) {
     $cells.each(function(index, cell) {
-        
+
         $(cell).css("background-color", "hsl("+(Math.floor(120*values[index]))+", 70%, 65%)");
-            });
+    });
 };
 
 var addToolTips = function(values) {
     $cells.each(function(index, cell) {
-        
-            $child = $(cell).children().first();
-            var cantCome = '<em>Unavailable Friends:</em><br>';
-            var count = 0;
-            $.each(values[index], function(index2, id) {
 
-                var top = friends.length;
-                var bot = 0;
-                var i = Math.floor(top/2);
+        $child = $(cell).children().first();
+        var cantCome = '<em>Unavailable Friends:</em><br>';
+        var count = 0;
+        $.each(values[index], function(index2, id) {
+
+            var top = friends.length;
+            var bot = 0;
+            var i = Math.floor(top/2);
                 // Binary Search
                 while (friends[i].id != id && top!=bot) {
-                var intID1 = parseInt(friends[i].id);
-                var intID2 = parseInt(id);
-                if (intID1 > intID2) {
-                top = i;
-                i = Math.floor((bot + i) /2);
-                } else {
-                bot = i;
-                i = Math.ceil((top + i) / 2);
-                }
+                    var intID1 = parseInt(friends[i].id);
+                    var intID2 = parseInt(id);
+                    if (intID1 > intID2) {
+                        top = i;
+                        i = Math.floor((bot + i) /2);
+                    } else {
+                        bot = i;
+                        i = Math.ceil((top + i) / 2);
+                    }
                 }
 
                 cantCome += (friendNames[i])+'<br>';
                 count++;
-                });
-            if (count == 0)
-                cantCome += 'None';
-            var place = 'right';
-            if (index % 7 > 3)
-                place = 'left';
-            $child.tooltip({html: true, title: cantCome, placement: place, container: "body"});
             });
+        if (count == 0)
+            cantCome += 'None';
+        var place = 'right';
+        if (index % 7 > 3)
+            place = 'left';
+        $child.tooltip({html: true, title: cantCome, placement: place, container: "body"});
+    });
 };
 
 var uncolorCells = function() {

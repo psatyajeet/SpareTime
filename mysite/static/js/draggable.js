@@ -518,25 +518,25 @@ var createEvent = function() {
     if ($("#repeatEventsCheckbox").is(':checked')){
         var rrule='RRULE:';
         if($('#repeat-option-time-period').val()=="daily"){
-            rrule+='FREQ=DAILY;';
+            rrule+='FREQ=DAILY';
             if ($('#After').is(':checked')){
-                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
             }
             else if ($('#On').is(':checked')){
-                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
             }
-            rrule+='INTERVAL='+$("#interval").val();
+            rrule+=';INTERVAL='+$("#interval").val();
         }
         else if($('#repeat-option-time-period').val()=="weekly"){
-            rrule+='FREQ=WEEKLY;';
+            rrule+='FREQ=WEEKLY';
             if ($('#After').is(':checked')){
-                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
             }
             else if ($('#On').is(':checked')){
-                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
             }
             if ($("#interval").val()!=1){
-                rrule+='INTERVAL='+$("#interval").val();
+                rrule+=';INTERVAL='+$("#interval").val();
             }
             var byday='';
             if ($('$SU').is(':checked')){
@@ -554,34 +554,61 @@ var createEvent = function() {
             if ($('$TH').is(':checked')){
                 byday+='TH';
             }
-            if ($('$SU').is(':checked')){
-                byday+='SU';
+            if ($('$FR').is(':checked')){
+                byday+='FR';
+            }
+            if ($('$SA').is(':checked')){
+                byday+='SA';
             }
             if (byday!='')
                 rrule+=';'+'BYDAY='+byday;
         }
         else if($('#repeat-option-time-period').val()=="monthly"){
-            rrule+='FREQ=MONTHLY;';
+            rrule+='FREQ=MONTHLY';
             if ($('#After').is(':checked')){
-                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
             }
             else if ($('#On').is(':checked')){
-                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
             }
             if ($("#interval").val()!=1){
-                rrule+='INTERVAL='+$("#interval").val();
+                rrule+=';INTERVAL='+$("#interval").val();
+            }
+            if ($("#dayweek").is(':checked')){
+                rrule+=';BYDAY='+$("#weekinmonth").val();
+                if ($('$SU').is(':checked')){
+                    rrule+='SU';
+                }
+                if ($('$MO').is(':checked')){
+                    rrule+='MO';
+                }
+                if ($('$TU').is(':checked')){
+                    rrule+='TU';
+                }
+                if ($('$WE').is(':checked')){
+                    rrule+='WE';
+                }
+                if ($('$TH').is(':checked')){
+                    rrule+='TH';
+                }
+                if ($('$FR').is(':checked')){
+                    rrule+='FR';
+                }
+                if ($('$SA').is(':checked')){
+                    rrule+='SA';
+                }
             }
         }
         else if($('#repeat-option-time-period').val()=="yearly"){
-            rrule+='FREQ=YEARLY;';
+            rrule+='FREQ=YEARLY';
             if ($('#After').is(':checked')){
-                rrule+='COUNT='+$("#afterOccurrences").val()+";";
+                rrule+=';COUNT='+$("#afterOccurrences").val()+";";
             }
             else if ($('#On').is(':checked')){
-                rrule+='UNTIL='+$("#onEndRepeat").val()+";";
+                rrule+=';UNTIL='+$("#onEndRepeat").val()+";";
             }
             if ($("#interval").val()!=1){
-                rrule+='INTERVAL='+$("#interval").val();
+                rrule+=';INTERVAL='+$("#interval").val();
             }
         }
     }
