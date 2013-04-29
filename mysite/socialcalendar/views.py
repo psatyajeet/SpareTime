@@ -154,7 +154,7 @@ def getWeeks(offset=0):
 @ensure_csrf_cookie
 def index(request):
     if request.GET.has_key('id'):
-        event = Event.objects.filter(id=request.GET['id'])
+        event = Event.objects.filter(id=findIdOfEvent(request.GET['id']))
         if len(event) != 0:
             e = event[0]
 
