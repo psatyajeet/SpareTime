@@ -161,7 +161,6 @@ def index(request):
             creators = list(e.creators.all().values())  
             if e.description == '':
                 e.description = "No-Description"   
-            print getListOfComments(e)      
             context = {
             'title': e.title,
             'description':e.description,
@@ -169,7 +168,7 @@ def index(request):
             'end': e.end.strftime(dateString),
             'creators' : creators,
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
-            'comments': getListOfComments(e),
+            'comments': getListOfCommentsNotReverse(e),
             'rejected' : list(e.rejected.all().values()),
             'id':e.id,
             }
@@ -521,7 +520,7 @@ def deleteEvent(request):
 
     if request.method == "POST":
         usr = UserProfile.objects.get(user=request.session['fbid'])
-        event = Event.objects.get(id=request.POST['id'])
+        event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
         if canEdit(usr, event):
             event.delete()
         else:
@@ -907,6 +906,17 @@ def addComment(commenter, name, date, event, comment):
 
 def getListOfComments(e):
     comments = e.event.all().values('name', 'date','comment').order_by('date').reverse()
+    d = []
+    for comment in comments:
+        d.append({
+            'name': comment['name'],
+            'date': comment['date'].strftime(dateString),  
+            'comment': comment['comment'],
+        })
+    return d
+
+def getListOfCommentsNotReverse(e):
+    comments = e.event.all().values('name', 'date','comment').order_by('date')
     d = []
     for comment in comments:
         d.append({

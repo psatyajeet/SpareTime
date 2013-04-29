@@ -32,7 +32,7 @@
             </form>
         </span>
         <span class="span8">
-            <div>
+            <div id = "commentsPlace">
                 {% for p in comments %}
                 <div class = "comment alert alert-info">
                     <span class="commentName"> {{p.name}} says:</span> 
@@ -85,7 +85,7 @@
     function addComment(){
         var comment = $("#commentForm").val()
         $.post('comment',{'name' : $("#inputBox").val(), 'id': id, 'comment': $('#commentForm').val()}, function (data, status) {
-            $("#comments").append('<li>'+ data[0].commenter + ' says: '+ comment+ '</br>' + '-'+data[0].date+'</li>');
+            $("#commentsPlace").append('<div class = "comment alert alert-info"> <span class="commentName">'+ data[0].commenter + ' says:</span> '+ comment+ '<div class="commentDate">'+data[0].date+'</div> </div>');
         }, "json")
         $("#commentForm").val("")
     }
@@ -94,7 +94,6 @@
     $("#signIn").click(login)
 
 </script>
-
 
 </body>
 
