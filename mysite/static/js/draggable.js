@@ -397,12 +397,22 @@ $(document).ready(function(){
     $popover.popover({title: "Notifications", placement: "bottom", html: true, content: function() {return latestNotification()} });
 
     $('#modalComments').hide();
+    $('#modalPeople').hide();
+    $('a[href=#peopleTab]').on('shown', function (e) {
+        $('#modalEventInformation').hide();
+        $('#modalComments').hide();
+        $('#modalPeople').show();
+    });
+
     $('a[href=#eventInformationTab]').on('shown', function (e) {
         $('#modalEventInformation').show();
         $('#modalComments').hide();
-    })
+        $('#modalPeople').hide();
+    });
+
     $('a[href=#commentsTab]').on('shown', function (e) {
         $('#modalEventInformation').hide();
+        $('#modalPeople').hide();
         $('#commentTextBox').val("");
         $('#modalComments').show();
         refreshComments();
