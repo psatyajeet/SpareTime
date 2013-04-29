@@ -605,6 +605,9 @@ $(document).ready(function(){
         }
         else if($('#repeat-option-time-period').val()=="monthly"){
             $('#repeat-monthly').show()
+            if($('#dayweek').is(':checked')){
+                $('#repeat-by-info').show();
+            }
         }
         else if($('#repeat-option-time-period').val()=="yearly"){
             $('#repeat-yearly').show()
