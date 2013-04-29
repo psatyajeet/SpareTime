@@ -352,6 +352,9 @@ var openID = function(id) {
         $("#endTime").val(data.end);
 
         $('#createEvent').hide();
+        $('#eventURL').show();
+        var url = document.URL+'?id='+id;
+        $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
 
         if(data.canEdit) {
            $('#editEvent').show();
@@ -455,6 +458,7 @@ $(document).ready(function(){
 var updateCalendar = function(amount) {
 
     uncolorCells();
+    removeToolTips();
     if (format === "monthly") {
         $.post('changeMonth', {"amount": amount}, function (data, status) {
             formatCalendar("monthly", data);
@@ -631,6 +635,7 @@ var createEvent = function() {
         "kind" : kind},
         "json").done(function (data, status) {
         uncolorCells();
+        removeToolTips();
         populateEvents();
     });
     $('#eventModal').modal('hide');
@@ -819,6 +824,7 @@ var tableUp = function($cell, eventObject) {
         $('a[href=#eventInformationTab]').tab('show');
         $('#deleteEvent').hide();
         $('#editEvent').hide();
+        $('#eventURL').hide();
         $('#eventModal').modal();
         $('#eventModal').on('shown', function(){                    
             $('#eventName').focus();

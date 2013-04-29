@@ -535,7 +535,7 @@
                     </div>
                     
                 </div>
-                <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="10"></textarea>
+                <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="6"></textarea>
 
                 <div>
                     <label class="radio inline">
@@ -550,6 +550,12 @@
                         <input type="radio" name="optionsRadios" id="FL" value="FL">
                         Flexible
                     </label>
+                </div>
+
+                <div class="row-fluid">
+                    <span="span12">
+                        Direct Link: <span id="eventURL"></span>
+                    </span>
                 </div>
 
             </div>
@@ -719,6 +725,7 @@ $("#gcal").click(gcal);
 var changeFormat = function(newFormat) {
     $.get('changeFormat', {'format': newFormat}, function (data, status) {
             uncolorCells();
+            removeToolTips();
             format = newFormat;
             formatCalendar(format, data);
             }, "json").done( function() {
@@ -880,6 +887,14 @@ var uncolorCells = function() {
     $cells.css("background-color", "white");
     invitedFriendsID = [];
 }
+
+var removeToolTips = function(values) {
+    $cells.each(function(index, cell) {
+        
+            $child = $(cell).children().first();
+                   $child.tooltip('destroy');
+            });
+};
 
 
 </script>
