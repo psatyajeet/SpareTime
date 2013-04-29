@@ -361,7 +361,9 @@ var openID = function(id) {
            $('#deleteEvent').show();
            if(data.repeat){
                $('#deleteEventThis').show();
-           } 
+           } else {
+                $('#deleteEventThis').hide();
+           }
         } else {
             if (data.notif) {
                 $('#acceptEvent').show();
