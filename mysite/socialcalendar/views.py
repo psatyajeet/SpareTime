@@ -307,9 +307,14 @@ def submitEvent(request):
         if request.POST.has_key('RRULE'):
             rrule = request.POST['RRULE']
             repeat = True
+        
+        title = "No-Title"
 
-        if(len(request.POST['title']) == 0):
-            e = Event(
+        if(len(request.POST['title']) != 0):
+            title = request.POST['title'] 
+
+        e = Event(
+            title=title,
             description=request.POST['description'],
             location=request.POST['location'],
             start=startDate,
@@ -317,18 +322,7 @@ def submitEvent(request):
             kind = request.POST['kind'],
             recurrence = rrule,
             repeat = repeat,
-        ) 
-        else:    
-            e = Event(
-                title=request.POST['title'],
-                description=request.POST['description'],
-                location=request.POST['location'],
-                start=startDate,
-                end=endDate,
-                kind = request.POST['kind'],
-                recurrence = rrule,
-                repeat = repeat,
-            )
+        )
         e.save()
         usr = UserProfile.objects.get(user=request.session['fbid'])
         usr.creators.add(e)
