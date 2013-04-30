@@ -383,20 +383,148 @@ def populateEvents(request):
     d = getArrayofWeeklyEvents(events, usr)
     return HttpResponse(simplejson.dumps(d))
 
+def getArrayofWeeklyEvents(events, usr): # events given to method sorted based on start time
+    d = [] # data?
+    x = 0 # x position of event on calendar
+    first = True # boolean - whether this is the first event of a day
+    groupStart = 0
+    # groupEnd = 0
+    # last = 0 
 
-def getArrayofWeeklyEvents(events, usr, notif=False):
-    d = []
-    x = 0
-    last = 0
-    if(len(events) == 0):
-        return d
+    print "events: ", events
 
-    biggestEnd = events[0].end
-    widths = []
-    xs = []
-    for i in range(len(events)-1):
+    '''
+    print "length:", len(events)
+    print "events:", events
+    print "usr:", usr
+    print events[0]
+    '''
+
+    if(len(events) == 0): # if the usr doesn't have any events in the given week
+        return d # return an empty array
+
+    latestStartTime = events[0].start # initialized to start time of very first event
+    # latest start time in the current group
+
+    # biggestEnd = events[0].end # initialized to end time of very first event
+
+    widths = [] # array of event widths
+    xs = [] # x positions of events
+
+    '''
+    currDate = events[0].start.date() # initialized to date of first event
+    print "test: ", (events[1].start.hour + events[1].start.minute/60.0)
+    print "date: ", currDate
+    '''
+    
+    # HERE!
+
+    # get the date of the first event
+    currDate = events[0].start.date() # initialized to date of first event
+
+    # keep track of i; initialize i to 0
+    i = 0
+
+    # while i < len(events) (if this is true, then events[i] is a valid event)
+    while i < len(events):
+
+    #     if the start date of event[i] is equal to the current date 
+    #     # can't use this as an indicator for first event of the day
+    #     # because we want the first event of the day to have its date stored in the present date at the beginning
+    #     # unless we set present date to null at the beginning (possible idea -- try that later)            
+    #         if it's the first event of the day
+    #             simply append x as is (xs.append(x))
+    #             set groupStart = i
+    #             set first = false
+
+        # event is on the same date as the previous event
+        if events[i].start.date() == currDate:
+            # only way it could be first in this case is if it's the very first event
+            if first:
+                print "THIS OCCURS NOW!"
+                groupStart = i
+                first = False
+
+            # not first event of the day
+            else:
+                # if start time is less than 30 minutes after most recent start time
+                # then put adjacent to other event
+                # increment x
+                # and append x to xs
+                # keep same precedence
+                prevTime = (latestStartTime.hour + latestStartTime.minute/60.0)
+                if (events[i].start.hour + events[i].start.minute/60.0 - prevTime) < 0.5:
+                    x += 1
+                    #xs.append(x)
+
+                # else (start time is at least 30 min after most recent start time)
+    #                 assign widths to all items in previous group (groupStart, i) -- not including i
+    #                 start a new group (set groupStart = i and set x = 0)
+    #                 give new group higher precedence in terms of overlay
+                else: 
+                    for j in range(groupStart, i):
+                        print "j:", j
+                        widths.append(x+1)
+                    groupStart = i
+                    x = 0
+                    # GIVE NEW GROUP HIGHER PRECEDENCE 
+
+        # event is on a date different from the previous event
+        else:
+            for j in range(groupStart, i):
+                print "j:", j
+                widths.append(x+1)
+            currDate = events[i].start.date() # reset the current date
+            # reset variables
+            # first = True
+            x = 0
+            groupStart = i
+
+        # update most recent start time (no matter what, right?)
+        latestStartTime = events[i].start
+
+        # increment i
+        i += 1
+
+        # append x
         xs.append(x)
-        if events[i].end > biggestEnd:
+
+    # # this is probably very necessary
+    # after loop finishes, set widths for (groupStart, i) (not including i)
+    for j in range(groupStart, i):
+        print "j:", j
+        widths.append(x+1)
+
+    '''
+    for i in range(len(events)-1): # iterate over every event
+            if (events[i].start.date() != currDate):
+            currDate = events[i].start.date()
+            xs.append(x) 
+ 
+        prevTime = (latestStartTime.hour + latestStartTime.minute/60.0)
+        print "prevTime:", prevTime
+        print "currTime:", (events[i].start.hour + events[i].start.minute/60.0)
+        if (events[i].start.hour + events[i].start.minute/60.0 - prevTime) < 0.5: # add to group
+            print "i:", i
+            x = x + 1
+
+        else:
+            for j in range(last, i+1):
+                widths.append(x+1)
+            # biggestEnd = events[i+1].end
+            x = 0
+            last = i+1
+
+            # print 'biggestEnd: ', biggestEnd
+            print 'last: ', last
+
+            # last keeps track of which event was last in the array
+
+        latestStartTime = events[i].start # update latest start time
+   
+    for i in range(len(events)-1): # iterate over every event
+        xs.append(x) 
+        if events[i].end > biggestEnd: # update latest end time
             biggestEnd = events[i].end
         if biggestEnd > events[i+1].start:
             x = x + 1
@@ -407,24 +535,43 @@ def getArrayofWeeklyEvents(events, usr, notif=False):
             x = 0
             last = i+1
 
+            print 'biggestEnd: ', biggestEnd
+            print 'last: ', last
+
+            # last keeps track of which event was last in the array
+
+
     xs.append(x)
     for j in range(last, len(events)):
         widths.append(x+1)
+    '''
+
+    # TAKE THIS OUT LATER
+    # print len(xs)
+    # print len(widths)
 
     for i in range(len(events)):
+        print "xs length:", len(xs)
+        print "widths length:", len(widths)
+
+        print "xs:", xs
+        print "widths:", widths
+
         e = events[i]
         endhour = e.end.hour
-        if (e.end.hour == 0 and e.end.minute == 0):
+        if (e.end.hour == 0):
             endhour = 24    
         eID = e.id;
-
         creator0 = None
 
         if e.repeat:
             eID = e.repeatID;
             creator0 = list(e.creators.values())
         elif (len(e.creators.all()) > 0):
-            creator0 = list(e.creators.all().values())        
+            creator0 = list(e.creators.all().values())     
+
+
+
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
@@ -439,7 +586,14 @@ def getArrayofWeeklyEvents(events, usr, notif=False):
             'kind': e.kind,
             'notif': len(usr.notifications.filter(id=e.id)) >= 1,
         })
+
+        print 'x:',  xs[i]
+        print 'width:', 1.0/float(widths[i])
+
     return d;
+
+
+
 
 
 
