@@ -356,7 +356,7 @@ var openID = function(id) {
 
         $('#createEvent').hide();
         $('#eventURL').show();
-        var url = document.URL+'?id='+id;
+        var url = document.URL.replace("#", "")+'?id='+id;
         $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
 
         if(data.canEdit) {
@@ -786,13 +786,22 @@ var editEvent = function() {
             }
         }
     }
+    var kind = 'PR'
+    var radios = document.getElementsByName('optionsRadios');
+
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            kind = (radios[i].value);
+        }
+    }
     $.post('editEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
         "startTime": $("#startTime").val(),
         "endTime": $("#endTime").val(),
         "RRULE": rrule,
-        "id": currentlyViewing}, 
+        "id": currentlyViewing,
+        "kind":kind}, 
         "json").done(function (data, status) {
         populateEvents();
     });

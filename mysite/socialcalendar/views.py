@@ -700,6 +700,52 @@ def deleteSingleRecurrence(e, time):
 @csrf_protect
 def editEvent(request):
     if request.method == "POST":
+        if(not request.POST.has_key('startTime')) :
+            return HttpResponse()
+
+        event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
+        
+        startDate = datetime.strptime(request.POST['startTime'],
+                                      dateString)
+        endDate = datetime.strptime(request.POST['endTime'],
+                                    dateString)
+        startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+        endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
+        startDate = startDate.astimezone(tz.gettz('UTC'))
+        endDate = endDate.astimezone(tz.gettz('UTC'))
+        
+        if(event.repeat):
+            #repeat
+            return HttpResponse()
+
+        rrule = ""
+        repeat = False
+        if request.POST.has_key('RRULE'):
+            rrule = request.POST['RRULE']
+            repeat = True
+        
+        title = "No-Title"
+
+        if(len(request.POST['title']) != 0):
+            title = request.POST['title'] 
+        print request.POST['kind']
+
+        event.title=title
+        event.description=request.POST['description']
+        event.location=request.POST['location']
+        event.start=startDate
+        event.end=endDate
+        event.kind = request.POST['kind']
+        event.recurrence = rrule
+        event.repeat = repeat
+        event.save()
+
+        return HttpResponse()
+    else:
+        return HttpResponseNotFound()
+
+
+    if request.method == "POST":
         event = Event.objects.get(id=request.POST['id'])
        
 
@@ -901,6 +947,7 @@ def gcal(request):
                       gid=event['id'],
                       repeat=recurring,
                       recurrence=recurrence,
+                      kind = 'PR',
                       ) 
             e.save()
             usr.creators.add(e);

@@ -11,14 +11,14 @@
    </fb:login-button>
    -->
 <!--Add a button for the user to click to initiate auth sequence -->
-<button id="lgoutgcal" onclick="logoutGmail()">Logout</button>
-<button id="lgoutgcal" onclick="acceptNotification()">Accept</button>
+<button id="lgoutgcal" onclick="logoutGmail()" class = "btn">Logout Gmail</button>
+<button type = "button" id="authorize-button" onclick="handleClientLoad()" class="btn btn-success" >Import Gmail</button>
+
 <script>
    var logoutGmail = function(){
     window.open('https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://127.0.0.1:8000/', '_self');
    }
 </script>
-<button id="authorize-button" onclick="handleClientLoad()">Authorize</button>
 <script type="text/javascript">
    // Enter a client ID for a web application from the Google Developer Console.
    // The provided clientId will only work if the sample is run directly from
@@ -94,6 +94,8 @@
       <h4 id="weekname">{{ header }}</h4>
    </div>
    <div class="span1"></div>
+
+
    <div class="span1"><button type="button" id="monthlyButton" class="btn btn-block btn-primary">Monthly</button></div>
    <div class="span1"><button type="button" id="weeklyButton" class="btn btn-block btn-primary">Weekly</button></div>
 </div>
