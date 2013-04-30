@@ -678,6 +678,9 @@ def deleteEvent(request):
         eid = request.POST['id']
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
 
+        if len(event.accepted.filter(user = usr.user)) > 0:
+            event.rejected.add(usr) 
+
         if canEdit(usr, event):
             if not event.repeat or request.POST['all'] == 'all':
                 event.delete()
