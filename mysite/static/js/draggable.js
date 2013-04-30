@@ -52,7 +52,7 @@ var getNotifications = function() {
             creators = ''
             $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
             var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
-                '<p>You have a new event request: '+dat.title+ ' from :' + creators + '</p> '+
+                '<p>Title: '+dat.title+ '</br> From: ' + creators + '</p> '+
                 '<div class="row-fluid"> '+
                 '<div class="span6"> '+
                 '<button class="btn btn-block btn-success acceptRequest eventID'+dat.id+'" type="button">Accept</button> '+
@@ -302,6 +302,8 @@ $(document).on('click', '.requestAlert', function(e) {
         formatCalendar("weekly", data);
     }, "json").done(function() {
         populateEvents();
+       // openID(first)
+
     });
 });
 
