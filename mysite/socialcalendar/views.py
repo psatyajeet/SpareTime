@@ -935,7 +935,7 @@ def gcal(request):
 
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
                 recurring = True;
-                if not 'RRULE' in event['recurrence'][0] and len(event['recurrence']) > 0 and 'RRULE' in event['recurrence'][1]: 
+                if not 'RRULE' in event['recurrence'][0] and len(event['recurrence']) > 1 and 'RRULE' in event['recurrence'][1]: 
                     until = re.match(".*UNTIL=........", event['recurrence'][1]);
                     if until is not None:
                         recurrence = event['recurrence'][1].replace(until.group(0), until.group(0)+"T000000Z"); 
