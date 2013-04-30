@@ -201,11 +201,14 @@ var populateWeekEvents = function() {
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
             $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
                 left: cumWidths[dat.day]+widths[dat.day]*dat.x + 1});
+            $div.css('z-index', index);
+
             //left: x + cumWidths[dat.day]+widths[dat.day]*dat.x + 
             //    borderWidth*(dat.day+3)});
 
             $overview.prepend($div);
     });
+
 
     $('.event').off('click');
     $('.event').off('mousedown');
