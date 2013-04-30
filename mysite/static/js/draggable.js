@@ -371,6 +371,7 @@ var openID = function(id) {
             if (data.notif) {
                 $('#acceptEvent').show();
                 $('#rejectEvent').show();
+                $('#deleteEventThis').hide();
             }else{
                 $('#deleteEvent').show();
                 $('#deleteEventThis').hide();

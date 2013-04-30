@@ -383,7 +383,7 @@ def populateEvents(request):
     d = getArrayofWeeklyEvents(events, usr)
     return HttpResponse(simplejson.dumps(d))
 
-def getArrayofWeeklyEvents(events, usr): # events given to method sorted based on start time
+def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method sorted based on start time
     d = [] # data?
     x = 0 # x position of event on calendar
     first = True # boolean - whether this is the first event of a day
