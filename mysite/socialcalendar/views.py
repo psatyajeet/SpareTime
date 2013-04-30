@@ -341,15 +341,25 @@ def getNotifications(user):
 
 
 def storeNotificationForFriends(friendIDs, e):
-        usr = UserProfile.objects.filter(user__in=friendIDs)
-        for user in usr:
-            user.unanswered.add(e)
-            user.notifications.add(e)
+    usr = UserProfile.objects.filter(user__in=friendIDs)
+    for user in usr:
+        user.unanswered.add(e)
+        user.notifications.add(e)
 
 
 def removeNotification(user, e) :
     user.notifications.remove(e);
 
+
+@csrf_protect
+def addFriendsToEvent(request):
+    if request.method == "POST":
+        event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
+        friendIDs = json.loads(request.POST['friendIDs'])
+        storeNotificationForFriends(friendIDs, event)
+        return HttpResponse();
+    else :
+        return HttpResponseNotFound()
 
 @csrf_protect
 def getNotificationsRequest(request):
@@ -1058,6 +1068,17 @@ def addCreators(event, creatorsArray):
     usrs = UserProfile.objects.filter(user__in=creatorsArray)
     for user in usrs:
         event.creators.add(user)
+
+@csrf_protect
+def addCreatorsToEvent(request):
+    if request.method == "POST":
+        event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
+        friendIDs = json.loads(request.POST['friendIDs'])
+        addCreators(event, friendIDs)
+        return HttpResponse();
+    else:
+        return HttpResponseNotFound()
+
 
 def findIdOfEvent(idToSearch):
     if idToSearch.rfind("_") == -1:

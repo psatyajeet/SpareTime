@@ -17,6 +17,8 @@ urlpatterns = patterns(
     url(r'^comment', views.comment, name='comment'),
     url(r'^getComments', views.getComments, name='getComments'),
 
+    url(r'^addFriendsToEvent', views.addFriendsToEvent, name='addFriendsToEvent'),
+    url(r'^addCreatorsToEvent', views.addCreatorsToEvent, name='addCreatorsToEvent'),
 
     url(r'^rejectNotification', views.rejectNotification, name='rejectNotification'),
     url(r'^acceptNotification', views.acceptNotification, name='acceptNotification'),
