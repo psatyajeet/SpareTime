@@ -391,14 +391,14 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     # groupEnd = 0
     # last = 0 
 
-    print "events: ", events
+#    print "events: ", events
 
-    '''
-    print "length:", len(events)
-    print "events:", events
-    print "usr:", usr
-    print events[0]
-    '''
+ #   '''
+  #  print "length:", len(events)
+   # print "events:", events
+    #print "usr:", usr
+   # print events[0]
+   # '''
 
     if(len(events) == 0): # if the usr doesn't have any events in the given week
         return d # return an empty array
@@ -411,11 +411,11 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     widths = [] # array of event widths
     xs = [] # x positions of events
 
-    '''
-    currDate = events[0].start.date() # initialized to date of first event
-    print "test: ", (events[1].start.hour + events[1].start.minute/60.0)
-    print "date: ", currDate
-    '''
+ #   '''
+  #  currDate = events[0].start.date() # initialized to date of first event
+   # print "test: ", (events[1].start.hour + events[1].start.minute/60.0)
+    #print "date: ", currDate
+    #'''
     
     # HERE!
 
@@ -441,7 +441,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
         if events[i].start.date() == currDate:
             # only way it could be first in this case is if it's the very first event
             if first:
-                print "THIS OCCURS NOW!"
+     #           print "THIS OCCURS NOW!"
                 groupStart = i
                 first = False
 
@@ -463,7 +463,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     #                 give new group higher precedence in terms of overlay
                 else: 
                     for j in range(groupStart, i):
-                        print "j:", j
+#                        print "j:", j
                         widths.append(x+1)
                     groupStart = i
                     x = 0
@@ -472,7 +472,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
         # event is on a date different from the previous event
         else:
             for j in range(groupStart, i):
-                print "j:", j
+ #               print "j:", j
                 widths.append(x+1)
             currDate = events[i].start.date() # reset the current date
             # reset variables
@@ -492,7 +492,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     # # this is probably very necessary
     # after loop finishes, set widths for (groupStart, i) (not including i)
     for j in range(groupStart, i):
-        print "j:", j
+      #  print "j:", j
         widths.append(x+1)
 
     '''
@@ -551,11 +551,11 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     # print len(widths)
 
     for i in range(len(events)):
-        print "xs length:", len(xs)
-        print "widths length:", len(widths)
+#        print "xs length:", len(xs)
+ #       print "widths length:", len(widths)
 
-        print "xs:", xs
-        print "widths:", widths
+#        print "xs:", xs
+ #       print "widths:", widths
 
         e = events[i]
         endhour = e.end.hour
@@ -587,8 +587,8 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             'notif': len(usr.notifications.filter(id=e.id)) >= 1,
         })
 
-        print 'x:',  xs[i]
-        print 'width:', 1.0/float(widths[i])
+  #      print 'x:',  xs[i]
+   #     print 'width:', 1.0/float(widths[i])
 
     return d;
 
