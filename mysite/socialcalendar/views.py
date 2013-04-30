@@ -789,7 +789,7 @@ def changeStart(request):
             rule = rrulestr(event.recurrence, dtstart = event.start)
             times = rule.between(start, end, inc=True)
 
-            if len(times) > 0:
+            if len(times) > 0 and times[0] == start:
                 return HttpResponse()
 
             ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
