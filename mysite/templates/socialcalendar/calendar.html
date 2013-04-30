@@ -268,7 +268,7 @@ function handleAuthClick(event) {
                 <h3 id="myModalLabel"><input id="eventName" class="input-block-level" type="text" placeholder="Event Name"></h3>
                 <div class="row-fluid">
                     <div class="span6">
-                        <div id="datetimepicker" class="input-append">
+                        <div id="datetimepicker" class="input-append datetimepicker">
                             <input id="startTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                             <span class="add-on">
                                 <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -276,7 +276,7 @@ function handleAuthClick(event) {
                         </div>
                     </div>
                     <div class="span6">
-                        <div id="datetimepicker2" class="input-append">
+                        <div id="datetimepicker2" class="input-append datetimepicker">
                             <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                             <span class="add-on">
                                 <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -317,7 +317,7 @@ function handleAuthClick(event) {
                             <div class="span2">
                                 Starts on: 
                             </div>
-                            <div id="datetimepicker2" class="input-append span6">
+                            <div id="datetimepicker2" class="input-append span6 datetimepicker">
                                 <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                                 <span class="add-on">
                                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -347,7 +347,7 @@ function handleAuthClick(event) {
                                 <input type="radio" name="endRadios" id="On"value="On"></input>
                                 On 
                             </div>
-                            <div id="datetimepicker2" class="input-append span6">
+                            <div id="datetimepicker2" class="input-append span6 datetimepicker">
                                 <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                                 <span class="add-on">
                                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -395,7 +395,7 @@ function handleAuthClick(event) {
                     <div class="span2">
                         Starts on: 
                     </div>
-                    <div id="datetimepicker2" class="input-append span6">
+                    <div id="datetimepicker2" class="input-append span6 datetimepicker">
                         <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                         <span class="add-on">
                             <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -418,7 +418,7 @@ function handleAuthClick(event) {
                                 <input type="radio" name="endRadios" value="On">
                                 On 
                             </div>
-                            <div id="datetimepicker2" class="input-append span6">
+                            <div id="datetimepicker2" class="input-append span6 datetimepicker">
                                 <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                                 <span class="add-on">
                                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -489,7 +489,7 @@ function handleAuthClick(event) {
                     <div class="span2">
                         Starts on: 
                     </div>
-                    <div id="datetimepicker2" class="input-append span6">
+                    <div id="datetimepicker2" class="input-append span6 datetimepicker">
                         <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                         <span class="add-on">
                             <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
@@ -512,13 +512,54 @@ function handleAuthClick(event) {
                                 <input type="radio" name="endRadios" value="On">
                                 On 
                             </div>
-                            <div id="datetimepicker2" class="input-append span6">
+                            <div id="datetimepicker2" class="input-append span6 datetimepicker">
                                 <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                                 <span class="add-on">
                                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                                 </span>
                             </div>
                         </div>
+                    </label>
+                </div>
+            </div>
+            <div class="" id="repeat-yearly">
+                <div>
+                Repeats every :
+                    <select class="span1">
+                    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                    <option>{{forloop.counter}}</option>
+                    {% endfor %}
+                    </select>
+                years
+                </div>
+                <div>
+                    Starts on:
+                    <div id="datetimepicker2" class="input-append datetimepicker">
+                    <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                    <span class="add-on">
+                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                    </span>
+                    </div>
+                </div>
+                <div>
+                    Ends:
+                    <label class="radio">
+                    <input type="radio" name="endRadios" value="Never" checked>
+                    Never
+                    </label>
+                    <label class="radio">
+                    <input type="radio" name="endRadios" value="After">
+                    After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> occurrences
+                    </label>
+                    <label class="radio">
+                    <input type="radio" name="endRadios" value="On">
+                    On
+                    <div id="datetimepicker2" class="input-append datetimepicker">
+                    <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                    <span class="add-on">
+                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                    </span>
+                    </div>
                     </label>
                 </div>
             </div>
