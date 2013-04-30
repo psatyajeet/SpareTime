@@ -809,6 +809,23 @@ $(function() {
     });
 });
 
+$(function() {
+    $('#datetimepicker3').datetimepicker({
+        language: 'en',
+        pick12HourFormat: true,
+        pickSeconds: false
+    });
+});
+
+$(function() {
+    $('.datetimepicker').datetimepicker({
+        language: 'en',
+        pick12HourFormat: true,
+        pickSeconds: false
+    });
+});
+
+
 // Stop text selection on monthly calendar
 
 var $monthCells = $(".calendarMonthEntry");
@@ -939,6 +956,16 @@ var tableUp = function($cell, eventObject) {
         dates[startx].setHours(endHour/2);
         dates[startx].setMinutes(30*(endHour%2));
         picker2.setLocalDate(dates[startx]);
+
+        var picker3 = $('#datetimepicker3').data('datetimepicker');
+        dates[startx].setHours(endHour/2);
+        dates[startx].setMinutes(30*(endHour%2));
+        picker3.setLocalDate(dates[startx]);
+
+        var picker4 = $('.datetimepicker').data('datetimepicker');
+        dates[startx].setHours(endHour/2);
+        dates[startx].setMinutes(30*(endHour%2));
+        picker3.setLocalDate(dates[startx]);
 
         clearModal();
         currentlyViewing = -1;
