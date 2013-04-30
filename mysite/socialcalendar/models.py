@@ -18,8 +18,8 @@ class Event(models.Model):
     kind = models.CharField(max_length=2,
                                       choices=TYPE_CHOICES,
                                       default='PR')
-    title = models.CharField(max_length=30, default = 'No-Title')
-    location = models.CharField(max_length=30)
+    title = models.TextField(default = 'No-Title')
+    location = models.TextField(default = '')
     description = models.TextField(default='No-Description')
     start = models.DateTimeField('Event start')
     end = models.DateTimeField('Event end')
