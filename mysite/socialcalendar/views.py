@@ -1138,7 +1138,7 @@ def addName(request):
     if request.method == "GET":
         if request.GET['name'] == '':
             return HttpResponse()
-        e = Event.objects.get(id = request.GET['id'])
+        e = Event.objects.get(id = findIdOfEvent(request.GET['id']))
         n = Name(name = request.GET['name'], linkedEvent=e)
         n.save()
         return HttpResponse()
