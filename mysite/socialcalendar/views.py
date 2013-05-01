@@ -168,6 +168,7 @@ def index(request):
             i = 0
             if request.session.has_key('fbid'): 
                 i = 1 
+            eid = request.GET['id']
             context = {
             'title': e.title,
             'description':e.description,
@@ -177,7 +178,7 @@ def index(request):
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
             'comments': getListOfCommentsNotReverse(e, request.GET['id']),
             'rejected' : list(e.rejected.all().values()),
-            'id':e.id,
+            'id':eid,
             'loggedIn': i,
             }
             return render(request, 'socialcalendar/event.html', context)
@@ -614,7 +615,6 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             'notif': len(usr.notifications.filter(id=e.id)) >= 1,
             'newComment':len(e.unseen.filter(people = usr).filter(commentID = eID)) >= 1,
             })
-        print d
   #      print 'x:',  xs[i]
    #     print 'width:', 1.0/float(widths[i])
 

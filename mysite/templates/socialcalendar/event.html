@@ -80,7 +80,7 @@
         $("#Name").hide()
     }
     eventPage = true
-    var id = {{id}}
+    var id = "{{id}}"
     function addName(){
         var name = $("#inputBox").val()
         $.get('addName',{'name' : $("#inputBox").val(), 'id': id}, function (data, status) {
