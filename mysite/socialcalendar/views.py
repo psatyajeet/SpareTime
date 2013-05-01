@@ -1050,6 +1050,7 @@ def getWeeklyRecurringEvents(usr, first, last):
             eid = event.id,
             creators = event.creators.all(), 
             kind = event.kind,
+            unseen = event.unseen
             )
             e.id = event.id
             totalForWeek.append(e)
@@ -1089,7 +1090,7 @@ def findIdOfEvent(idToSearch):
     return idToSearch[0: idToSearch.rfind("_")]
 
 class tempEvent:
-    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators, kind):
+    def __init__(self, title, description, location, start,end, repeat, repeatID, eid, creators, kind, unseen):
         self.title = title
         self.description = description
         self.location = location,
@@ -1100,6 +1101,7 @@ class tempEvent:
         self.id = eid
         self.creators = creators
         self.kind = kind
+        self.unseen = unseen
 
 
 @csrf_protect
