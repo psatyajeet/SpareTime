@@ -315,7 +315,7 @@
                <div class="hide" id="repeat-daily">
                   <div>
                      Repeats every : 
-                     <select class="span1" id="interval">
+                     <select class="span1" id="dinterval">
                         {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
                         <option>{{forloop.counter}}</option>
                         {% endfor  %}
@@ -340,18 +340,18 @@
                      Never
                      </label>
                      <label class="radio">
-                     <input type="radio" name="endRadios" id= "After" value="After">
-                     After <input id="afterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
+                     <input type="radio" name="endRadios" id= "dAfter" value="After">
+                     After <input id="dafterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
                      </input>
                      </label>
                      <label class="radio">
                         <div class="row-fluid">
                            <div class="span1">
-                              <input type="radio" name="endRadios" id="On"value="On"></input>
+                              <input type="radio" name="endRadios" id="dOn"value="On"></input>
                               On 
                            </div>
                            <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                              <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                              <input id="donEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                               <span class="add-on">
                               <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                               </span>
@@ -363,7 +363,7 @@
                <div class="hide" id="repeat-weekly">
                   <div>
                      Repeats every : 
-                     <select class="span1" id="interval">
+                     <select class="span1" id="winterval">
                         {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
                         <option>{{forloop.counter}}</option>
                         {% endfor  %}
@@ -413,18 +413,18 @@
                            Never
                            </label>
                            <label class="radio">
-                           <input type="radio" name="endRadios" id= "After" value="After">
-                           After <input id="afterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
+                           <input type="radio" name="endRadios" id= "wAfter" value="After">
+                           After <input id="wafterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
                            </input>
                            </label>
                            <label class="radio">
                               <div class="row-fluid">
                                  <div class="span1">
-                                    <input type="radio" name="endRadios" id="On"value="On"></input>
+                                    <input type="radio" name="endRadios" id="wOn" value="On"></input>
                                     On 
                                  </div>
                                  <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                                    <input id="onEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                                    <input id="wonEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                                     <span class="add-on">
                                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                                     </span>
@@ -438,7 +438,7 @@
                <div class="hide" id="repeat-monthly">
                   <div>
                      Repeats every : 
-                     <select class="span1" id="interval">
+                     <select class="span1" id="minterval">
                         {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
                         <option>{{forloop.counter}}</option>
                         {% endfor  %}
@@ -510,17 +510,17 @@
                      Never
                      </label>
                      <label class="radio">
-                     <input type="radio" name="endRadios" value="After">
-                     After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+                     <input type="radio" name="endRadios" id="mAfter" value="After">
+                     After <input id="mafterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
                      </label>
                      <label class="radio">
                         <div class="row-fluid">
                            <div class="span1">
-                              <input type="radio" name="endRadios" value="On">
+                              <input type="radio" name="endRadios" id="mOn" value="On">
                               On 
                            </div>
                            <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                              <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                              <input id="monEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                               <span class="add-on">
                               <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                               </span>
@@ -532,7 +532,7 @@
                <div class="hide" id="repeat-yearly">
                   <div>
                      Repeats every :
-                     <select class="span1">
+                     <select class="span1" id="yinterval">
                         {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
                         <option>{{forloop.counter}}</option>
                         {% endfor %}
@@ -555,14 +555,14 @@
                      Never
                      </label>
                      <label class="radio">
-                     <input type="radio" name="endRadios" value="After">
-                     After <input id="afterOccurrences" class="span1 input-block-level" type="text" placeholder=""> occurrences
+                     <input type="radio" name="endRadios" id="yAfter" value="After">
+                     After <input id="yafterOccurrences" class="span1 input-block-level" type="text" placeholder=""> occurrences
                      </label>
                      <label class="radio">
-                        <input type="radio" name="endRadios" value="On">
+                        <input type="radio" name="endRadios" id= "yOn" value="On">
                         On
                         <div id="datetimepicker2" class="input-append datetimepicker">
-                           <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                           <input id="yonEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                            <span class="add-on">
                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                            </span>
