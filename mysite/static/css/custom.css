@@ -174,6 +174,17 @@ tr.calendarRow td:last-child {
     cursor: default;
 }
 
+.cantEdit {
+    background-color: #00BFFF;
+    border: 2px solid #01A9DB; 
+    position: absolute;
+    z-index: 10;
+    opacity: 0.7;
+    overflow: hidden;
+    cursor: default;
+}
+
+
 .commentNotif {
     background-color: #9999FF;
     border: 2px solid #4C4C80; 

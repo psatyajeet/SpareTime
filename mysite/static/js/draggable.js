@@ -195,7 +195,7 @@ var populateWeekEvents = function() {
                 if (dat.canEdit)
                     $div = $('<div class="event canEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
                 else
-                    $div = $('<div class="event" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+                    $div = $('<div class="event cantEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
             }
             if (dat.newComment)
                 $div = $('<div class="event commentNotif" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
