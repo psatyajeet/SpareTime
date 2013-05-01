@@ -51,6 +51,7 @@ var getNotifications = function() {
         $.each(data, function (index, dat) {
             creators = ''
             $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
+            console.log(dat.id)
             var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
                 '<p>Title: '+dat.title+ '</br> From: ' + creators + '</p> '+
                 '<div class="row-fluid"> '+
@@ -1049,13 +1050,13 @@ $(document).on("mouseup", function(eventObject) {
      
 var acceptNotification = function(eventID) {
     $.post('acceptNotification', {"eventID": eventID}, "json").done(function (data, status) {
-        setTimeout(function() { populateEvents();}, 250);
+        setTimeout(function() { populateEvents();}, 300);
     });
 };
 
 var rejectNotification = function(eventID) {
     $.post('rejectNotification', {"eventID": eventID}, "json").done( function (data, status) {
-        setTimeout(function() { populateEvents();}, 250);
+        setTimeout(function() { populateEvents();}, 300);
     });
 };
 

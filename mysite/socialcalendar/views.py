@@ -341,8 +341,15 @@ def submitEvent(request):
 
 
 def getNotifications(user):
-    events = user.notifications.all();        
-    return getArrayofWeeklyEvents(events, user, True);
+    events = user.notifications.all();
+    d = []
+    for event in events:     
+        d.append({
+            'id':event.id,
+            'creators':getCreators(event),
+            'title':event.title
+            });
+    return d
 
 
 def storeNotificationForFriends(friendIDs, e):
@@ -974,7 +981,7 @@ def gcal(request):
 def acceptNotification(request):    
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
-        event = Event.objects.get(id=request.POST['eventID'])
+        event = Event.objects.get(id=findIdOfEvent(request.POST['eventID']))
         event.unanswered.remove(usr)
         usr.accepted.add(event)
         removeNotification(usr, event)
@@ -987,7 +994,7 @@ def acceptNotification(request):
 def rejectNotification(request):
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
-        event = Event.objects.get(id=request.POST['eventID'])
+        event = Event.objects.get(id=findIdOfEvent(request.POST['eventID']))
         event.unanswered.remove(usr)
         usr.unanswered.remove(event)
         usr.rejected.add(event)
@@ -1026,8 +1033,7 @@ def deleteCookie(request):
         del request.session['fbid']
     return HttpResponse()
 
-def getWeeklyRecurringEvents(usr, first, last):
-    events = usr.events.filter(repeat=True)
+def getWeeklyRecurringEvents(events, first, last):
     totalForWeek = []
     for event in events:
         try:    
@@ -1060,8 +1066,14 @@ def getWeeklyRecurringEvents(usr, first, last):
 # change getAllEvents to add kinds array parameter
 def getAllEvents(usr, first, last, kinds):
     events = usr.events.filter(start__gte=first).filter(end__lt=last).filter(repeat=False).filter(kind__in = kinds)
-    events = chain(events, usr.notifications.filter(start__gte=first).filter(end__lt=last).filter(repeat=False).filter(kind__in = kinds))
-    events = sorted(chain(events, getWeeklyRecurringEvents(usr, first, last)), key=lambda event: event.start)
+    events = chain(events, getNotificationsForWeek(usr, first, last, kinds))
+    events = sorted(chain(events, getWeeklyRecurringEvents(usr.events.filter(repeat=True), first, last)), key=lambda event: event.start)
+    return events
+
+def getNotificationsForWeek(user, first, last, kinds):
+    events = user.notifications.filter(repeat=False).filter(start__gte=first).filter(end__lt=last)
+    weeklyEvents = user.notifications.filter(repeat=True).filter(kind__in = kinds)
+    events = chain(events, getWeeklyRecurringEvents(weeklyEvents, first, last))
     return events
 
 
