@@ -197,6 +197,8 @@ var populateWeekEvents = function() {
                 else
                     $div = $('<div class="event" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
             }
+            if (dat.newComment)
+                $div = $('<div class="event commentNotif" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
             $div.height((height+cellBorderWidth)*(dat.end - dat.start)*2-bufferWidth-eventBorderWidth);
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
             $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
