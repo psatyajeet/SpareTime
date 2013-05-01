@@ -248,8 +248,9 @@ def goToEvent(request):
 
         today = datetime.today()
         today = today.replace(tzinfo=tz.gettz('UTC'))
-        request.session['whichweek'] = int((event.start - today).days/7.0)
-
+        monday1 = (today - timedelta(days=today.weekday()))
+        monday2 = (event.start - timedelta(days=event.start.weekday()))
+        request.session['whichweek'] = int((monday2 - monday1).days / 7)
         days, hours, dates, header = getDays(request.session['whichweek'])
         d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse(simplejson.dumps(d))
