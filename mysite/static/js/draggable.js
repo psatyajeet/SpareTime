@@ -388,7 +388,7 @@ var openID = function(id) {
         });
         document.getElementById(data.kind).checked = true
         
-        currentlyViewing = data.id;
+        currentlyViewing = id;
 
     }, "json");
 }

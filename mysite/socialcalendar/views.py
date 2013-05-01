@@ -244,7 +244,7 @@ def changeFormat(request):
 @csrf_protect
 def goToEvent(request):
     if request.method == "POST":
-        event = Event.objects.get(id=request.POST['id'])
+        event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
 
         today = datetime.today()
         today = today.replace(tzinfo=tz.gettz('UTC'))
@@ -697,6 +697,7 @@ def deleteEvent(request):
     if request.method == "POST":
         usr = UserProfile.objects.get(user=request.session['fbid'])
         eid = request.POST['id']
+        print eid
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
 
         if len(event.accepted.filter(user = usr.user)) > 0:
