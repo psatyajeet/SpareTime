@@ -1,6 +1,13 @@
 .main-info{
-	color: #009BFF;
-  	font-size: 24px;
+	color: #FFFAF0;
   	font-weight: 400;
   	text-align: center;
+  	font-family: "adobe-garamond-pro";
+	font-style: normal;
+	font-size: 26px;
+	padding-top: 15px;
+}
+
+.homepage-body{
+	background-color: #000000;
 }
