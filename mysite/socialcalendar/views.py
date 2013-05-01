@@ -832,9 +832,8 @@ def changeStart(request):
 
             e.save()
 
-            usr = UserProfile.objects.get(user=request.session['fbid'])
-            usr.events.add(e)
-            e.creators.add(usr)
+            e.events.add(*list(event.events.all()))
+            e.creators.add(*list(event.creators.all()))
             return HttpResponse()
 
         startDate = datetime.strptime(request.POST['startTime'],
