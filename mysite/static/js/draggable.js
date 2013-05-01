@@ -572,23 +572,23 @@ var createEvent = function() {
         var rrule='RRULE:';
         if($('#repeat-option-time-period').val()=="daily"){
             rrule+='FREQ=DAILY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val();
+            if ($('#dAfter').is(':checked')){
+                rrule+=';COUNT='+$("#dafterOccurrences").val();
             }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val();
+            else if ($('#dOn').is(':checked')){
+                rrule+=';UNTIL='+$("#donEndRepeat").val();
             }
-            rrule+=';INTERVAL='+$("#interval").val();
+            rrule+=';INTERVAL='+$("#dinterval").val();
         }
         if($('#repeat-option-time-period').val()=="weekly"){
             rrule+='FREQ=WEEKLY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val();
+            if ($('#wAfter').is(':checked')){
+                rrule+=';COUNT='+$("#wafterOccurrences").val();
             }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val();
+            else if ($('#wOn').is(':checked')){
+                rrule+=';UNTIL='+$("#wonEndRepeat").val();
             }
-            rrule+=';INTERVAL='+$("#interval").val();
+            rrule+=';INTERVAL='+$("#winterval").val();
 
             var byday='';
             if ($('#weekSU').is(':checked')){
@@ -618,14 +618,14 @@ var createEvent = function() {
         }
         if($('#repeat-option-time-period').val()=="monthly"){
             rrule+='FREQ=MONTHLY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val();
+            if ($('#mAfter').is(':checked')){
+                rrule+=';COUNT='+$("#mafterOccurrences").val();
             }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val();
+            else if ($('#mOn').is(':checked')){
+                rrule+=';UNTIL='+$("#monEndRepeat").val();
             }
-            if ($("#interval").val()!=1){
-                rrule+=';INTERVAL='+$("#interval").val();
+            if ($("#minterval").val()!=1){
+                rrule+=';INTERVAL='+$("#minterval").val();
             }
             if ($("#dayweek").is(':checked')){
                 rrule+=';BYDAY='+$("#weekinmonth").val();
@@ -650,19 +650,18 @@ var createEvent = function() {
                 if ($('#mSA').is(':checked')){
                     rrule+='SA';
                 }
-                console.log(rrule);
             }
         }
         if($('#repeat-option-time-period').val()=="yearly"){
             rrule+='FREQ=YEARLY';
-            if ($('#After').is(':checked')){
-                rrule+=';COUNT='+$("#afterOccurrences").val();
+            if ($('#yAfter').is(':checked')){
+                rrule+=';COUNT='+$("#yafterOccurrences").val();
             }
-            else if ($('#On').is(':checked')){
-                rrule+=';UNTIL='+$("#onEndRepeat").val();
+            else if ($('#yOn').is(':checked')){
+                rrule+=';UNTIL='+$("#yonEndRepeat").val();
             }
-            if ($("#interval").val()!=1){
-                rrule+=';INTERVAL='+$("#interval").val();
+            if ($("#yinterval").val()!=1){
+                rrule+=';INTERVAL='+$("#yinterval").val();
             }
         }
     }
