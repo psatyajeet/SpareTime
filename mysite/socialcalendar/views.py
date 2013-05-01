@@ -1136,8 +1136,10 @@ def comment(request):
 
         addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')))
         d = []
-
-        event.unseen.add(*list(event.events.all()))
+        if usr != None:
+            event.unseen.add(*list(event.events.exclude(user__in = usr.user)))
+        else:
+            event.unseen.add(*list(event.events.all()))            
 
         d.append({
             'commenter': name,
