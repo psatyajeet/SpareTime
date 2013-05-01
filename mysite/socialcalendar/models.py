@@ -23,11 +23,11 @@ class Event(models.Model):
     description = models.TextField(default='No-Description')
     start = models.DateTimeField('Event start')
     end = models.DateTimeField('Event end')
-    gid = models.CharField(max_length=100)
+    gid = models.TextField(default = "")
     repeat = models.BooleanField(default = False)
-    recurrence = models.CharField(max_length = 100)
+    recurrence = models.TextField(default= "")
     exceptions = models.ManyToManyField(ExceptionDate, related_name = 'ExceptionDate')
-    repeatID = models.CharField(max_length=20, default = "")
+    repeatID = models.TextField(default = "")
     def __unicode__(self):
         return self.title
 
