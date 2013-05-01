@@ -51,7 +51,6 @@ var getNotifications = function() {
         $.each(data, function (index, dat) {
             creators = ''
             $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
-            console.log(dat.id)
             var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
                 '<p>Title: '+dat.title+ '</br> From: ' + creators + '</p> '+
                 '<div class="row-fluid"> '+
