@@ -838,6 +838,9 @@ def changeStart(request):
 
             e.events.add(*list(event.events.all()))
             e.creators.add(*list(event.creators.all()))
+            comments = Comment.objects.filter(commentID=eid)
+            e.event.add(*list(comments))
+            comments.update(commentID=e.id)
             return HttpResponse()
 
         startDate = datetime.strptime(request.POST['startTime'],
