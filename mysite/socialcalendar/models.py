@@ -28,7 +28,7 @@ class Event(models.Model):
     recurrence = models.TextField(default= "")
     exceptions = models.ManyToManyField(ExceptionDate, related_name = 'ExceptionDate')
     repeatID = models.TextField(default = "")
-    unseen = models.ManyToManyField("UserProfile", related_name = 'unseen')
+    unseen = models.ManyToManyField("Unseen", related_name = 'Unseen')
 
     def __unicode__(self):
         return self.title
@@ -61,8 +61,14 @@ class Name(models.Model):
 class Comment(models.Model):
     comment = models.TextField(default='')
     commenter = models.ForeignKey(UserProfile, related_name = 'commenter', blank=True, null = True)
-    name = models.CharField(max_length=30)
+    name = models.TextField(default = '')
     date = models.DateTimeField('Comment Time')
     event = models.ForeignKey(Event, related_name = 'event')
+    commentID = models.TextField(default = '')
     def __unicode__(self):
         return self.comment 
+
+class Unseen(models.Model):
+    people = models.ForeignKey("UserProfile", related_name = 'unseen')
+    commentID = models.TextField(default = '')
+

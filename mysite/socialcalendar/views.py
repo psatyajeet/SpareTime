@@ -17,6 +17,7 @@ from socialcalendar.models import UserProfile
 from socialcalendar.models import ExceptionDate
 from socialcalendar.models import Name
 from socialcalendar.models import Comment
+from socialcalendar.models import Unseen
 
 
 
@@ -158,7 +159,9 @@ def index(request):
         if len(event) != 0:
             e = event[0]
             if(request.session.has_key('fbid')):
-                e.unseen.remove(UserProfile.objects.get(user=request.session['fbid']))
+                unseen = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID=request.GET['id'])
+                if len(unseen) > 0:
+                    e.unseen.remove(unseen[0])
             creators = list(e.creators.all().values())  
             if e.description == '':
                 e.description = "No-Description"   
@@ -172,7 +175,7 @@ def index(request):
             'end': e.end.strftime(dateString),
             'creators' : creators,
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
-            'comments': getListOfCommentsNotReverse(e),
+            'comments': getListOfCommentsNotReverse(e, request.GET['id']),
             'rejected' : list(e.rejected.all().values()),
             'id':e.id,
             'loggedIn': i,
@@ -403,6 +406,7 @@ def populateEvents(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     
     events = getAllEvents(usr, first, last, ['PU', 'PR', 'FL'])
+
     d = getArrayofWeeklyEvents(events, usr)
     return HttpResponse(simplejson.dumps(d))
 
@@ -608,9 +612,9 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             'repeat': e.repeat,
             'kind': e.kind,
             'notif': len(usr.notifications.filter(id=e.id)) >= 1,
-            'newComment':len(e.unseen.filter(id = usr.id)) >= 1,
+            'newComment':len(e.unseen.filter(people = usr).filter(commentID = eID)) >= 1,
             })
-
+        print d
   #      print 'x:',  xs[i]
    #     print 'width:', 1.0/float(widths[i])
 
@@ -1147,13 +1151,20 @@ def comment(request):
         if name == None:
             return HttpResponse()
 
-        addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')))
+        addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')), commentID = request.POST['id'])
         d = []
         if usr != None:
-            event.unseen.add(*list(event.events.exclude(user__in = usr.user)))
+            users = event.events.exclude(user__in = usr.user)
         else:
-            event.unseen.add(*list(event.events.all()))            
+            users = event.events.all()
 
+        for user in users:
+            u = Unseen(
+                people = user,
+                commentID = request.POST['id'],
+            )     
+            u.save()
+            event.unseen.add(u)      
         d.append({
             'commenter': name,
             'date':  datetime.today().replace(tzinfo=tz.gettz('UTC')).strftime(dateString)
@@ -1163,15 +1174,15 @@ def comment(request):
     else:
         return HttpResponseNotFound()
 
-def addComment(commenter, name, date, event, comment):
+def addComment(commenter, name, date, event, comment, commentID):
     if commenter == None:
-        c = Comment(event=event, comment = comment, name = name, date = date);
+        c = Comment(event=event, comment = comment, name = name, date = date, commentID=commentID);
     else :
-        c = Comment(commenter = commenter, event=event, comment = comment, name = name, date = date);
+        c = Comment(commenter = commenter, event=event, comment = comment, name = name, date = date, commentID=commentID);
     c.save()
 
-def getListOfComments(e):
-    comments = e.event.all().values('name', 'date','comment').order_by('date').reverse()
+def getListOfComments(e, commentID = ''):
+    comments = e.event.filter(commentID=commentID).values('name', 'date','comment').order_by('date').reverse()
     d = []
     for comment in comments:
         d.append({
@@ -1181,8 +1192,8 @@ def getListOfComments(e):
         })
     return d
 
-def getListOfCommentsNotReverse(e):
-    comments = e.event.all().values('name', 'date','comment').order_by('date')
+def getListOfCommentsNotReverse(e, commentID =''):
+    comments = e.event.filter(commentID=commentID).values('name', 'date','comment').order_by('date')   
     d = []
     for comment in comments:
         d.append({
@@ -1195,11 +1206,15 @@ def getListOfCommentsNotReverse(e):
 @csrf_protect
 def getComments(request):
     if request.method == "GET":
-        event = Event.objects.get(id=findIdOfEvent(request.GET['id']));
+        eid = request.GET['id'];
+        event = Event.objects.get(id=findIdOfEvent(eid));
+
         if(request.session.has_key('fbid')):
-            event.unseen.remove(UserProfile.objects.get(user=request.session['fbid']))
+            u = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID = eid)
+            for u0 in u:
+                event.unseen.remove(u0)
         
-        return HttpResponse(simplejson.dumps(getListOfComments(event)))
+        return HttpResponse(simplejson.dumps(getListOfComments(event, eid)))
     else:
         return HttpResponseNotFound()
 
