@@ -669,9 +669,6 @@ def getEventData(request):
                 'canEdit': canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind': event.kind,
                 'notif': len(usr.notifications.filter(id=event.id)) >= 1,
-                'id': request.POST['id'],
-                'canEdit' : canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
-                'kind' : event.kind,
                 'coming':list(event.events.all().values()), 
                 'repeat':event.repeat,               
             }
@@ -913,7 +910,7 @@ def gcal(request):
 
                 if len(ev) > 0 and len(ev[0].exceptions.filter(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))) == 0:                   
                     ex = ExceptionDate(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))
-                    ex.save()
+                    ex.save()   
                     ev[0].exceptions.add(ex)
                     if not event.has_key('start'):
                         continue
@@ -921,7 +918,7 @@ def gcal(request):
             if event.has_key('id'):
                 existentEvent = usr.events.filter(gid=event['id'])
                 if(len(existentEvent) != 0):
-                    continue
+                    continue    
             if not event.has_key('summary'):
                 event['summary'] = 'No-Title'
             if not event.has_key('description'):
