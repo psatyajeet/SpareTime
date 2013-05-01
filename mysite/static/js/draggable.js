@@ -461,9 +461,12 @@ $(document).ready(function(){
 
         })
     $('#postComment').on('click', function (e) {
+        if($('#commentTextBox').val() != ""){
         $.post('comment',{'id': currentlyViewing, 'comment': $('#commentTextBox').val()}, function(data, status) {
             refreshComments();
         }, "json");
+        }
+        $('#commentTextBox').val("")
         });
 
 });
