@@ -157,10 +157,14 @@ def index(request):
         event = Event.objects.filter(id=findIdOfEvent(request.GET['id']))
         if len(event) != 0:
             e = event[0]
-
+            if(request.session.has_key('fbid')):
+                e.unseen.remove(UserProfile.objects.get(user=request.session['fbid']))
             creators = list(e.creators.all().values())  
             if e.description == '':
                 e.description = "No-Description"   
+            i = 0
+            if request.session.has_key('fbid'): 
+                i = 1 
             context = {
             'title': e.title,
             'description':e.description,
@@ -171,6 +175,7 @@ def index(request):
             'comments': getListOfCommentsNotReverse(e),
             'rejected' : list(e.rejected.all().values()),
             'id':e.id,
+            'loggedIn': i,
             }
             return render(request, 'socialcalendar/event.html', context)
     
@@ -595,7 +600,8 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             'repeat': e.repeat,
             'kind': e.kind,
             'notif': len(usr.notifications.filter(id=e.id)) >= 1,
-        })
+            'newComment':len(e.unseen.filter(id = usr.id)) >= 1,
+            })
 
   #      print 'x:',  xs[i]
    #     print 'width:', 1.0/float(widths[i])
@@ -1114,11 +1120,13 @@ def comment(request):
     if request.method == "POST":
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
         usr = None
-        name = None
+        
+        name = "No-Name"
+
         if request.POST.has_key('name'):
             name = request.POST['name']
 
-        if request.session['fbid']:
+        if request.session.has_key('fbid'):
             usr = UserProfile.objects.get(user=request.session['fbid'])
             name = usr.name
         if name == None:
@@ -1126,7 +1134,9 @@ def comment(request):
 
         addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')))
         d = []
-        
+
+        event.unseen.add(*list(event.events.all()))
+
         d.append({
             'commenter': name,
             'date':  datetime.today().replace(tzinfo=tz.gettz('UTC')).strftime(dateString)
@@ -1169,6 +1179,9 @@ def getListOfCommentsNotReverse(e):
 def getComments(request):
     if request.method == "GET":
         event = Event.objects.get(id=findIdOfEvent(request.GET['id']));
+        if(request.session.has_key('fbid')):
+            event.unseen.remove(UserProfile.objects.get(user=request.session['fbid']))
+        
         return HttpResponse(simplejson.dumps(getListOfComments(event)))
     else:
         return HttpResponseNotFound()
