@@ -160,8 +160,8 @@ def index(request):
             e = event[0]
             if(request.session.has_key('fbid')):
                 unseen = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID=request.GET['id'])
-                if len(unseen) > 0:
-                    e.unseen.remove(unseen[0])
+                for u in unseen:
+                    e.unseen.remove(u)
             creators = list(e.creators.all().values())  
             if e.description == '':
                 e.description = "No-Description"   
@@ -842,6 +842,13 @@ def changeStart(request):
             e.creators.add(*list(event.creators.all()))
             comments = Comment.objects.filter(commentID=eid)
             e.event.add(*list(comments))
+            unseen = Unseen.objects.filter(commentID=eid)
+
+            for u in unseen:
+                u.commentID = e.id
+                u.save()
+            
+            e.unseen.add(*list(unseen))
             comments.update(commentID=e.id)
             return HttpResponse()
 
@@ -1159,10 +1166,9 @@ def comment(request):
         addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')), commentID = request.POST['id'])
         d = []
         if usr != None:
-            users = event.events.exclude(user__in = usr.user)
+            users = event.events.exclude(user = usr.user)
         else:
             users = event.events.all()
-
         for user in users:
             u = Unseen(
                 people = user,

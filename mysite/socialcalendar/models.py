@@ -71,4 +71,6 @@ class Comment(models.Model):
 class Unseen(models.Model):
     people = models.ForeignKey("UserProfile", related_name = 'unseen')
     commentID = models.TextField(default = '')
+    def __unicode__(self):
+        return self.commentID 
 
