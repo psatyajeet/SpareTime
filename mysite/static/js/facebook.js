@@ -14,7 +14,7 @@ FB.getLoginStatus(function(response) {
         if(homepage) {
               homepage = false;
                 FB.api('/me', function(response) {
-                    makeUser(response.name, response.id);
+                  //  makeUser(response.name, response.id);
                 return;
             })        
         } else if(eventPage) {
