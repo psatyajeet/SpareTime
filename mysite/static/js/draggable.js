@@ -198,7 +198,7 @@ var populateWeekEvents = function() {
                     $div = $('<div class="event cantEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
             }
             if (dat.newComment)
-                $div = $('<div class="event commentNotif" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+                $div.addClass("commentNotif")
             $div.height((height+cellBorderWidth)*(dat.end - dat.start)*2-bufferWidth-eventBorderWidth);
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
             $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
@@ -401,6 +401,8 @@ var refreshComments = function () {
             insideComments += '<div class="comment alert alert-info"><span class="commentName">'+dat.name+':</span> '+dat.comment+'</br><div class="commentDate">'+dat.date+'</div></div>';
         });
         $commentSpace.html(insideComments);
+        $("#"+currentlyViewing).removeClass("commentNotif")
+
     }, "json");
 };
 
