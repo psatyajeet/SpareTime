@@ -413,6 +413,35 @@ def populateEvents(request):
     d = getArrayofWeeklyEvents(events, usr)
     return HttpResponse(simplejson.dumps(d))
 
+@csrf_protect
+def populateTime(request):
+    if request.method == "GET":
+        if not request.GET.has_key('startTime'):
+            return HttpResponse()
+
+        startDate = datetime.strptime(request.GET['startTime'], dateString)
+        startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
+        startDate = startDate.astimezone(tz.gettz('UTC'))
+        usr = UserProfile.objects.get(user=request.session['fbid'])
+        events = getAllEventsForTime(usr, startDate, startDate+timedelta(minutes=30), ['PU', 'PR', 'FL'])
+        return HttpResponse(simplejson.dumps(getArrayofWeeklyEvents(events, usr)))
+    else:
+        return HttpResponseNotFound()
+
+def getAllEventsForTime(usr, first, last, kinds):
+    events = usr.events.filter(start__gte=first).filter(start__lt=last).filter(repeat=False).filter(kind__in = kinds)
+    events = chain(events, getNotificationsForTime(usr, first, last, kinds))
+    events = list(chain(events, getWeeklyRecurringEvents(usr.events.filter(repeat=True), first, last)))
+    return events
+
+def getNotificationsForTime(user, first, last, kinds):
+    events = user.notifications.filter(repeat=False).filter(start__gte=first).filter(start__lt=last)
+    weeklyEvents = user.notifications.filter(repeat=True).filter(kind__in = kinds)
+    events = chain(events, getWeeklyRecurringEvents(weeklyEvents, first, last))
+    return events
+
+
+
 def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method sorted based on start time
     d = [] # data?
     x = 0 # x position of event on calendar

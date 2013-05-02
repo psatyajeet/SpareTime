@@ -1020,8 +1020,10 @@ var tableUp = function($cell, eventObject) {
         dates[x].setMinutes(30*(y%2));
         var startTime = formatTime(dates[x]);
 
-        $.post('changeStart', {"id": currentlyMovingID, "startTime": startTime}, "json");
-        populateEvents()
+        $.post('changeStart', {"id": currentlyMovingID, "startTime": startTime}, "json").done(function(){        
+            populateTime(startTime)
+        });
+        //populateEvents()
     }
     currentlyMoving = -1;
     starty = -1;
@@ -1037,6 +1039,7 @@ $cells.on("mouseup", function(eventObject) {
 
     return false;
 });
+
 
 
 $(document).on("mouseup", function(eventObject) {
@@ -1060,5 +1063,131 @@ var rejectNotification = function(eventID) {
         setTimeout(function() { populateEvents();}, 300);
     });
 };
+
+var populateTime = function (startTime){
+    $.get('populateTime', {"startTime": startTime}, function (data, status){
+        $overview = $('.overview');
+        var x = $('.hourEntry').width();
+        var widths = [7];
+        $entries = $('.calendarEntry');
+        for(var i = 0; i < 200; i++) {
+            widths[i] = $($entries.get(i)).width();
+        }
+        var cumWidths = [7];
+        $entries = $('.calendarEntry');
+        var reference = $('.overview').offset().left;
+        for(var i = 0; i < 7; i++) {
+            cumWidths[i] = $($entries.get(i)).offset().left-reference;
+        }
+        var height = $('.calendarEntry').height();
+        var eventBorderWidth = 4;
+        var cellBorderWidth = 1;
+        var bufferWidth = 4;
+        var z = 0;
+        $.each(data, function (index, dat) {
+            if($("#"+dat.id).css("z-index") !== undefined) {
+                z = $("#"+dat.id).css("z-index")
+                return;
+            } 
+        });
+        $.each(data, function (index, dat) {
+            $("#"+dat.id).remove()
+            if (dat.notif)
+                $div = $('<div class="event notif" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+            else {
+                if (dat.canEdit)
+                    $div = $('<div class="event canEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+                else
+                    $div = $('<div class="event cantEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+            }
+            if (dat.newComment)
+                $div = $('<div class="event commentNotif" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+            
+            $div.height((height+cellBorderWidth)*(dat.end - dat.start)*2-bufferWidth-eventBorderWidth);
+            $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
+            $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
+                left: cumWidths[dat.day]+widths[dat.day]*dat.x + 1});
+
+
+            $div.css('z-index', z);
+
+            //left: x + cumWidths[dat.day]+widths[dat.day]*dat.x + 
+            //    borderWidth*(dat.day+3)});
+
+            $overview.prepend($div);
+            //console.log(dat.title)
+        })
+
+    $('.event').off('click');
+    $('.event').off('mousedown');
+    $('.event').off('mouseup');
+    $('.event').off('mousemove');
+    $('.event').on('mousedown', function(event){
+        event.preventDefault();
+        currentlyClicking = 1;
+
+        currentlyMoving = $(this).attr("id");
+        currentlyMovingID = $(this).attr("id")
+        $.post('getEventData', {"id": currentlyMovingID}, function (data, status) {
+            currentlyMovingEnd = new Date(data.endms);
+            currentlyMovingStart = new Date(data.startms);
+        }, 'json');
+        currentlyMovingY = event.pageY - $(this).offset().top;
+
+        if (-1 == $(this).attr("class").indexOf("notif")) {
+            canEdit = true;
+        } else {
+            canEdit = false;
+        }
+
+    });
+    $('.event').on('click', function (){
+        if (currentlyClicking == 1) {
+            openID($(this).attr('id'));
+        }
+        return false;
+    });
+    $('.event').on('mousemove', function (event){
+        var x = event.pageX;
+        var y = event.pageY-currentlyMovingY;
+
+        $cells.each(function(index) {
+            if (y >= $(this).offset().top && 
+                y <= $(this).offset().top + $(this).height() + borderWidth&&
+                x >= $(this).offset().left && 
+                x <= $(this).offset().left + $(this).width() + borderWidth) {
+                currentlyClicking = -1;
+                tableOver($(this), event);
+            }
+        });
+        if (canEdit && currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
+            $(this).width($cells.width());
+            $(this).attr("class", "event movingEvent");
+        }
+
+    });
+    $('.event').on('mouseup', function (event){
+        var x = event.pageX;
+        var y = Math.max(event.pageY-currentlyMovingY, $cells.offset().top);
+        var called = false;
+        $cells.each(function(index) {
+            if (y >= $(this).offset().top && 
+                y <= $(this).offset().top + $(this).height() + borderWidth &&
+                x >= $(this).offset().left && 
+                x <= $(this).offset().left + $(this).width() + borderWidth) {
+                tableUp($(this), event);
+                called = true;
+            }
+        });
+        if (!called) {
+            currentlyMoving = -1;
+            populateEvents();
+            tableUp(null, event);
+        }
+        currentlyMovingY = 0
+        return false;
+    });
+    }, "json");
+}
 
 
