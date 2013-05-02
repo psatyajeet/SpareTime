@@ -1166,9 +1166,9 @@ def comment(request):
         addComment(commenter=usr, event=event, comment=request.POST['comment'], name = name, date = datetime.today().replace(tzinfo=tz.gettz('UTC')), commentID = request.POST['id'])
         d = []
         if usr != None:
-            users = event.events.exclude(user = usr.user)
+            users = event.events.exclude(user = usr.user).exclude(unseen__in = list(event.unseen.all()))
         else:
-            users = event.events.all()
+            users = event.events.exclude(unseen__in = list(event.unseen.all()))
         for user in users:
             u = Unseen(
                 people = user,
