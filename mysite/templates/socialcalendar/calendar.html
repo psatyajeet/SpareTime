@@ -15,6 +15,8 @@
 <button type = "button" id="authorize-button" onclick="handleClientLoad()" class="btn btn-success" >Import Gmail</button>
 
 <script>
+    $("#notificationButton").show()
+
    var logoutGmail = function(){
     window.open('https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://127.0.0.1:8000/', '_self');
    }

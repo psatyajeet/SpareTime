@@ -2,8 +2,6 @@
 {% block main %}
 
 <body>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
     <div class="row-fluid">
         <span class="span12">
             <h1>Event: {{title}}</h1>
@@ -75,6 +73,7 @@
         </span>
     </div>
 <script>
+    $("#notificationButton").hide()
     loggedIn = {{loggedIn}}
     if(loggedIn == 1){
         $("#Name").hide()
