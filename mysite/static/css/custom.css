@@ -297,3 +297,7 @@ td.otherMonth {
 #eventModal .modal-body {
         max-height: 350px;
 }
+
+#friendModal .modal-body {
+    overflow: visible;
+}

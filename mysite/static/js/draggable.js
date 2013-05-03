@@ -251,7 +251,7 @@ var populateWeekEvents = function() {
         }, 'json');
         currentlyMovingY = event.pageY - $(this).offset().top;
 
-        if (-1 == $(this).attr("class").indexOf("notif")) {
+        if (-1 != $(this).attr("class").indexOf("canEdit")) {
             canEdit = true;
         } else {
             canEdit = false;
@@ -371,15 +371,13 @@ $(document).on('click', '#rejectEvent', function(e) {
     rejectNotification(currentlyViewing);
 });
 
+
+
 var openID = function(id) {
     clearModal();
 
     $.post('getEventData', {"id": id}, function (data, status) {
-        $("#eventName").val(data.title);
-        $("#eventDescription").val(data.description);
-        $("#eventLocation").val(data.location);
-        $("#startTime").val(data.start);
-        $("#endTime").val(data.end);
+
 
         $('#createEvent').hide();
         $('#eventURL').show();
@@ -387,16 +385,32 @@ var openID = function(id) {
         $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
 
         if(data.canEdit) {
-           $('#editEvent').show();
-           $('#deleteEvent').show();
-           if(data.repeat){
-               $('#deleteEventThis').show();
-               $('#editEventThis').show()
-           } else {
+            $("#eventName").val(data.title);
+            $("#eventDescription").val(data.description);
+            $("#eventLocation").val(data.location);
+            $("#startTime").val(data.start);
+            $("#endTime").val(data.end);
+            $('#editEvent').show();
+            $('#deleteEvent').show();
+            if(data.repeat){
+                $('#deleteEventThis').show();
+                $('#editEventThis').show()
+            } else {
                 $('#deleteEventThis').hide();
                 $('#editEventThis').hide()
-           }
+            }
         } else {
+            $("#nonEditableTitle").html(data.title);
+            if (data.description != "")
+                $("#nonEditableDescription").html("Description: "+data.description);
+            if (data.location != "")
+                $("#nonEditableLocation").html("Location: "+data.location);
+            $("#nonEditableStartTime").html("Starts: "+data.start);
+            $("#nonEditableEndTime").html("Ends: "+data.end);
+
+            $("#modalEventEditable").hide();
+            $("#modalEventNotEditable").show();
+
             if (data.notif) {
                 $('#acceptEvent').show();
                 $('#rejectEvent').show();
@@ -411,6 +425,8 @@ var openID = function(id) {
         } 
         $('#eventModal').modal();
         $('a[href=#eventInformationTab]').tab('show');
+        $('a[href=#peopleTab]').show();
+        $('a[href=#commentsTab]').show();
         $('#eventModal').on('shown', function(){                    
             $('#eventName').focus();
         });
@@ -708,6 +724,7 @@ var createEvent = function() {
         "kind" : kind},
         "json").done(function (data, status) {
         uncolorCells();
+        removeToolTips();
         populateEvents();
     });
     $('#eventModal').modal('hide');
@@ -897,6 +914,7 @@ var $dragged = $(".dragged");
 var $reference;
 var borderWidth = 1;
 $cells.on("mousedown", function(eventObject) {
+    canEdit = true;
     eventObject.preventDefault();
     var index = $cells.index($(this));
     startx = index%7;
@@ -1019,6 +1037,8 @@ var tableUp = function($cell, eventObject) {
         $('#createEvent').show();
 
         $('a[href=#eventInformationTab]').tab('show');
+        $('a[href=#peopleTab]').hide();
+        $('a[href=#commentsTab]').hide();
         $('#deleteEvent').hide();
         $('#deleteEventThis').hide();
         $('#editEventThis').hide()

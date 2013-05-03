@@ -276,6 +276,7 @@
       </div>
       <div class="modal-body">
          <div id="modalEventInformation">
+             <div id="modalEventEditable">
             <h3 id="myModalLabel"><input id="eventName" class="input-block-level" type="text" placeholder="Event Name"></h3>
             <div class="row-fluid">
                <div class="span6">
@@ -587,12 +588,41 @@
             Flexible
             </label>
          </div>
-         <div class="row-fluid">
-            <span="span12">
-            Direct Link: <span id="eventURL"></span>
-            </span>
-         </div>
+
+     </div>
+     <div id="modalEventNotEditable">
+         <h3 id="nonEditableTitle">
+         </h3>
+            <div class="row-fluid">
+               <div class="span6">
+                   <div id="nonEditableStartTime">
+                   </div>
+               </div>
+               <div class="span6">
+                   <div id="nonEditableEndTime">
+                   </div>
+               </div>
             </div>
+            <div class="row-fluid">
+               <div class="span12">
+                   <div id="nonEditableLocation">
+                   </div>
+               </div>
+            </div>
+            <div class="row-fluid">
+               <div class="span12">
+                   <div id="nonEditableDescription">
+                   </div>
+               </div>
+            </div>
+
+     </div>
+     <div class="row-fluid">
+         <span="span12">
+             Direct Link: <span id="eventURL"></span>
+         </span>
+     </div>
+ </div>
 
 
 
@@ -751,6 +781,9 @@
        $('#deleteEvent').hide();
        $('#acceptEvent').hide();
        $('#rejectEvent').hide();
+
+       $("#modalEventEditable").show();
+       $("#modalEventNotEditable").hide();
    }
    
    var dates = new Array();
