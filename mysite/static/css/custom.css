@@ -196,7 +196,6 @@ tr.calendarRow td:last-child {
     z-index: 5;
 }
 
-
 .calendarMonthTable table{
     table-layout:fixed;
     width: 100%;
@@ -300,4 +299,8 @@ td.otherMonth {
 
 #friendModal .modal-body {
     overflow: visible;
+}
+
+#Name {
+    margin-top:0.75cm;
 }
