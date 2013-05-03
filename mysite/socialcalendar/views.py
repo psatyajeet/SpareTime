@@ -326,19 +326,8 @@ def submitEvent(request):
         if(len(request.POST['title']) != 0):
             title = request.POST['title'] 
 
-        e = Event(
-            title=title,
-            description=request.POST['description'],
-            location=request.POST['location'],
-            start=startDate,
-            end=endDate,
-            kind = request.POST['kind'],
-            recurrence = rrule,
-            repeat = repeat,
-        )
-        e.save()
         usr = UserProfile.objects.get(user=request.session['fbid'])
-        createEvent(start=startDate, end=endDate, recurrence = rrule, usr = usr, title=title, description=request.POST['description'], location=request.POST['location'], kind = request.POST['kind'], repeat = repeat)
+        e = createEvent(start=startDate, end=endDate, recurrence = rrule, usr = usr, title=title, description=request.POST['description'], location=request.POST['location'], kind = request.POST['kind'], repeat = repeat)
 
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
@@ -351,6 +340,8 @@ def submitEvent(request):
 def createEvent(start, end, recurrence, usr = None, title = "No-Title", description = "", location = "", kind = "PR", repeat = False):
     if usr == None:
         return
+    if end <= start:
+       end = start + timedelta(minutes = 30) 
     e = Event(
         title=title,
         description=description,
@@ -364,6 +355,8 @@ def createEvent(start, end, recurrence, usr = None, title = "No-Title", descript
     e.save()
     usr.creators.add(e)
     usr.events.add(e)
+
+    return e
 
 
 def getNotifications(user):
