@@ -655,6 +655,8 @@ def populateMonthEvents(request):
 
     for i in range(len(events)):
         e = events[i]
+        if(e.repeat):
+            e.id = e.repeatID
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
