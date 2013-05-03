@@ -83,6 +83,7 @@ var getNotifications = function() {
 
 var latestNotification = function() {
     getNotifications();
+    $('#notificationExclamation').hide();
     return notifications;
 };
 
@@ -93,6 +94,29 @@ var populateEvents = function() {
         populateMonthEvents();
 };
 
+var getEventType = function(data) {
+    var extraClasses = "";
+    if (data.notif) {
+        extraClasses += 'notif ';
+    } else {
+        if (data.canEdit) {
+            extraClasses += 'canEdit ';
+        } else {
+            extraClasses += 'cantEdit ';
+        }
+    }
+    if (data.newComment) {
+
+        //extraClasses += 'commentNotif ';
+    }
+    return extraClasses;
+}
+
+var addCommentNotification = function($obj, data) {
+    if (data.newComment) {
+        addExclamation($obj, $obj.attr('id')+'Exclamation');
+    }
+}
 
 var populateMonthEvents = function() {
     $.get('populateMonthEvents', function (data, status) {
@@ -107,22 +131,11 @@ var populateMonthEvents = function() {
             if ($entry.children().length >= 2) {
                 numEvents[parseInt(data[i].day)].push(data[i]);
             } else {
-                var extraClasses = "";
-                if (data[i].notif) {
-                    extraClasses += 'notif ';
-                } else {
-                    if (data[i].canEdit) {
-                        extraClasses += 'canEdit ';
-                    } else {
-                        extraClasses += 'cantEdit ';
-                    }
-                }
-                if (data[i].newComment)
-                    extraClasses += 'commentNotif ';
-                console.log(extraClasses);
+                
 
-                $monthEvent = $('<div id="'+data[i].id+'" class="monthEvent '+extraClasses+'">'+data[i].title+'</div>');
+                $monthEvent = $('<div id="'+data[i].id+'" class="monthEvent '+getEventType(data[i])+'">'+data[i].title+'</div>');
                 $entry.append($monthEvent);
+                addCommentNotification($monthEvent, data[i]);
             }
 
         }
@@ -137,21 +150,9 @@ var populateMonthEvents = function() {
                     $entry.append($extra);
                     monthEvents = "";
                     for (var j = 0; j < numEvents[i].length; j++) {
-                        var extraClasses = "";
-                        if (numEvents[i][j].notif) {
-                            extraClasses += 'notif ';
-                        } else {
-                            if (numEvents[i][j].canEdit) {
-                                extraClasses += 'canEdit ';
-                            } else {
-                                extraClasses += 'cantEdit ';
-                            }
-                        }
-                        if (numEvents[i][j].newComment)
-                            extraClasses += 'commentNotif ';
 
-
-                        monthEvents += '<div id="'+numEvents[i][j].id+'" class="monthEvent '+extraClasses+'">'+numEvents[i][j].title+'</div>';
+                        monthEvents += '<div id="'+numEvents[i][j].id+'" class="monthEvent '+getEventType(numEvents[i][j])+'">'+numEvents[i][j].title+'</div>';
+                        //addCommentNotification($monthEvent, numEvents[i][j]);
                     }
                     $popover.popover({html: true, trigger: 'manual', content: monthEvents, position: 'on right'});
 
@@ -219,16 +220,8 @@ var populateWeekEvents = function() {
         var cellBorderWidth = 1;
         var bufferWidth = 4;
         $.each(data, function(index, dat) {
-            if (dat.notif)
-                $div = $('<div class="event notif" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-            else {
-                if (dat.canEdit)
-                    $div = $('<div class="event canEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-                else
-                    $div = $('<div class="event cantEdit" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-            }
-            if (dat.newComment)
-                $div.addClass("commentNotif")
+            $div = $('<div class="event '+getEventType(dat)+'" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
+
             $div.height((height+cellBorderWidth)*(dat.end - dat.start)*2-bufferWidth-eventBorderWidth);
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
             $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
@@ -239,6 +232,7 @@ var populateWeekEvents = function() {
             //    borderWidth*(dat.day+3)});
 
             $overview.prepend($div);
+            addCommentNotification($div, dat);
     });
 
 
@@ -431,7 +425,7 @@ var refreshComments = function () {
             insideComments += '<div class="comment alert alert-info"><span class="commentName">'+dat.name+':</span> '+dat.comment+'</br><div class="commentDate">'+dat.date+'</div></div>';
         });
         $commentSpace.html(insideComments);
-        $("#"+currentlyViewing).removeClass("commentNotif")
+        $("#"+currentlyViewing+"Exclamation").remove();
 
     }, "json");
 };
@@ -1092,5 +1086,13 @@ var rejectNotification = function(eventID) {
         setTimeout(function() { populateEvents();}, 300);
     });
 };
+
+
+var addExclamation = function($obj, id) {
+    var $exclamation = $('<div class="exclamation" id="'+id+'">!</div>');
+    $obj.append($exclamation);
+
+    $exclamation.offset({top: ($obj.offset().top), left: ($obj.offset().left +$obj.width() - $exclamation.width() )});
+}
 
 

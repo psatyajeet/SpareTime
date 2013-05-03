@@ -147,8 +147,7 @@ tr.calendarRow td:last-child {
 }
 
 .event {
-    background-color: #009BFF;
-    border: 1px solid #0065A6; 
+
     font-size: 10.5px;
     color: black;
     font-family: "Arial", Times, serif;
@@ -166,28 +165,31 @@ tr.calendarRow td:last-child {
 
 .notif {
     background-color: #FF8E00;
-    border: 2px solid #FF6C00; 
-    position: absolute;
-    z-index: 10;
+    border: 1px solid #FF6C00; 
     opacity: 0.7;
-    overflow: hidden;
-    cursor: default;
 }
 
 .cantEdit {
     background-color: #00BFFF;
-    border: 2px solid #01A9DB; 
+    border: 1px solid #01A9DB; 
 
 }
 
+.canEdit {
+    background-color: #009BFF;
+    border: 1px solid #0065A6; 
+}
 
 .commentNotif {
     background-color: #9999FF;
-    border: 2px solid #4C4C80; 
+    border: 1px solid #4C4C80; 
 
 }
 
 .movingEvent {
+
+    background-color: #009BFF;
+    border: 1px solid #0065A6; 
     opacity: 0.6;
     filter: alpha(opacity=60);
     cursor: move;
@@ -219,8 +221,7 @@ td.otherMonth {
 }
 
 .monthEvent {
-    width: 95%;
-    background-color: #009BFF;
+    width: 90%;
     /*border: 2px solid #0065A6;*/ 
     border-radius: 4px;
     overflow: hidden;
@@ -280,4 +281,15 @@ td.otherMonth {
 .eventHeading {
     font-size: 14px;
     font-weight: bold;
+}
+
+.exclamation {
+    background-color: #B00000;
+    border: 1px solid #800000;
+    color: #FFFFFF;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    text-align: center;
+    position: absolute;
 }

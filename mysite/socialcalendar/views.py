@@ -203,6 +203,7 @@ def index(request):
     if request.session['format'] == "monthly":
         header = monthHeader
 
+    usr = UserProfile.objects.get(user=request.session['fbid'])
     context = {
         'format': request.session['format'],
         'days': days,
@@ -212,6 +213,7 @@ def index(request):
         'events': Event.objects.all(),
         'monthDays': monthDays,
         'monthWeeks': monthWeeks,
+        'hasNotification': len(usr.notifications.all()) > 0,
     }
 
     return render(request, 'socialcalendar/calendar.html', context)
@@ -655,14 +657,28 @@ def populateMonthEvents(request):
 
     for i in range(len(events)):
         e = events[i]
-        if(e.repeat):
-            e.id = e.repeatID
+
+        eID = e.id
+        creator0 = None
+
+        if e.repeat:
+            eID = e.repeatID
+            creator0 = list(e.creators.values())
+        elif (len(e.creators.all()) > 0):
+            creator0 = list(e.creators.all().values())     
+
         d.append({
             'title': e.title,
             'start': e.start.hour+e.start.minute/60.0,
             'end': e.end.hour+e.end.minute/60.0,
             'day': ((e.start - first).days),
-            'id': e.id,
+            'id': eID,
+            'creators': creator0,
+            'canEdit': canEdit(usr, e),
+            'repeat': e.repeat,
+            'kind': e.kind,
+            'notif': len(usr.notifications.filter(id=e.id)) >= 1,
+            'newComment':len(e.unseen.filter(people = usr).filter(commentID = eID)) >= 1,
         })
 
     return HttpResponse(simplejson.dumps(d))

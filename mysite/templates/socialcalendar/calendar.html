@@ -639,6 +639,11 @@
 </div>
 <script type="text/javascript">
    $(document).ready(function(){ 
+
+    {% if hasNotification %}
+        addExclamation($('#notificationButton').parent(), "notificationExclamation");
+    {% endif %}
+
           $('#modal-repeat').hide()
        if($("#repeatEventsCheckbox").is(':checked')){
            $('#modal-repeat').show()
@@ -953,6 +958,7 @@
        });
    };
    
+
    
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}/js/draggable.js"></script>

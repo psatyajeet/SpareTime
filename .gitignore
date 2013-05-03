@@ -21,3 +21,5 @@ mysite/mysite/__init__.pyc
 *.pyc
 
 *.swp
+
+*.swn
