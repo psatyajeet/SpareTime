@@ -103,7 +103,7 @@ var populateMonthEvents = function() {
         }
         $(".monthEvent, .monthExtra").remove();
         for (var i = 0; i < data.length; i++) {
-            $entry = $($monthEntries.get(data[i].day)).children();
+            var $entry = $($monthEntries.get(data[i].day)).children();
             if ($entry.children().length >= 2) {
                 numEvents[parseInt(data[i].day)].push(data[i]);
             } else {
@@ -118,6 +118,7 @@ var populateMonthEvents = function() {
                     $popover = $('<a href="#" onclick="return false" class="popoverMonthlyEvent" rel="popover" data-title="More Events" data-toggle="popover" data-placement="right" title="">+ '+numEvents[i].length+' More</a>');
                     $extra = $('<div class="monthExtra"></div>');
                     $extra.html($popover);
+                    var $entry = $($monthEntries.get(i)).children();
                     $entry.append($extra);
                     monthEvents = "";
                     for (var j = 0; j < numEvents[i].length; j++) {
