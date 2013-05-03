@@ -777,7 +777,6 @@ def editEvent(request):
 
         if(len(request.POST['title']) != 0):
             title = request.POST['title'] 
-        print request.POST['kind']
 
         event.title=title
         event.description=request.POST['description']
@@ -792,33 +791,6 @@ def editEvent(request):
         return HttpResponse()
     else:
         return HttpResponseNotFound()
-
-
-    if request.method == "POST":
-        event = Event.objects.get(id=request.POST['id'])
-       
-
-        startDate = datetime.strptime(request.POST['startTime'],
-                                      dateString)
-        endDate = datetime.strptime(request.POST['endTime'],
-                                    dateString)
-
-        startDate = startDate.replace(tzinfo=tz.gettz('UTC'))
-        endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
-        startDate = startDate.astimezone(tz.tzlocal())
-        endDate = endDate.astimezone(tz.tzlocal())
-
-        event.title = request.POST['title']
-        event.description = request.POST['description']
-        event.location = request.POST['location']
-        event.start = startDate
-        event.end = endDate
-
-        event.save()
-        return HttpResponse()
-    else:
-        return HttpResponseNotFound()
-
 
 @csrf_protect
 def changeStart(request):
