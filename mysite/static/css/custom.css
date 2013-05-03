@@ -293,3 +293,7 @@ td.otherMonth {
     text-align: center;
     position: absolute;
 }
+
+#eventModal .modal-body {
+        max-height: 350px;
+}
