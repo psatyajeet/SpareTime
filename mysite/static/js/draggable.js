@@ -1021,6 +1021,7 @@ var tableUp = function($cell, eventObject) {
         $('a[href=#eventInformationTab]').tab('show');
         $('#deleteEvent').hide();
         $('#deleteEventThis').hide();
+        $('#editEventThis').hide()
         $('#editEvent').hide();
         $('#eventURL').hide();
         $('#eventModal').modal();
