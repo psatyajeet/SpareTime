@@ -107,9 +107,24 @@ var populateMonthEvents = function() {
             if ($entry.children().length >= 2) {
                 numEvents[parseInt(data[i].day)].push(data[i]);
             } else {
-                $monthEvent = $('<div id="'+data[i].id+'" class="monthEvent">'+data[i].title+'</div>');
+                var extraClasses = "";
+                if (data[i].notif) {
+                    extraClasses += 'notif ';
+                } else {
+                    if (data[i].canEdit) {
+                        extraClasses += 'canEdit ';
+                    } else {
+                        extraClasses += 'cantEdit ';
+                    }
+                }
+                if (data[i].newComment)
+                    extraClasses += 'commentNotif ';
+                console.log(extraClasses);
+
+                $monthEvent = $('<div id="'+data[i].id+'" class="monthEvent '+extraClasses+'">'+data[i].title+'</div>');
                 $entry.append($monthEvent);
             }
+
         }
 
         for (i = 0; i < $monthEntries.length; i++) {
@@ -122,7 +137,21 @@ var populateMonthEvents = function() {
                     $entry.append($extra);
                     monthEvents = "";
                     for (var j = 0; j < numEvents[i].length; j++) {
-                        monthEvents += '<div id="'+numEvents[i][j].id+'" class="monthEvent">'+numEvents[i][j].title+'</div>';
+                        var extraClasses = "";
+                        if (numEvents[i][j].notif) {
+                            extraClasses += 'notif ';
+                        } else {
+                            if (numEvents[i][j].canEdit) {
+                                extraClasses += 'canEdit ';
+                            } else {
+                                extraClasses += 'cantEdit ';
+                            }
+                        }
+                        if (numEvents[i][j].newComment)
+                            extraClasses += 'commentNotif ';
+
+
+                        monthEvents += '<div id="'+numEvents[i][j].id+'" class="monthEvent '+extraClasses+'">'+numEvents[i][j].title+'</div>';
                     }
                     $popover.popover({html: true, trigger: 'manual', content: monthEvents, position: 'on right'});
 
