@@ -59,9 +59,12 @@
 
         <span class = "span2">  
         </span>
-        <span class="span8">
+        <span class="span4">
             <button class="btn btn-block btn-success" type="button" id="signIn">Sign in</button>
         </span>
+        <span class="span4">
+            <button class="btn btn-block btn-success" type="button" id="share">Share!</button>
+        </span>        
         <span class="span2">
         </span>
     </div>
@@ -95,9 +98,16 @@
         }, "json")
         $("#commentForm").val("")
     }
+    function share(){
+        var url = document.URL
+        mail = "mailto:user@example.com?subject=SpareTime&body=" +  encodeURIComponent("Hey, check out my event on SpareTime. And, join! It's easy, free, and fun!\n\n" + url + "\n \n Thanks!")
+        console.log(mail)
+        window.location.href = mail;
+    }
     $("#comment").click(addComment)
     $("#accept").click(addName)
     $("#signIn").click(login)
+    $("#share").click(share)
 
 </script>
 
