@@ -29,10 +29,19 @@
                         <li class="active"><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
                      </ul>
                      <ul class="nav pull-right">
-                        <!--<li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>-->
-                        
-                        <li><a href="#" id="notificationButton">Notifications</a></li>
-                        <li><a href="#" id="loginButton">Log In</a></li>
+                         <!--<li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>-->
+
+                         <li class="dropdown">
+                             <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#">
+                                 Import
+                                 <b class="caret"></b>
+                             </a>
+                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                 <li><a href="#" id="authorize-button" onclick="handleClientLoad()">From Google Calendar</a></li>
+                             </ul>
+                         </li>                        
+                         <li><a href="#" id="notificationButton">Notifications</a></li>
+                         <li><a href="#" id="loginButton">Log In</a></li>
                      </ul>
                   </div>
                </div>
