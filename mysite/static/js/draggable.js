@@ -1073,8 +1073,7 @@ var tableUp = function($cell, eventObject) {
         dates[x].setMinutes(30*(y%2));
         var startTime = formatTime(dates[x]);
 
-        $.post('changeStart', {"id": currentlyMovingID, "startTime": startTime}, "json");
-        populateEvents()
+        $.post('changeStart', {"id": currentlyMovingID, "startTime": startTime}, "json").done(function() {populateEvents();});
     }
     currentlyMoving = -1;
     starty = -1;
