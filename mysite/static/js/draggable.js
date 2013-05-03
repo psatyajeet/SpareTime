@@ -605,9 +605,14 @@ var createEvent = function() {
                 rrule+=';COUNT='+$("#dafterOccurrences").val();
             }
             else if ($('#dOn').is(':checked')){
-                rrule+=';UNTIL='+$("#donEndRepeat").val();
+                var endRepeat=$("#donEndRepeat").val();
+                var re = "/(\d+)/(\d+)/(\d+)";
+                var newEnd = endRepeat.replace(re, "$2-$1");
+                rrule+=';UNTIL='+endRepeat;
+                console.log(endRepeat);
             }
             rrule+=';INTERVAL='+$("#dinterval").val();
+
         }
         if($('#repeat-option-time-period').val()=="weekly"){
             rrule+='FREQ=WEEKLY';
@@ -651,7 +656,8 @@ var createEvent = function() {
                 rrule+=';COUNT='+$("#mafterOccurrences").val();
             }
             else if ($('#mOn').is(':checked')){
-                rrule+=';UNTIL='+$("#monEndRepeat").val();
+                var endRepeat=$("#monEndRepeat").val();
+                rrule+=';UNTIL='+endRepeat;
             }
             if ($("#minterval").val()!=1){
                 rrule+=';INTERVAL='+$("#minterval").val();
@@ -694,6 +700,7 @@ var createEvent = function() {
             }
         }
     }
+    console.log(rrule);
     $.post('submitEvent', {"title": $("#eventName").val(), 
         "description": $("#eventDescription").val(),
         "location": $("#eventLocation").val(),
