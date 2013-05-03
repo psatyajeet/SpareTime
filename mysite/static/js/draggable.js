@@ -392,17 +392,22 @@ var openID = function(id) {
            $('#deleteEvent').show();
            if(data.repeat){
                $('#deleteEventThis').show();
+               $('#editEventThis').show()
            } else {
                 $('#deleteEventThis').hide();
+                $('#editEventThis').hide()
            }
         } else {
             if (data.notif) {
                 $('#acceptEvent').show();
                 $('#rejectEvent').show();
                 $('#deleteEventThis').hide();
+                $('#editEventThis').hide()
+
             }else{
                 $('#deleteEvent').show();
                 $('#deleteEventThis').hide();
+                $('#editEventThis').hide()                
             }
         } 
         $('#eventModal').modal();
@@ -721,7 +726,7 @@ var deleteEvent = function(deleteAll) {
 $("#deleteEvent").click(function() {deleteEvent("all")});
 $("#deleteEventThis").click(function() {deleteEvent("this")});
 
-var editEvent = function() {
+var editEvent = function(all) {
     var radios = document.getElementsByName('optionsRadios');
     var kind = 'PR'
     for (var i = 0, length = radios.length; i < length; i++) {
@@ -834,13 +839,16 @@ var editEvent = function() {
         "endTime": $("#endTime").val(), 
         "RRULE": rrule,
         "id": currentlyViewing,
+        "all":all,
         "kind" : kind},
         "json").done(function (data, status) {
         populateEvents();
     });
     $('#eventModal').modal('hide');
 }
-$("#editEvent").click(function() {editEvent()});
+
+$("#editEvent").click(function() {editEvent("all")});
+$("#editEventThis").click(function() {editEvent("this")});
 
 
 

@@ -338,8 +338,8 @@ def submitEvent(request):
         )
         e.save()
         usr = UserProfile.objects.get(user=request.session['fbid'])
-        usr.creators.add(e)
-        usr.events.add(e)
+        createEvent(start=startDate, end=endDate, recurrence = rrule, usr = usr, title=title, description=request.POST['description'], location=request.POST['location'], kind = request.POST['kind'], repeat = repeat)
+
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
             storeNotificationForFriends(friendIDs, e)
@@ -347,6 +347,23 @@ def submitEvent(request):
         return HttpResponse()
     else:
         return HttpResponseNotFound()
+
+def createEvent(start, end, recurrence, usr = None, title = "No-Title", description = "", location = "", kind = "PR", repeat = False):
+    if usr == None:
+        return
+    e = Event(
+        title=title,
+        description=description,
+        location=location,
+        start=start,
+        end=end,
+        kind = kind,
+        recurrence = recurrence,
+        repeat = repeat,
+    )
+    e.save()
+    usr.creators.add(e)
+    usr.events.add(e)
 
 
 def getNotifications(user):
@@ -688,19 +705,26 @@ def populateMonthEvents(request):
 def getEventData(request):
 
     if request.method == "POST":
-        events = Event.objects.filter(id=findIdOfEvent(request.POST['id']))
+        eid = request.POST['id']
+        events = Event.objects.filter(id=findIdOfEvent(eid))
         usr = UserProfile.objects.get(user=request.session['fbid'])
 
         if (len(events) != 1):
             return HttpResponseNotFound()
         else:
             event = list(events)[0]
+            start = event.start
+            end = event.end
+
+            if event.repeat:
+                start = datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)
+                end = start + (event.end - event.start)
             d = {
                 'title': event.title,
                 'description': event.description,
                 'location': event.location,
-                'start': event.start.strftime(dateString),
-                'end': event.end.strftime(dateString),
+                'start': start.strftime(dateString),
+                'end': end.strftime(dateString),
                 'startms': calendar.timegm(event.start.timetuple())*1000,
                 'endms': calendar.timegm(event.end.timetuple())*1000,
                 'id': event.id,
@@ -762,21 +786,22 @@ def editEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
-        
-        if(event.repeat):
-            #repeat
-            return HttpResponse()
-
         rrule = ""
         repeat = False
         if request.POST.has_key('RRULE'):
             rrule = request.POST['RRULE']
             repeat = True
-        
+
         title = "No-Title"
 
         if(len(request.POST['title']) != 0):
             title = request.POST['title'] 
+
+        if(event.repeat and request.POST.has_key('all') and request.POST['all'] == 'this'):
+            usr = UserProfile.objects.get(user=request.session['fbid'])
+            createException(request.POST['id'], event)
+            createEvent(title=title, description=request.POST['description'], location=request.POST['location'], start=startDate, end=endDate, kind = request.POST['kind'], recurrence = rrule, repeat = repeat, usr = usr)
+            return HttpResponse()
 
         event.title=title
         event.description=request.POST['description']
@@ -791,6 +816,7 @@ def editEvent(request):
         return HttpResponse()
     else:
         return HttpResponseNotFound()
+
 
 @csrf_protect
 def changeStart(request):
@@ -813,9 +839,7 @@ def changeStart(request):
             if len(times) > 0 and times[0] == start:
                 return HttpResponse()
 
-            ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
-            ex.save()
-            event.exceptions.add(ex)
+            createException(eid, event)
 
             e = Event(
                 title=event.title,
@@ -1243,4 +1267,7 @@ def getRejected(e):
 def getUnanswered(e):
     return list(e.unanswered.all().values())
 
-
+def createException(eid, event):
+    ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
+    ex.save()
+    event.exceptions.add(ex)
