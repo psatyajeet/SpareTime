@@ -2,6 +2,8 @@
 <head>
 <title> SpareTime Internals</title>
 
+</head>
+
 <body bgcolor="ffffff">
 
 <h1> SpareTime </h1>
@@ -25,6 +27,19 @@ Our entire codebase can be find within the mysite folder. We will go folder-by-f
 
 	This file is a django-generated file that holds the code for various django-python functions such as how to sync the database (python manage.py syncdb) and how to run the localhost server (python manage.py runserver).
 </li>
+
+<li>
+	file: requirements.txt
+
+	This is a very important file for Heroku. It tells Heroku what python apps/plug-ins we have installed on our machines and therefore what needs to be installed on the server for our website to work. 
+</li>
+
+<li>
+	file: Procfile
+
+	This is a very important file for running on Heroku. It tells Heroku what kind of web process we'd like to run when someone hits the domain sparetime.herokuapp.com.
+</li>
+
 
 <li>
 	folder: mysite
