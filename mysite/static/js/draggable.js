@@ -606,10 +606,17 @@ var createEvent = function() {
             }
             else if ($('#dOn').is(':checked')){
                 var endRepeat=$("#donEndRepeat").val();
-                var re = "/(\d+)/(\d+)/(\d+)";
-                var newEnd = endRepeat.replace(re, "$2-$1");
-                rrule+=';UNTIL='+endRepeat;
+                var re = /(\w+)\/(\w+)\/(\w+) (\w+):(\w+) (AM|PM)/;
+                var ampm= /AM/;
+                if (ampm.test(endRepeat)==true){
+                    var newEnd = endRepeat.replace(re, "$3-$1-$2T$4:$5:00.000Z");
+                }
+                else{
+                    
+                }
+                rrule+=';UNTIL='+newEnd;
                 console.log(endRepeat);
+                console.log(newEnd);
             }
             rrule+=';INTERVAL='+$("#dinterval").val();
 
@@ -873,7 +880,7 @@ $(function() {
     $('.datetimepicker').datetimepicker({
         language: 'en',
         pick12HourFormat: true,
-        pickSeconds: false
+        pickSeconds: true
     });
 });
 
