@@ -9,6 +9,15 @@
 	line-height: 34px;
 }
 
+.picture-info{
+    color: #FFFFFF;
+    font-weight: 400;
+    text-align: center;
+    font-family: "adobe-garamond-pro";
+    font-style: normal;
+    font-size: 14px;
+}
+
 .logo{
 	color: #009BFF;
   	font-weight: 400;
