@@ -213,7 +213,7 @@ def index(request):
         'events': Event.objects.all(),
         'monthDays': monthDays,
         'monthWeeks': monthWeeks,
-        'hasNotification': len(usr.notifications.all()) > 0,
+        'hasNotification': usr.notifications.count() > 0,
     }
 
     return render(request, 'socialcalendar/calendar.html', context)
@@ -626,8 +626,8 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             'canEdit': canEdit(usr, e),
             'repeat': e.repeat,
             'kind': e.kind,
-            'notif': len(usr.notifications.filter(id=e.id)) >= 1,
-            'newComment':len(e.unseen.filter(people = usr).filter(commentID = eID)) >= 1,
+            'notif': usr.notifications.filter(id=e.id).count() >= 1,
+            'newComment':e.unseen.filter(people = usr).filter(commentID = eID).count() >= 1,
             })
   #      print 'x:',  xs[i]
    #     print 'width:', 1.0/float(widths[i])
@@ -687,8 +687,8 @@ def populateMonthEvents(request):
             'canEdit': canEdit(usr, e),
             'repeat': e.repeat,
             'kind': e.kind,
-            'notif': len(usr.notifications.filter(id=e.id)) >= 1,
-            'newComment':len(e.unseen.filter(people = usr).filter(commentID = eID)) >= 1,
+            'notif': usr.notifications.filter(id=e.id).count() >= 1,
+            'newComment':e.unseen.filter(people = usr).filter(commentID = eID).count() >= 1,
         })
 
     return HttpResponse(simplejson.dumps(d))
@@ -723,7 +723,7 @@ def getEventData(request):
                 'id': event.id,
                 'canEdit': canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind': event.kind,
-                'notif': len(usr.notifications.filter(id=event.id)) >= 1,
+                'notif': usr.notifications.filter(id=event.id).count() >= 1,
                 'coming':list(event.events.all().values()), 
                 'repeat':event.repeat,               
             }
@@ -740,7 +740,7 @@ def deleteEvent(request):
         eid = request.POST['id']
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
 
-        if len(event.events.filter(user = usr.user)) > 0:
+        if event.events.filter(user = usr.user).count() > 0:
             event.rejected.add(usr) 
 
         if canEdit(usr, event):
@@ -944,7 +944,7 @@ def gcal(request):
             if event.has_key('originalStartTime') and event.has_key('recurringEventId') :
                 ev = usr.events.filter(gid=event['recurringEventId'])
 
-                if len(ev) > 0 and len(ev[0].exceptions.filter(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))) == 0:                   
+                if len(ev) > 0 and ev[0].exceptions.filter(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC'))).count() == 0:                   
                     ex = ExceptionDate(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))
                     ex.save()   
                     ev[0].exceptions.add(ex)
@@ -1064,7 +1064,7 @@ def getWeeklyRecurringEvents(events, first, last):
         except:            
             continue
         for time in times:
-            if len(event.exceptions.filter(exceptionTime=time)) > 0:
+            if event.exceptions.filter(exceptionTime=time).count() > 0:
                 continue
 
             e = tempEvent(
