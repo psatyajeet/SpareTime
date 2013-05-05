@@ -272,6 +272,7 @@
             <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
             <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
             <li><a href="#peopleTab" data-toggle="tab">People</a></li>
+            <li><a href="#invitedTab" data-toggle="tab">Invited</a></li>
          </ul>
          <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
       </div>
@@ -625,8 +626,14 @@
      </div>
  </div>
 
-
-
+    <div id="modalInvited">
+      <p>Add friends to invite to your event:</p>
+      <input type="text" id="friendComplete">
+      <div class="row-fluid">
+         <div id="invitedFriends">
+         </div>
+      </div>
+   </div>
 
       <div id="modalPeople">
          <div class="row-fluid">
@@ -656,6 +663,7 @@
             </div>
          </div>
       </div>
+
         </div>
    </form>
    <div class="modal-footer">

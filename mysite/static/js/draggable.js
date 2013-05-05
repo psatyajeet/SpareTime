@@ -463,6 +463,7 @@ $(document).ready(function(){
     $('a[href=#peopleTab]').on('shown', function (e) {
         $('#modalEventInformation').hide();
         $('#modalComments').hide();
+
         $('#modalPeople').show();
         $.get('getPeople', {'id': currentlyViewing}, function (data, status) {
             var filler = '';
@@ -491,7 +492,12 @@ $(document).ready(function(){
 
         }, 'json');
     });
-
+    $('a[href=#invitedTab]').on('shown', function (e) {
+         $('#modalEventInformation').hide();
+        $('#modalComments').hide();
+        $('#modalPeople').hide();        
+         $("#friendModal").show()
+    });
     $('a[href=#eventInformationTab]').on('shown', function (e) {
         $('#modalEventInformation').show();
         $('#modalComments').hide();
