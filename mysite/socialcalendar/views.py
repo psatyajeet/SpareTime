@@ -738,10 +738,9 @@ def deleteEvent(request):
     if request.method == "POST":
         usr = UserProfile.objects.get(user=request.session['fbid'])
         eid = request.POST['id']
-        print eid
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
 
-        if len(event.accepted.filter(user = usr.user)) > 0:
+        if len(event.events.filter(user = usr.user)) > 0:
             event.rejected.add(usr) 
 
         if canEdit(usr, event):
@@ -1007,7 +1006,6 @@ def acceptNotification(request):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=findIdOfEvent(request.POST['eventID']))
         event.unanswered.remove(usr)
-        usr.accepted.add(event)
         removeNotification(usr, event)
         usr.events.add(event)
         return HttpResponse();
