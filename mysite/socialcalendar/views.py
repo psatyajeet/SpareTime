@@ -910,7 +910,7 @@ def heatMap(request):
                 for i in range(start.hour*2+start.minute/30, end.hour*2+end.minute/30):
                     if not timeSlotConsider[day][i]:
                         ratio[day][i] += 1;
-                        busy[day][i].append(friend)
+                        busy[day][i].append(usr[0].name)
                     timeSlotConsider[day][i] = True
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])

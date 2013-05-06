@@ -952,7 +952,7 @@
            var count = 0;
            $.each(values[index], function(index2, id) {
    
-               var top = friends.length;
+              /* var top = friends.length;
                var bot = 0;
                var i = Math.floor(top/2);
                    // Binary Search
@@ -966,9 +966,9 @@
                            bot = i;
                            i = Math.ceil((top + i) / 2);
                        }
-                   }
+                   }*/
    
-                   cantCome += (friendNames[i])+'<br>';
+                   cantCome += (id)+'<br>';
                    count++;
                });
            if (count == 0)
