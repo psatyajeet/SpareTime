@@ -81,6 +81,9 @@
     loggedIn = "{{loggedIn}}"
     if(loggedIn == "1"){
         $("#Name").hide()
+        $("#signIn").hide()
+    } else {
+        $("#signIn").show()
     }
     eventPage = true
     var id = "{{id}}"
