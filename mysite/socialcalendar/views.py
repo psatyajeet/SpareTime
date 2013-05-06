@@ -602,7 +602,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
 
         e = events[i]
         endhour = e.end.hour
-        if (e.end.hour == 0 and e.end.minute == 0):
+        if (e.end.day > e.start.day):
             endhour = 24    
         eID = e.id;
         creator0 = None
