@@ -295,9 +295,11 @@ td.otherMonth {
 }
 
 #eventModal .modal-body {
-        max-height: 350px;
+    max-height: 350px;
+    overflow: visible;
 }
 
 #friendModal .modal-body {
     overflow: visible;
 }
+

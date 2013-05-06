@@ -251,9 +251,9 @@
    </div>
    <div class="modal-body">
       <p>Add friends to invite to your event:</p>
-      <input type="text" id="friendComplete">
+      <input type="text" class="friendComplete">
       <div class="row-fluid">
-         <div id="invitedFriends">
+         <div class="invitedFriends">
          </div>
       </div>
    </div>
@@ -272,6 +272,7 @@
             <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
             <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
             <li><a href="#peopleTab" data-toggle="tab">People</a></li>
+            <li><a href="#inviteTab" data-toggle="tab">Invite</a></li>
          </ul>
          <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
       </div>
@@ -654,8 +655,18 @@
             </div>
             <div id="commentSpace">
             </div>
+
          </div>
       </div>
+      <div id="modalInvite">
+          <p>Add friends to invite to your event:</p>
+          <input type="text" class="friendComplete">
+          <div class="row-fluid">
+              <div class="invitedFriends">
+              </div>
+          </div>
+      </div>
+
         </div>
    </form>
    <div class="modal-footer">
@@ -847,8 +858,8 @@
        var nonRemovedFriends;
    
        var addFriend = function(item) {
-           var $invited = $('#invitedFriends');
-           var $friendComplete = $('#friendComplete');
+           var $invited = $('.invitedFriends');
+           var $friendComplete = $('.friendComplete');
            $invited.html($invited.html() + '<span class="invitedFriend" ><span>' + item + '</span><span class="friendCloseBox">X</span></span>');
            $friendComplete.val("");
            var index = friendNames.indexOf(item);
@@ -865,7 +876,7 @@
            nonRemovedFriends.push(name);
        });
    
-       $('#friendComplete').typeahead({
+       $('.friendComplete').typeahead({
            source: function() {
                if(nonRemovedFriends.length == 0) {
                    friendNames = []
@@ -883,7 +894,7 @@
        $('#friendModal').modal({'show': false, 'keyboard': false});
    
        $('#friendModal').on('shown', function() {
-           $('#friendComplete').focus();
+           $('.friendComplete').focus();
        });
    
        $("#chooseFriendsCancel").on("click", function() {
@@ -909,10 +920,15 @@
            }
        });
    
+    var clearFriends = function() {
+        $('.invitedFriends').html("");
+        invitedFriendsID = [];
+        nonRemovedFriends = friendNames.slice(0);
+
+    }
+
        $("#addFriends").on("click", function() {
-           $('#invitedFriends').html("");
-           invitedFriendsID = [];
-           nonRemovedFriends = friendNames.slice(0);
+            clearFriends();
            $("#friendModal").modal('show');
        });
    
@@ -929,6 +945,7 @@
        });
        $("#startTime").val("");
        $("#endTime").val("");
+       nonRemovedFriends = friendNames.slice(0);
    });
    
    var $cells = $(".calendarEntry, .calendarHalfHour");

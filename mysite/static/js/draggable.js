@@ -161,6 +161,7 @@ var populateMonthEvents = function() {
                     var onPopoverLink = false;
 
                     $popover.on("mouseenter", function() {
+                        //$('.popoverMonthlyEvent').popover('hide');
                         onPopoverLink = true;
                         $(this).popover('show');
                         var $pop = $(this);
@@ -465,9 +466,11 @@ $(document).ready(function(){
 
     $('#modalComments').hide();
     $('#modalPeople').hide();
+    $('#modalInvite').hide();
     $('a[href=#peopleTab]').on('shown', function (e) {
         $('#modalEventInformation').hide();
         $('#modalComments').hide();
+        $('#modalInvite').hide();
         $('#modalPeople').show();
         $.get('getPeople', {'id': currentlyViewing}, function (data, status) {
             var filler = '';
@@ -500,17 +503,29 @@ $(document).ready(function(){
     $('a[href=#eventInformationTab]').on('shown', function (e) {
         $('#modalEventInformation').show();
         $('#modalComments').hide();
+        $('#modalInvite').hide();
         $('#modalPeople').hide();
     });
 
     $('a[href=#commentsTab]').on('shown', function (e) {
         $('#modalEventInformation').hide();
         $('#modalPeople').hide();
+        $('#modalInvite').hide();
         $('#commentTextBox').val("");
         $('#modalComments').show();
         refreshComments();
 
         })
+
+    $('a[href=#inviteTab]').on('shown', function (e) {
+        $('#modalEventInformation').hide();
+        $('#modalPeople').hide();
+        $('#modalComments').hide();
+        $('#modalInvite').show();
+
+        nonRemovedFriends = friendNames.slice(0);
+        })
+
     $('#postComment').on('click', function (e) {
         if($('#commentTextBox').val() != ""){
         $.post('comment',{'id': currentlyViewing, 'comment': $('#commentTextBox').val()}, function(data, status) {
@@ -733,6 +748,7 @@ var createEvent = function() {
         populateEvents();
     });
     $('#eventModal').modal('hide');
+    clearFriends();
 }
 $("#createEvent").click(function() {createEvent()});
 
