@@ -221,7 +221,7 @@ var populateWeekEvents = function() {
         var bufferWidth = 4;
         $.each(data, function(index, dat) {
             $div = $('<div class="event '+getEventType(dat)+'" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-            $div.height((height+cellBorderWidth)*Math.max(dat.end - dat.start, .6)*2-bufferWidth-eventBorderWidth);
+            $div.height((height+cellBorderWidth)*Math.max(dat.end - dat.start, .4)*2-bufferWidth-eventBorderWidth);
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
             $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
                 left: cumWidths[dat.day]+widths[dat.day]*dat.x + 1});
