@@ -671,7 +671,10 @@
 </div>
 <script type="text/javascript">
    $(document).ready(function(){ 
-
+       if (format == "weekly")
+           $("#monthlyCalendar").hide();
+       else
+           $("#weeklyCalendar").hide();
     {% if hasNotification %}
         addExclamation($('#notificationButton').parent(), "notificationExclamation");
     {% endif %}
@@ -798,11 +801,6 @@
        var scrollBar = $('#scrollbar1');
        scrollBar.tinyscrollbar({wheel: 34});
        scrollBar.tinyscrollbar_update(272);
-   
-       if (format == "weekly")
-           $("#monthlyCalendar").hide();
-       else
-           $("#weeklyCalendar").hide();
    
    });
    
