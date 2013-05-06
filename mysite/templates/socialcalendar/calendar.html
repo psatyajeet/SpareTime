@@ -671,6 +671,10 @@
 </div>
 <script type="text/javascript">
    $(document).ready(function(){ 
+         
+       var scrollBar = $('#scrollbar1');
+       scrollBar.tinyscrollbar({wheel: 34});
+       scrollBar.tinyscrollbar_update(272);
        if (format == "weekly")
            $("#monthlyCalendar").hide();
        else
@@ -796,14 +800,6 @@
        {{ date.month }},
        {{ date.day }}));
    {% endfor %}
-   $(document).ready(function(){
-   
-       var scrollBar = $('#scrollbar1');
-       scrollBar.tinyscrollbar({wheel: 34});
-       scrollBar.tinyscrollbar_update(272);
-   
-   });
-   
    
    var gcal = function(resp) {
        $.post('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
