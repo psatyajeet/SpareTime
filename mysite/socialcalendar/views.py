@@ -602,7 +602,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
 
         e = events[i]
         endhour = e.end.hour
-        if (e.end.hour == 0):
+        if (e.end.hour == 0 and e.end.minute == 0):
             endhour = 24    
         eID = e.id;
         creator0 = None
@@ -612,8 +612,6 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             creator0 = list(e.creators.values())
         elif (len(e.creators.all()) > 0):
             creator0 = list(e.creators.all().values())     
-
-
 
         d.append({
             'title': e.title,
