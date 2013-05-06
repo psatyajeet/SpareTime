@@ -260,7 +260,7 @@ def goToEvent(request):
         #delta_day = target_day - datetime.now().isoweekday()
         sunday1 = today - timedelta(days=(today.isoweekday() %7))
         sunday2 = event.start - timedelta(days=(event.start.isoweekday() %7))
-        request.session['whichweek'] = int((sunday2 - sunday1).days/ 7)
+        request.session['whichweek'] = int((sunday2 - sunday1).days/7.0)
         
         days, hours, dates, header = getDays(request.session['whichweek'])
         d = {'header': header, 'days': days, 'dates': dates}
