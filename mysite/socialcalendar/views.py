@@ -844,8 +844,8 @@ def changeStart(request):
             )
 
             e.save()
-
-            e.events.add(*list(event.events.all()))
+            e.notification.add(*list(event.notification.all()))
+            e.events.add(*list(event.events.all())) 
             e.creators.add(*list(event.creators.all()))
             comments = Comment.objects.filter(commentID=eid)
             e.event.add(*list(comments))
