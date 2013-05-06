@@ -28,6 +28,7 @@ import json
 import random
 
 import re
+import math
 idfeDateString = "%m%d%Y%I%M%p"
 dateString = "%m/%d/%Y %I:%M %p"
 googleDateString = "%Y-%m-%dT%H:%M:%S"
@@ -889,28 +890,24 @@ def heatMap(request):
         last = last.replace(tzinfo=tz.gettz('UTC'))
         ratio = [[0 for x in xrange(48)] for x in xrange(7)]         
         busy = [[[] for j in range(48)] for i in range(7)]       
-        noApp = []
         total = 0.0;
 
-        for friend in friendIDs :
+
+        usrs = UserProfile.objects.filter(user__in=friendIDs)    
+        for usr in usrs :
             timeSlotConsider = [[0 for x in xrange(48)] for x in xrange(7)] 
 
-            usr = UserProfile.objects.filter(user=friend)     
-            if(len(usr) == 0):
-                noApp.append(friend)
-                continue
-
             total = total+1.0;
-            events = getAllEvents(usr[0], first, last, ['PU'])
+            events = getAllEvents(usr, first, last, ['PU'])
             
             for event in events:
                 start = event.start;
                 end = event.end;
                 day = (start.weekday()+1) % 7
-                for i in range(start.hour*2+start.minute/30, end.hour*2+end.minute/30):
+                for i in range(int(start.hour*2+math.floor(start.minute/30.0)), int(end.hour*2+math.ceil(end.minute/30.0))):
                     if not timeSlotConsider[day][i]:
                         ratio[day][i] += 1;
-                        busy[day][i].append(usr[0].name)
+                        busy[day][i].append(usr.name)
                     timeSlotConsider[day][i] = True
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
@@ -922,8 +919,6 @@ def heatMap(request):
                         'ratios': (1-ratio[i][j]/total),
                         'busy': busy[i][j],
                     })
-
-        d.append({'noApp':noApp});
 
         return HttpResponse(simplejson.dumps(d))
     else:
