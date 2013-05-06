@@ -156,7 +156,7 @@ def getWeeks(offset=0):
 def index(request):
     if request.GET.has_key('id'):
         event = Event.objects.filter(id=findIdOfEvent(request.GET['id']))
-        if len(event) != 0:
+        if len(event) != 0 and (event[0].kind == 'PU' or event[0].kind == 'FL'):
             e = event[0]
             if(request.session.has_key('fbid')):
                 unseen = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID=request.GET['id'])
@@ -901,7 +901,7 @@ def heatMap(request):
                 continue
 
             total = total+1.0;
-            events = getAllEvents(usr[0], first, last, ['PR', 'PU'])
+            events = getAllEvents(usr[0], first, last, ['PU'])
             
             for event in events:
                 start = event.start;
@@ -993,7 +993,7 @@ def gcal(request):
                       gid=event['id'],
                       repeat=recurring,
                       recurrence=recurrence,
-                      kind = 'PR',
+                      kind = 'PU',
                       ) 
             e.save()
             usr.creators.add(e);

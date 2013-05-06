@@ -382,8 +382,11 @@ var openID = function(id) {
         $('#createEvent').hide();
         $('#eventURL').show();
         var url = document.URL.replace("#", "")+'?id='+id;
-        $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
-
+        if(data.kind == "PU" || data.kind == "FL"){
+            $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
+        } else {
+            $('#eventURL').html('Private Event');
+        }
         if(data.canEdit) {
             $("#eventName").val(data.title);
             $("#eventDescription").val(data.description);
