@@ -472,7 +472,7 @@ $(document).ready(function(){
         $('#modalComments').hide();
         $('#modalInvite').hide();
         $('#modalPeople').show();
-        $('#eventModalBody').css("overflow","hidden");
+        $('#eventModalBody').css("overflow","auto");
         $.get('getPeople', {'id': currentlyViewing}, function (data, status) {
             var filler = '';
             $.each(data.creators, function(index, dat) {
@@ -506,7 +506,7 @@ $(document).ready(function(){
         $('#modalComments').hide();
         $('#modalInvite').hide();
         $('#modalPeople').hide();
-        $('#eventModalBody').css("overflow","hidden");
+        $('#eventModalBody').css("overflow","auto");
     });
 
     $('a[href=#commentsTab]').on('shown', function (e) {
@@ -515,7 +515,7 @@ $(document).ready(function(){
         $('#modalInvite').hide();
         $('#commentTextBox').val("");
         $('#modalComments').show();
-        $('#eventModalBody').css("overflow","hidden");
+        $('#eventModalBody').css("overflow","auto");
         refreshComments();
 
         })
@@ -1071,7 +1071,7 @@ var tableUp = function($cell, eventObject) {
         $('#eventURL').hide();
         $('#eventModal').modal();
         $('#eventModal').on('shown', function(){                    
-            $('#eventModalBody').css("overflow", "hidden");
+            $('#eventModalBody').css("overflow", "auto");
             $('#eventName').focus();
         });
     }
