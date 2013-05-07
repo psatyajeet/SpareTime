@@ -112,6 +112,7 @@
       <p></p>
    </div>
 </div>
+
 <!-- Start Week Calendar -->
 <div id="weeklyCalendar">
    <table class="table table-bordered">
@@ -963,7 +964,9 @@
    };
    
    var addToolTips = function(values) {
-       $cells.each(function(index, cell) {
+         $("#weeklyCalendar").addClass("black")
+         
+          $cells.each(function(index, cell) {
    
            $child = $(cell).children().first();
            var cantCome = '<em>Unavailable Friends:</em><br>';
@@ -1004,6 +1007,8 @@
    }
    
    var removeToolTips = function(values) {
+      $("#weeklyCalendar").removeClass("black")
+
        $cells.each(function(index, cell) {
    
            $child = $(cell).children().first();
