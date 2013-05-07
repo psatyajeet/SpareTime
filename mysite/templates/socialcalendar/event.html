@@ -3,28 +3,28 @@
 
 <body>
     <div class="row-fluid">
-        <span class="span10">
-            <h1><center>{{title}}</center></h1>
+        <span class="span12">
+            <h1 class = "heading1"><center>{{title}}</center></h1>
         </span>
     </div>
     <br>
     
     <div class="row-fluid">
-        <span class="span5">
-            <h4> Details </h4>
-            <div>Start: {{start}}</div>
-            <div>End: {{end}}</div>
-            <br>
-            <div>Description: <br>{{description}}</div>
+        <span class="span6 sectionEvent">
+            <h3 class = "heading2"> Details </h3>
+            <div> <h5 class = "heading3">Start:</h5> {{start}}</div>
+            <div> <h5 class = "heading3">End: </h5> {{end}}</div>
+            <div> <h5 class = "heading3">Location: </h5> {{location}}</div>
+            <div><h5 class = "heading3">Description: </h5>{{description}}</div>
         </span>
 
-        <span class="span7">
-            <h4> People </h4>
-            <div>Creators: {% for creator in creators %} {{creator.name}} {% endfor %}</div>
-            <div>Coming: <ul id = "coming">{% for p in coming %}<li> {{p.name}}</li> {% endfor %}</ul></div>
-            <form class="form-search span7">
+        <span class="span6 sectionEvent">
+            <h3 class = "heading2"> People </h3>
+            <div><h5 class = "heading3">Creators:</h5> {% for creator in creators %} {{creator.name}} {% endfor %}</div>
+            <div><h5 class = "heading3">Coming:</h5> <ul id = "coming">{% for p in coming %}<li> {{p.name}}</li> {% endfor %}</ul></div>
+            <form class="form-search">
                 <span>
-                    <input type="text" class="span8" id = "inputBox">
+                    <input type="text" id = "inputBox">
                     <button class="btn  btn-success" type="button" id="accept">Add Name</button>
                 </span>
             </form>
@@ -34,16 +34,18 @@
     <br><br>
 
     <div class="row-fluid offset2">
-
-        <button class="btn btn-block btn-success span4" type="button" id="signIn">Sign in</button>
-        <button class="btn btn-block btn-success span4" type="button" id="share">Share!</button>
-    
+        <div class = "span4">
+            <button class="btn btn-block btn-primary" type="button" id="signIn">Sign in</button>
+        </div>
+        <div class = "span4">        
+            <button class="btn btn-block btn-primary" type="button" id="share">Share! <i class="icon-envelope" style = "margin-left:20px"> </i> </button>
+        </div>
     </div>
 
     <hr />
 
     <div class="row-fluid">
-        <div class="row-fluid"> <h4> Comments: </h4> </div>
+        <div class="row-fluid commentsSection"> Comments: </div>
         <br>
         <span class="span8">
             <input type="text" class="span3" id = "Name" placeholder="Name here"> 

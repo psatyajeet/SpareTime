@@ -170,9 +170,13 @@ def index(request):
             if request.session.has_key('fbid'): 
                 i = 1 
             eid = request.GET['id']
+            location = e.location;
+            if location == "":
+                location = "No-Location"
             context = {
             'title': e.title,
             'description':e.description,
+            'location':location,
             'start': e.start.strftime(dateString),  
             'end': e.end.strftime(dateString),
             'creators' : creators,
