@@ -375,12 +375,11 @@ def getNotifications(user):
 
 
 def storeNotificationForFriends(friendIDs, e):
-    usr = UserProfile.objects.filter(user__in=friendIDs).exclude(notifications = e)
+    usr = UserProfile.objects.filter(user__in=friendIDs).exclude(notifications = e).exclude(events = e)
     print usr
     for user in usr:
         user.unanswered.add(e)
         user.notifications.add(e)
-
 
 def removeNotification(user, e) :
     user.notifications.remove(e);

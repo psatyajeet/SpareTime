@@ -222,8 +222,6 @@ var populateWeekEvents = function() {
         var bufferWidth = 4;
         $.each(data, function(index, dat) {
             $div = $('<div class="event '+getEventType(dat)+'" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
-            console.log(dat.end)
-            console.log(dat.start)
             $div.height((height+cellBorderWidth)*Math.max(dat.end - dat.start, .4)*2-bufferWidth-eventBorderWidth);
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
             $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
@@ -433,6 +431,8 @@ var openID = function(id) {
         $('a[href=#eventInformationTab]').tab('show');
         $('a[href=#peopleTab]').show();
         $('a[href=#commentsTab]').show();
+        $('#inviteFriends').show()
+
         $('#eventModal').on('shown', function(){                    
             $('#eventName').focus();
         });
@@ -526,9 +526,14 @@ $(document).ready(function(){
         $('#modalComments').hide();
         $('#modalInvite').show();
         $('#eventModalBody').css("overflow","visible");
+        $('#InvitedNotif').hide()
+        
+        if(nonRemovedFriends.length == 0){
+           clearFriends()
+        }
+   
+    })
 
-        nonRemovedFriends = friendNames.slice(0);
-        })
 
     $('#postComment').on('click', function (e) {
         if($('#commentTextBox').val() != ""){
@@ -540,6 +545,13 @@ $(document).ready(function(){
         });
 
 });
+
+$('#inviteFriends').click(function(){addFriendsToEvent(JSON.stringify(invitedFriendsID))});
+var addFriendsToEvent = function(friends){
+    $.post('addFriendsToEvent', {'friendIDs': friends, 'id': currentlyViewing}, "json");
+    $("#InvitedNotif").show()
+    clearFriends()
+}
 
 var updateCalendar = function(amount) {
 
@@ -1064,6 +1076,8 @@ var tableUp = function($cell, eventObject) {
         $('a[href=#eventInformationTab]').tab('show');
         $('a[href=#peopleTab]').hide();
         $('a[href=#commentsTab]').hide();
+        $('#inviteFriends').hide()
+
         $('#deleteEvent').hide();
         $('#deleteEventThis').hide();
         $('#editEventThis').hide()
@@ -1071,7 +1085,7 @@ var tableUp = function($cell, eventObject) {
         $('#eventURL').hide();
         $('#eventModal').modal();
         $('#eventModal').on('shown', function(){                    
-            $('#eventModalBody').css("overflow", "auto");
+            //$('#eventModalBody').css("overflow", "auto");
             $('#eventName').focus();
         });
     }
