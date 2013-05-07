@@ -276,7 +276,7 @@
          </ul>
          <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="eventModalBody">
          <div id="modalEventInformation">
              <div id="modalEventEditable">
             <h3 id="myModalLabel"><input id="eventName" class="input-block-level" type="text" placeholder="Event Name"></h3>
@@ -661,6 +661,7 @@
       <div id="modalInvite">
           <p>Add friends to invite to your event:</p>
           <input type="text" class="friendComplete">
+          <button class="btn" type="button" id="inviteFriends">Invite</button>
           <div class="row-fluid">
               <div class="invitedFriends">
               </div>
@@ -945,7 +946,6 @@
        });
        $("#startTime").val("");
        $("#endTime").val("");
-       nonRemovedFriends = friendNames.slice(0);
    });
    
    var $cells = $(".calendarEntry, .calendarHalfHour");

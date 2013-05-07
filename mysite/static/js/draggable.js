@@ -472,6 +472,7 @@ $(document).ready(function(){
         $('#modalComments').hide();
         $('#modalInvite').hide();
         $('#modalPeople').show();
+        $('#eventModalBody').css("overflow","scroll");
         $.get('getPeople', {'id': currentlyViewing}, function (data, status) {
             var filler = '';
             $.each(data.creators, function(index, dat) {
@@ -505,6 +506,7 @@ $(document).ready(function(){
         $('#modalComments').hide();
         $('#modalInvite').hide();
         $('#modalPeople').hide();
+        $('#eventModalBody').css("overflow","scroll");
     });
 
     $('a[href=#commentsTab]').on('shown', function (e) {
@@ -513,6 +515,7 @@ $(document).ready(function(){
         $('#modalInvite').hide();
         $('#commentTextBox').val("");
         $('#modalComments').show();
+        $('#eventModalBody').css("overflow","scroll");
         refreshComments();
 
         })
@@ -522,6 +525,7 @@ $(document).ready(function(){
         $('#modalPeople').hide();
         $('#modalComments').hide();
         $('#modalInvite').show();
+        $('#eventModalBody').css("overflow","visible");
 
         nonRemovedFriends = friendNames.slice(0);
         })
@@ -1067,6 +1071,7 @@ var tableUp = function($cell, eventObject) {
         $('#eventURL').hide();
         $('#eventModal').modal();
         $('#eventModal').on('shown', function(){                    
+            $('#eventModalBody').css("overflow", "scroll");
             $('#eventName').focus();
         });
     }
