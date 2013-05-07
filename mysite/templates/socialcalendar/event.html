@@ -43,6 +43,12 @@
         <div class="row-fluid"> <h4> Comments: </h4> </div>
         <br>
         <span class="span8">
+            <input type="text" class="span3" id = "Name" placeholder="Name here"> 
+
+            <form class="form-search">
+                <textarea  class="span10" id = "commentForm"></textarea>
+                <button class="btn btn-primary" type="button" id="comment">Comment</button>
+            </form>
             <div id = "commentsPlace">
                 {% for p in comments %}
                 <div class = "comment alert alert-info">
@@ -52,12 +58,6 @@
                 </div>
                 {% endfor %}
             </div>
-            <input type="text" class="span3" id = "Name" placeholder="Name here"> 
-
-            <form class="form-search">
-                <textarea  class="span10" id = "commentForm"></textarea>
-                <button class="btn btn-primary" type="button" id="comment">Comment</button>
-            </form>
         </span>
     </div>
 
@@ -98,7 +98,7 @@
     function addComment(){
         var comment = $("#commentForm").val()
         $.post('comment',{'name' : $("#Name").val(), 'id': id, 'comment': $('#commentForm').val()}, function (data, status) {
-            $("#commentsPlace").append('<div class = "comment alert alert-info"> <span class="commentName">'+ data[0].commenter + ' says:</span> '+ comment+ '<div class="commentDate">'+data[0].date+'</div> </div>');
+            $("#commentsPlace").prepend('<div class = "comment alert alert-info"> <span class="commentName">'+ data[0].commenter + ' says:</span> '+ comment+ '<div class="commentDate">'+data[0].date+'</div> </div>');
         }, "json")
         $("#commentForm").val("")
     }

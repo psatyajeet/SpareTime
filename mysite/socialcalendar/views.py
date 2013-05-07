@@ -177,7 +177,7 @@ def index(request):
             'end': e.end.strftime(dateString),
             'creators' : creators,
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
-            'comments': getListOfCommentsNotReverse(e, request.GET['id']),
+            'comments': getListOfComments(e, request.GET['id']),
             'rejected' : list(e.rejected.all().values()),
             'id':eid,
             'loggedIn': i,
