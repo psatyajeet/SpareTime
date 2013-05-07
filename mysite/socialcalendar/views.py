@@ -306,7 +306,7 @@ def changeMonth(request):
 @csrf_protect
 def submitEvent(request):
     if request.method == "POST":
-        if(not request.POST.has_key('startTime')) :
+        if(not request.POST.has_key('startTime') or request.POST['startTime'] == "" or not request.POST.has_key('endTime') or request.POST['endTime'] == "") :
             return HttpResponse()
 
         startDate = datetime.strptime(request.POST['startTime'],

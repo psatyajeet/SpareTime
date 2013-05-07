@@ -683,13 +683,13 @@
    </form>
    <div class="modal-footer">
       <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button class="btn btn-danger" id="deleteEvent">Delete</button>
-      <button class="btn btn-danger" id="deleteEventThis">Delete This Occurence</button>
-      <button class="btn btn-primary" id="editEvent">Edit</button>
-      <button class="btn btn-primary" id="editEventThis" aria-hidden="true">Edit This</button>
-      <button class="btn btn-primary" id="createEvent">Create</button>
-      <button class="btn btn-success" id="acceptEvent">Accept</button>
-      <button class="btn btn-danger" id="rejectEvent">Reject</button>
+      <button class="btn btn-danger" id="deleteEvent" hidden = "true">Delete</button>
+      <button class="btn btn-danger" id="deleteEventThis" hidden = "true">Delete This Occurence</button>
+      <button class="btn btn-primary" id="editEvent" hidden = "true">Edit</button>
+      <button class="btn btn-primary" id="editEventThis" hidden = "true">Edit This</button>
+      <button class="btn btn-primary" id="createEvent" hidden = "true">Create</button>
+      <button class="btn btn-success" id="acceptEvent" hidden = "true">Accept</button>
+      <button class="btn btn-danger" id="rejectEvent" hidden = "true">Reject</button>
    </div>
 </div>
 <script type="text/javascript">
@@ -946,6 +946,9 @@
        $('a[href=#eventInformationTab]').tab('show');
        $('#deleteEvent').hide();
        $('#editEvent').hide();
+        $('#deleteEventThis').hide();
+        $('#editEventThis').hide()
+      
        $('#eventModal').modal();
        $('#eventModal').on('shown', function(){                    
            $('#eventName').focus();
