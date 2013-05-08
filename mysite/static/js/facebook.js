@@ -96,7 +96,7 @@ var changeFormat = function(newFormat) {
 function makeUser(name, id) {
     $.get('makeUser', {'name' : name, 'fbid': id}, function (data, status) {
     }).done(function() {
-                window.open('http://127.0.0.1:8000/', '_self');
+                window.open('http://localhost:8000/', '_self');
                 });
 }
   // Load the SDK Asynchronously
