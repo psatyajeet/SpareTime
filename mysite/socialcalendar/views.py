@@ -782,6 +782,8 @@ def editEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
+        if(startDate < endDate):
+            return HttpResponse()            
         rrule = ""
         repeat = False
         if request.POST.has_key('RRULE'):
