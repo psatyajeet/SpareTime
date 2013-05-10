@@ -182,7 +182,7 @@ def index(request):
             'end': e.end.strftime(dateString),
             'creators' : creators,
             'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
-            'comments': getListOfComments(e, request.GET['id']),
+            'comments': getListOfCommentsNotReverse(e, request.GET['id']),
             'rejected' : list(e.rejected.all().values()),
             'id':eid,
             'loggedIn': i,
@@ -1146,7 +1146,9 @@ def addName(request):
         e = Event.objects.get(id = findIdOfEvent(request.GET['id']))
         n = Name(name = request.GET['name'], linkedEvent=e)
         n.save()
-        return HttpResponse()
+        d = []
+        d.append({"person": cgi.escape(request.GET['name'])});
+        return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
 
@@ -1183,6 +1185,7 @@ def comment(request):
             event.unseen.add(u)      
         d.append({
             'commenter': name,
+            'comment':cgi.escape(request.POST['comment']),
             'date':  datetime.today().replace(tzinfo=tz.gettz('UTC')).strftime(dateString)
         })
 
@@ -1202,14 +1205,14 @@ def getListOfComments(e, commentID = ''):
     d = []
     for comment in comments:
         d.append({
-            'name': comment['name'],
+            'name': cgi.escape(comment['name']),
             'date': comment['date'].strftime(dateString),  
-            'comment': comment['comment'],
+            'comment': cgi.escape(comment['comment']),
         })
     return d
 
 def getListOfCommentsNotReverse(e, commentID =''):
-    comments = e.event.filter(commentID=commentID).values('name', 'date','comment').order_by('date')   
+    comments = e.event.filter(commentID=commentID).values('name', 'date','comment').order_by('date').reverse()
     d = []
     for comment in comments:
         d.append({

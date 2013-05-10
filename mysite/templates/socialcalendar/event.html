@@ -58,7 +58,9 @@
                 {% for p in comments %}
                 <div class = "comment alert alert-info">
                     <span class="commentName"> {{p.name}} says:</span> 
+                    {% autoescape on %}
                     {{p.comment}}
+                    {% endautoescape %}
                     <div class="commentDate">{{p.date}}</div> 
                 </div>
                 {% endfor %}
@@ -95,15 +97,19 @@
     function addName(){
         var name = $("#inputBox").val()
         $.get('addName',{'name' : $("#inputBox").val(), 'id': id}, function (data, status) {
-            $("#coming").append('<li>'+name+'</li>')
-        })
+            if(data.length == 0){
+                return;
+            } else {
+                $("#coming").append('<li>'+data[0].person + '</li>')
+            }   
+        }, "json")
         $("#inputBox").val("")
     }
 
     function addComment(){
         var comment = $("#commentForm").val()
         $.post('comment',{'name' : $("#Name").val(), 'id': id, 'comment': $('#commentForm').val()}, function (data, status) {
-            $("#commentsPlace").prepend('<div class = "comment alert alert-info"> <span class="commentName">'+ data[0].commenter + ' says:</span> '+ comment+ '<div class="commentDate">'+data[0].date+'</div> </div>');
+            $("#commentsPlace").prepend('<div class = "comment alert alert-info"> <span class="commentName">'+ data[0].commenter + ' says:</span> '+ data[0].comment+ '<div class="commentDate">'+data[0].date+'</div> </div>');
         }, "json")
         $("#commentForm").val("")
     }
