@@ -1,3 +1,4 @@
+import cgi
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -619,7 +620,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             creator0 = list(e.creators.all().values())     
 
         d.append({
-            'title': e.title,
+            'title': cgi.escape(e.title),
             'start': e.start.hour+e.start.minute/60.0,
             'end': endhour+e.end.minute/60.0,
             'day': ((e.start.weekday()+1) % 7),
@@ -782,7 +783,7 @@ def editEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
-        if(startDate < endDate):
+        if(startDate > endDate):    
             return HttpResponse()            
         rrule = ""
         repeat = False
@@ -794,13 +795,12 @@ def editEvent(request):
 
         if(len(request.POST['title']) != 0):
             title = request.POST['title'] 
-
+        print "here"
         if(event.repeat and request.POST.has_key('all') and request.POST['all'] == 'this'):
             usr = UserProfile.objects.get(user=request.session['fbid'])
             createException(request.POST['id'], event)
             createEvent(title=title, description=request.POST['description'], location=request.POST['location'], start=startDate, end=endDate, kind = request.POST['kind'], recurrence = rrule, repeat = repeat, usr = usr)
             return HttpResponse()
-
         event.title=title
         event.description=request.POST['description']
         event.location=request.POST['location']
