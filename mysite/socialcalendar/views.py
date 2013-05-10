@@ -795,7 +795,7 @@ def editEvent(request):
 
         if(len(request.POST['title']) != 0):
             title = request.POST['title'] 
-        print "here"
+
         if(event.repeat and request.POST.has_key('all') and request.POST['all'] == 'this'):
             usr = UserProfile.objects.get(user=request.session['fbid'])
             createException(request.POST['id'], event)
