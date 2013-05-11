@@ -6,6 +6,8 @@ var canEdit = true;
 var currentlyMovingStart = new Date();
 var currentlyMovingEnd = new Date();
 
+var notificationClickedAway = false;
+var notificationIsVisible = true;
 
 function getCookie(name) {
     var cookieValue = null;
@@ -161,7 +163,13 @@ var populateMonthEvents = function() {
                     var onPopoverLink = false;
 
                     $popover.on("mouseenter", function() {
-                        //$('.popoverMonthlyEvent').popover('hide');
+                        
+                        var over = this;
+                        $('.popoverMonthlyEvent').each(function(index, element){
+                            console.log($(element));
+                            if (element != over)
+                                $(element).popover('hide');
+                        });
                         onPopoverLink = true;
                         $(this).popover('show');
                         var $pop = $(this);
@@ -174,7 +182,7 @@ var populateMonthEvents = function() {
                             if (!onPopoverLink) {
                                 setTimeout(function() {
                                     if (!onPopoverLink)
-                                    $pop.popover('hide');
+                                        $pop.popover('hide');
                                 canClosePopover = true;
                                 }, 250);
                             }
@@ -462,7 +470,19 @@ $(document).ready(function(){
 
     getNotifications();
     $popover = $('#notificationButton');
-    $popover.popover({title: "Notifications", placement: "bottom", html: true, content: function() {return latestNotification()} });
+    $popover.popover({title: "Notifications", placement: "bottom", html: true, content: function() {return latestNotification();}, trigger: 'manual'
+    }).click(function(e) {
+        if (notificationIsVisible) {
+            $(this).popover('hide');
+            notificationClickedAway = false;
+            notificationIsVisible = false;
+        } else {
+            $(this).popover('show');
+            notificationClickedAway = false;
+            notificationIsVisible = true;
+        }
+        e.preventDefault();
+        });
 
     $('#modalComments').hide();
     $('#modalPeople').hide();
@@ -1047,8 +1067,11 @@ var formatTime = function(date) {
 }
 
 var tableUp = function($cell, eventObject) {
-    if (!canEdit)
+    if (!canEdit) {
+        currentlyMoving = -1;
+        canEdit = true;
         return;
+    }
     if (starty != -1) {
         eventObject.preventDefault();
         $dragged.hide();
@@ -1089,7 +1112,7 @@ var tableUp = function($cell, eventObject) {
             $('#eventName').focus();
         });
     }
-    if (currentlyMoving != -1) {
+    if (currentlyMoving != -1 && currentlyClicking == -1) {
         var index = $cells.index($cell);
         var x = index%7;
         var y = parseInt(index/7);
@@ -1137,9 +1160,21 @@ $(document).on("mouseup", function(eventObject) {
         populateEvents();
     }
     tableUp($(this), eventObject);
+
+
 });
 
-
+$(document).on("click", function(eventObject) {
+    if(notificationIsVisible & notificationClickedAway)
+    {
+        $('#notificationButton').popover('hide');
+        notificationIsVisible = notificationClickedAway = false;
+    }
+    else
+    {
+        notificationClickedAway = true;
+    }
+});
      
 var acceptNotification = function(eventID) {
     $.post('acceptNotification', {"eventID": eventID}, "json").done(function (data, status) {

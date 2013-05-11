@@ -301,3 +301,17 @@ td.otherMonth {
 #friendModal .modal-body {
     overflow: visible;
 }
+
+.popover-content {
+    overflow: auto;
+    max-height: 500px;
+}
+
+#blackScreen {
+    background-color: black;
+    display: none;
+    width: 100%;
+    height: 100%;
+    text: white;
+    padding-top: 100px;
+}
