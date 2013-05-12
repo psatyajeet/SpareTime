@@ -37,7 +37,7 @@ Our entire codebase can be find within the mysite folder. We will go folder-by-f
 <li>
 	file: Procfile
 
-	This is a very important file for running on Heroku. It tells Heroku what kind of web process we'd like to run when someone hits the domain sparetime.herokuapp.com.
+	This is a very important file for running on Heroku. It tells Heroku what kind of web process we'd like to run when someone hits the domain sparetime.herokuapp.com; it is telling Heroku to execute python manage.py runserver. 
 </li>
 
 
@@ -53,12 +53,12 @@ Our entire codebase can be find within the mysite folder. We will go folder-by-f
 		<li>
 			file: settings.py <br>
 
-			This file is the main file that holds the django settings for the sparetime application. These settings include the database information, directory for static files, directory for templates, installed django apps, and heroku settings at the bottom. 
+			This file is the main file that holds the django settings for the sparetime application. These settings include the database information, directory for static files, directory for templates, installed django apps, and heroku settings at the bottom. There is no hardcoding of directory information, so we use relative paths to find certain folders, notably the templates folder and static folder.
 		</li>
 		<li>
 			file: urls.py <br>
 
-			This file is the top level url re-routing file. Any url essentially re-routes to the url file in the socialcalendar app
+			This file is the top level url re-routing file. We many any url essentially re-route to the url file in the socialcalendar app.
 		</li>
 		<li>
 			file: wsgi.py <br>
@@ -90,12 +90,12 @@ Our entire codebase can be find within the mysite folder. We will go folder-by-f
 		<li>
 			file: urls.py <br>
 
-			This is the url re-routing file for socialcalendar. 
+			This is the url re-routing file for socialcalendar. This is a very important file. It tells Django what view to run when a certain url is called. Almost all of these calls are made directly within the application and aren't meant to be made from external sources.
 		</li>
 		<li>
 			file: views.py <br>
 
-			This is the main view file for our application. It contains all of the django-python methods that are the base of the functionality 
+			This is the main view file for our application. It contains all of the django-python methods that are the basis of the functionality for sparetime.  
 		</li>
 	</ul>
 </li>
@@ -124,6 +124,11 @@ Our entire codebase can be find within the mysite folder. We will go folder-by-f
 					The css for the homepage (not logged-in)
 				</li>
 				<li>
+					file: event.css <br>
+
+					The css for the event page.
+				</li>							
+				<li>
 					file: tinyscrollbar.css <br>
 
 					The css for the scrollbar used in our calendar
@@ -147,7 +152,7 @@ Our entire codebase can be find within the mysite folder. We will go folder-by-f
 				<li>
 					file: facebook.js <br>
 
-					Contains the facebook javascript 
+					Contains the facebook javascript required for connecting to facebook with our application.
 				</li>
 				<li>
 					file: jquery.tinyscrollbar.min.js <br>
