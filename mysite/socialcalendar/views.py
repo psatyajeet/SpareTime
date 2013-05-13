@@ -839,12 +839,6 @@ def changeStart(request):
             start = startDate
             end = startDate + eventLength
 
-            rule = rrulestr(event.recurrence, dtstart = event.start)
-            times = rule.between(start, end, inc=True)
-
-            if len(times) > 0 and times[0] == datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString).replace(tzinfo=tz.gettz('UTC')):
-                return HttpResponse()
-
             createException(eid, event)
 
             e = Event(
