@@ -695,7 +695,7 @@ def populateMonthEvents(request):
             creator0 = list(e.creators.all().values())     
 
         d.append({
-            'title': e.title,
+            'title': cgi.escape(e.title),
             'start': e.start.hour+e.start.minute/60.0,
             'end': e.end.hour+e.end.minute/60.0,
             'day': ((e.start - first).days),
