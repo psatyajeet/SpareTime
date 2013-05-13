@@ -161,6 +161,7 @@ tr.calendarRow td:last-child {
     position: absolute;
     overflow: hidden;
     cursor: default;
+    overflow-wrap: break-word;
 }
 
 .notif {
@@ -262,6 +263,7 @@ td.otherMonth {
 .comment {
     color: #666666;
     margin: 4px;
+    overflow-wrap: break-word;
 }
 
 .commentName {
@@ -314,4 +316,8 @@ td.otherMonth {
     height: 100%;
     text: white;
     padding-top: 100px;
+}
+
+#modalEventNotEditable {
+    overflow-wrap: break-word;
 }

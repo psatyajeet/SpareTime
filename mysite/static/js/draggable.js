@@ -547,6 +547,7 @@ $(document).ready(function(){
         $('#eventModalBody').css("overflow","visible");
         $('#InvitedNotif').hide()
         $("#InvitedNotifError").hide()
+        $('.friendComplete').val('');
         
         if(nonRemovedFriends.length == 0){
            clearFriends()
@@ -1072,10 +1073,6 @@ var formatTime = function(date) {
 }
 
 var tableUp = function($cell, eventObject) {
-    console.log('canEdit: '+canEdit);
-    console.log('starty: '+starty);
-    console.log('currentlyMoving: '+currentlyMoving);
-    console.log('currentlyClicking: '+currentlyClicking);
     if (!canEdit) {
         currentlyMoving = -1;
         canEdit = true;
@@ -1145,8 +1142,6 @@ var tableUp = function($cell, eventObject) {
         dates[x].setMinutes(30*(y%2));
         var startTime = formatTime(dates[x]);
 
-        console.log("here");
-        console.log('startTime: '+startTime);
         $.post('changeStart', {"id": currentlyMovingID, "startTime": startTime}, "json").done(function() {populateEvents();});
     }
     currentlyMoving = -1;

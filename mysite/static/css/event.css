@@ -17,6 +17,7 @@
     font-family: "adobe-garamond-pro";    
     font-size:40px;
     color:#0B0B61;
+    overflow-wrap: break-word;
 
 }
 .sectionEvent{

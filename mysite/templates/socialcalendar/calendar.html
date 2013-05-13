@@ -134,10 +134,18 @@
       </div>
       <div class="viewport">
           <div id="blackScreen"> 
-              <h3><center>Drag To Create An Event To Invite The Friends You Just Added.</center></h3>
-              <h3><center>The more people available the more green the calendar is.</center></h3>
-              <h3><center>The more people unavailable the more red the calendar is.</center></h3>
-              <h1><center>Click to begin</center></h1>
+              <div id="noValidFriends">
+                  <h3><center>You Only Invited Friends Who Don't Have SpareTime.</center></h3>
+                  <h3><center>Try Again With At Least One Friend Who Has The App.</center></h3>
+                  <h3><center>Or Make An Event And Send Out The Event Page Link For Anyone To Respond.</center></h3>
+                  <h1><center>Click To Continue</center></h1>
+              </div>
+              <div id="validFriends">
+                  <h3><center>Drag To Create An Event To Invite The Friends You Just Added.</center></h3>
+                  <h3><center>The more people available the more green the calendar is.</center></h3>
+                  <h3><center>The more people unavailable the more red the calendar is.</center></h3>
+                  <h1><center>Click To Begin</center></h1>
+              </div>
           </div>
           <div>
               <div class="overview">
@@ -352,7 +360,7 @@
                   Ends:
                   <div>
                      <label class="radio">
-                     <input type="radio" name="endRadios" id="Never" value="Never" checked></input>
+                     <input type="radio" name="endRadios" id="dNever" value="Never" checked></input>
                      Never
                      </label>
                      <label class="radio">
@@ -427,7 +435,7 @@
                         Ends:
                         <div>
                            <label class="radio">
-                           <input type="radio" name="endRadios" id="Never" value="Never" checked></input>
+                           <input type="radio" name="endRadios" id="wNever" value="Never" checked></input>
                            Never
                            </label>
                            <label class="radio">
@@ -526,7 +534,7 @@
                   <div class="row-fluid">
                      Ends: 
                      <label class="radio">
-                     <input type="radio" name="endRadios" value="Never" checked>
+                     <input type="radio" name="endRadios" value="mNever" checked>
                      Never
                      </label>
                      <label class="radio">
@@ -573,7 +581,7 @@
                   <div>
                      Ends:
                      <label class="radio">
-                     <input type="radio" name="endRadios" value="Never" checked>
+                     <input type="radio" name="endRadios" value="yNever" checked>
                      Never
                      </label>
                      <label class="radio">
@@ -831,6 +839,52 @@
 
        $("#modalEventEditable").show();
        $("#modalEventNotEditable").hide();
+
+       $("#commentTextBox").val("");
+       $(".friendComplete").val("");
+
+       $('#modal-repeat').hide();
+       $('#repeat-daily').hide();
+       $('#repeat-weekly').hide();
+       $('#repeat-monthly').hide();
+       $('#repeat-by-info').hide();
+       $('#repeat-yearly').hide();
+
+       $('#repeatEventsCheckbox').attr('checked', false);
+       $('#repeat-option-time-period').val('daily');
+
+
+       $('#dinterval').val('1');
+       $('#dNever').prop('checked', false);
+       $('#dAfter').prop('checked', false);
+       $('#dafterOccurrences').val('');
+       $('#dOn').prop('checked', false);
+       $('#donEndRepeat').val('');
+
+       $('#winterval').val('1');
+       $('[name="repeatOn"]').prop('checked', false);
+       $('#wNever').prop('checked', false);
+       $('#wAfter').prop('checked', false);
+       $('#wafterOccurrences').val('');
+       $('#wOn').prop('checked', false);
+       $('#wonEndRepeat').val('');
+
+       $('#minterval').val('1');
+       $('#daymonth').prop('checked', true);
+       $('#dayweek').prop('checked', false);
+       $('#weekinmonth').val('1');
+       $('#mNever').prop('checked', false);
+       $('#mAfter').prop('checked', false);
+       $('#mafterOccurrences').val('');
+       $('#mOn').prop('checked', false);
+       $('#monEndRepeat').val('');
+
+       $('#yinterval').val('1');
+       $('#yNever').prop('checked', false);
+       $('#yAfter').prop('checked', false);
+       $('#yafterOccurrences').val('');
+       $('#yOn').prop('checked', false);
+       $('#yonEndRepeat').val('');
    }
    
    var dates = new Array();
@@ -916,9 +970,10 @@
            }});
    
    
-       $('#friendModal').modal({'show': false, 'keyboard': false});
+       $('#friendModal').modal({'show': false, 'keyboard': true});
    
        $('#friendModal').on('shown', function() {
+           $('.friendComplete').val("");
            $('.friendComplete').focus();
        });
    
@@ -943,11 +998,18 @@
                    $.each(data, function(index, dat) {
                        values.push(dat.ratios);
                        busy.push(dat.busy);
-                   });
-                   showBlackScreen();
-                   colorCells(values);
-                   removeToolTips()
-                   addToolTips(busy);
+                       });
+                   if (busy.length === 0) {
+                        uncolorCells();
+                        removeToolTips();
+                        showBlackScreen(false);
+                   } else {
+
+                       showBlackScreen(true);
+                       colorCells(values);
+                       removeToolTips()
+                       addToolTips(busy);
+                   }
                }, "json");
            }
        });
@@ -984,9 +1046,16 @@
    
    var $cells = $(".calendarEntry, .calendarHalfHour");
 
-   var showBlackScreen = function() {
+   var showBlackScreen = function(validFriends) {
         var $black = $('#blackScreen');
         
+        if (validFriends) {
+            $('#noValidFriends').hide();
+            $('#validFriends').show();
+        } else {
+            $('#noValidFriends').show();
+            $('#validFriends').hide();
+        }
         var $calendar = $('.overview').parent();
         $black.show();
         $calendar.hide();
