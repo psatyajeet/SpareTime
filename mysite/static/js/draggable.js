@@ -572,6 +572,9 @@ $(document).ready(function(){
 
 $('#inviteFriends').click(function(){addFriendsToEvent(JSON.stringify(invitedFriendsID))});
 var addFriendsToEvent = function(friends){
+    if(invitedFriendsID.length === 0) {
+        return;
+    } else {
     $.post('addFriendsToEvent', {'friendIDs': friends, 'id': currentlyViewing}, function (data, status){
         if(data[0].notif){
              $("#InvitedNotif").show()
@@ -580,6 +583,7 @@ var addFriendsToEvent = function(friends){
         }
     }, "json");
     clearFriends()
+    }
 }
 
 var updateCalendar = function(amount) {
