@@ -465,6 +465,9 @@ var refreshComments = function () {
 
 
 $(document).ready(function(){
+
+    $('.friendComplete').attr('disabled', 'disabled');
+
     populateEvents();
 
     getNotifications();

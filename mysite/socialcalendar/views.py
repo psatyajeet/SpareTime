@@ -1271,3 +1271,13 @@ def createException(eid, event):
     ex = ExceptionDate(exceptionTime=(datetime.strptime(eid[eid.rfind("_")+1:], idfeDateString)).replace(tzinfo=tz.gettz('UTC')))
     ex.save()
     event.exceptions.add(ex)
+
+
+@csrf_protect
+def getUsersWithAccount(request):
+    if request.method == "POST":
+        validUsers = list(UserProfile.objects.filter(user__in=eval(request.POST['id[param]'])).values('user'))
+        return HttpResponse(simplejson.dumps(validUsers))
+    else:
+        return HttpResponseNotFound()
+

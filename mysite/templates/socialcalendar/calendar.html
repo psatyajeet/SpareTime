@@ -268,7 +268,7 @@
    </div>
    <div class="modal-body">
       <p>Add friends to invite to your event:</p>
-      <input type="text" class="friendComplete">
+      <input type="text" class="friendComplete" >
       <div class="row-fluid">
          <div class="invitedFriends">
          </div>
@@ -953,7 +953,8 @@
        $(document).on('click', '.friendCloseBox', function() {
            var name = $(this).siblings().html();
            var index = friendNames.indexOf(name);
-           invitedFriendsID.splice(index, 1);
+           var index2 = invitedFriendsID.indexOf(friends[index].id);
+           invitedFriendsID.splice(index2, 1);
            $(this).parent().remove();
            nonRemovedFriends.push(name);
        });
@@ -991,8 +992,8 @@
            $('#friendModal').modal('hide');
    
            if (invitedFriendsID.length > 0) {
-               var data = JSON.stringify(invitedFriendsID);
-               $.post('heatMap', {'data': {'param': data}}, function (data, status) {
+               var inputData = JSON.stringify(invitedFriendsID);
+               $.post('heatMap', {'data': {'param': inputData}}, function (data, status) {
                    var values = [];
                    var busy = [];
                    $.each(data, function(index, dat) {
@@ -1018,7 +1019,6 @@
         $('.invitedFriends').html("");
         invitedFriendsID = [];
         nonRemovedFriends = friendNames.slice(0);
-
     }
 
        $("#addFriends").on("click", function() {

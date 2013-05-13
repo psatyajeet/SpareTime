@@ -117,9 +117,30 @@ function ShowMyName() {
     FB.api('/me/friends', function(response) {
         if(response.data) {
             friends = response.data;
+            var friendIDs = [];
             $.each(response.data, function(index, friend) {
-                friendNames.push(friend.name);
+                friendIDs.push(friend.id);
+            });
+            var inputData = JSON.stringify(friendIDs);
+            $.post('getUsersWithAccount',{'id': {'param': inputData}}, function(data, status) {
+                var validFriends = [];
+                for (var i = 0; i < data.length; i++) {
+                    validFriends.push(data[i].user);
+                }
+                for (var i = 0; i < friends.length; i++) {
+                    if (validFriends.indexOf(friends[i].id) == -1) {
+                        friends.splice(i,1);
+                        i--;
+                    }
+                }
+                $.each(friends, function(index, friend) {
+                    friendNames.push(friend.name);
                 });
+                nonRemovedFriends = friendNames.slice(0);
+                $('.friendComplete').removeAttr('disabled');
+            }, "json");
+
+
         } else {
             console.log("Error!");
         }
