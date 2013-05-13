@@ -265,7 +265,10 @@ def goToEvent(request):
         #monday2 = (event.start - timedelta(days=event.start.weekday()+1))
         #delta_day = target_day - datetime.now().isoweekday()
         sunday1 = today - timedelta(days=(today.isoweekday() %7))
-        sunday2 = event.start - timedelta(days=(event.start.isoweekday() %7))
+        sunday1 = sunday1.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+        sunday2 = event.start - timedelta(days=(event.start.isoweekday() %7), hours = event.start.hour, minutes = event.start.minute)
+        sunday2 = sunday2.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+        print sunday1, sunday2
         request.session['whichweek'] = int((sunday2 - sunday1).days/7.0)
         
         days, hours, dates, header = getDays(request.session['whichweek'])
