@@ -393,6 +393,8 @@ def storeNotificationForFriends(friendIDs, e):
         user.unanswered.add(e)
         user.notifications.add(e)
 
+    return len(usr) > 0
+
 def removeNotification(user, e) :
     user.notifications.remove(e);
 
@@ -402,8 +404,10 @@ def addFriendsToEvent(request):
     if request.method == "POST":
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
         friendIDs = json.loads(request.POST['friendIDs'])
-        storeNotificationForFriends(friendIDs, event)
-        return HttpResponse();
+        notif = storeNotificationForFriends(friendIDs, event)
+        d = []
+        d.append({"notif": notif})
+        return HttpResponse(simplejson.dumps(d));
     else :
         return HttpResponseNotFound()
 

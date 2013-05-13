@@ -547,6 +547,7 @@ $(document).ready(function(){
         $('#modalInvite').show();
         $('#eventModalBody').css("overflow","visible");
         $('#InvitedNotif').hide()
+        $("#InvitedNotifError").hide()
         
         if(nonRemovedFriends.length == 0){
            clearFriends()
@@ -568,8 +569,13 @@ $(document).ready(function(){
 
 $('#inviteFriends').click(function(){addFriendsToEvent(JSON.stringify(invitedFriendsID))});
 var addFriendsToEvent = function(friends){
-    $.post('addFriendsToEvent', {'friendIDs': friends, 'id': currentlyViewing}, "json");
-    $("#InvitedNotif").show()
+    $.post('addFriendsToEvent', {'friendIDs': friends, 'id': currentlyViewing}, function (data, status){
+        if(data[0].notif){
+             $("#InvitedNotif").show()
+        } else {
+             $("#InvitedNotifError").show()            
+        }
+    }, "json");
     clearFriends()
 }
 
