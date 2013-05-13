@@ -1276,7 +1276,7 @@ def createException(eid, event):
 @csrf_protect
 def getUsersWithAccount(request):
     if request.method == "POST":
-        validUsers = list(UserProfile.objects.filter(user__in=eval(request.POST['id[param]'])).values('user'))
+        validUsers = list(UserProfile.objects.filter(user__in=json.loads(request.POST['id[param]'])).values('user'))
         return HttpResponse(simplejson.dumps(validUsers))
     else:
         return HttpResponseNotFound()
