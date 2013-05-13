@@ -31,6 +31,7 @@ import random
 import re
 import math
 idfeDateString = "%m%d%Y%I%M%p"
+untilString = "%Y%m%dT000000Z"
 dateString = "%m/%d/%Y %I:%M %p"
 googleDateString = "%Y-%m-%dT%H:%M:%S"
 
@@ -326,7 +327,7 @@ def submitEvent(request):
         rrule = ""
         repeat = False
         if request.POST.has_key('RRULE'):
-            rrule = request.POST['RRULE']
+            rrule = getrrule(request.POST['RRULE'])
             repeat = True
         
         title = "No-Title"
@@ -366,6 +367,13 @@ def createEvent(start, end, recurrence, usr = None, title = "No-Title", descript
 
     return e
 
+def getrrule(rrule):
+    rule = str(rrule);
+    until = re.findall(r"../../.............", str(rrule));
+    if len(until) > 0: 
+        date = datetime.strptime(until[0], dateString)
+        rule = str(rule).replace(until[0], date.strftime(untilString)) 
+    return rule
 
 def getNotifications(user):
     events = user.notifications.all();
@@ -788,7 +796,7 @@ def editEvent(request):
         rrule = ""
         repeat = False
         if request.POST.has_key('RRULE'):
-            rrule = request.POST['RRULE']
+            rrule = getrrule(request.POST['RRULE'])
             repeat = True
 
         title = "No-Title"
