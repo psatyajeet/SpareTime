@@ -558,9 +558,6 @@ $(document).ready(function(){
            var index = friendIDs.indexOf(invitedFriendsID[i]);
            $invited.append('<span class="invitedFriend" ><span>' + friendNames[index] + '</span><span class="friendCloseBox">X</span></span>');
         }
-        console.log(nonRemovedFriends.length);
-        if(nonRemovedFriends.length == 0){
-        }
    
     })
 
