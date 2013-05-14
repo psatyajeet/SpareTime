@@ -312,9 +312,11 @@ td.otherMonth {
 #blackScreen {
     background-color: black;
     display: none;
+    font-family: "Arial", Times, serif;
+    font-size:12px;
     width: 100%;
     height: 100%;
-    text: white;
+    color: #0040FF;
     padding-top: 100px;
 }
 
