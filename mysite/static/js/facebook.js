@@ -112,12 +112,13 @@ function makeUser(name, id) {
 
 var friends;
 var friendNames = [];
+var friendIDs = [];
 
 function ShowMyName() {
     FB.api('/me/friends', function(response) {
         if(response.data) {
             friends = response.data;
-            var friendIDs = [];
+            friendIDs = [];
             $.each(response.data, function(index, friend) {
                 friendIDs.push(friend.id);
             });
@@ -133,8 +134,10 @@ function ShowMyName() {
                         i--;
                     }
                 }
+                friendIDs = [];
                 $.each(friends, function(index, friend) {
                     friendNames.push(friend.name);
+                    friendIDs.push(friend.id);
                 });
                 nonRemovedFriends = friendNames.slice(0);
                 $('.friendComplete').removeAttr('disabled');

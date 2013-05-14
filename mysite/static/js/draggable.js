@@ -552,8 +552,14 @@ $(document).ready(function(){
         $("#InvitedNotifError").hide()
         $('.friendComplete').val('');
         
+        var $invited = $('.invitedFriends');
+        $invited.html("");
+        for (var i = 0; i < invitedFriendsID.length; i++) {
+           var index = friendIDs.indexOf(invitedFriendsID[i]);
+           $invited.append('<span class="invitedFriend" ><span>' + friendNames[index] + '</span><span class="friendCloseBox">X</span></span>');
+        }
+        console.log(nonRemovedFriends.length);
         if(nonRemovedFriends.length == 0){
-           clearFriends()
         }
    
     })
