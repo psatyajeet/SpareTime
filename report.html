@@ -1,0 +1,132 @@
+<html>
+<head>
+<title> SpareTime </title>
+
+</head>
+
+<body bgcolor="ffffff">
+
+<h1> SpareTime </h1>
+
+<P> <br>
+Overall, we are pleased with our project. The current version of SpareTime is a fairly polished beta product, and we believe that SpareTime has potential as a legitimate web service. We believe that we can attract many users to our website due to its ease of use and its effectiveness in solving a significant problem for a wide range of target users. We currently see many people using whenisgood and Doodle, and we believe that these markets are reasonable targets for SpareTime. Our value added through features including our heat map, connectivity with people's Google Calendars, and Facebook will propel our growth if we execute scaling properly. 
+
+<P> <br>
+<b> How did your milestones go? </b>
+<P>
+Our group successfully outlined our goals and set manageable milestones every week. For the most part, we were able to accomplish more than we set out to accomplish each week, and this helped propel us forward with increasing momentum as we built the website. We also had an excellent head start due to some of Mark's frontend work over spring break. The guidance of our TA, both advising us and encouraging us to present new material every week, definitely motivated us to accomplish more and more each week. Furthermore, we started the project fairly early, making many of our design and over-arching implementation decisions early in the process. This made it much easier to understand what some of our challenges would be from the beginning, thus helping us to construct a more realistic set of goals for our project from the outset.
+
+<P> <br>
+<b> What was your experience with design, interfaces, testing, etc.? </b>
+<P>
+We tried to keep things simple with respect to the design and interface. At the start, we chose a standard workflow for a user to our website and concluded that it would be beneficial to have as few separate pages as possible. This led to our decision to have a homepage for the un-registered user and a calendar page from which a logged-in user could perform all functions on our application. Because SpareTime, at its core, is a calendar application, we had many great examples of user interfaces (e.g., Google Calendar, iCal, etc.). We often used these examples to guide our design choices, which proved to be a very successful and efficient method. At the same time, we wanted our user interface and design to be unique and identifiable with SpareTime. Brand creation is important to consider from the very beginning, and it was thus necessary to ensure that our calendar could be easily identified as ''our'' application. 
+
+<P>
+We had to make many conscious decisions as we were designing our application. In particular, we put a significant amount of thought and consideration into the heat map. We had to choose between giving users a gradient of colors based on peoples' availabilities and only providing 3-4 colors on the heat map. The main benefit of only 3-4 colors is a possibly less cluttered appearance and stronger visible distinctions between time slots. However, if many people are invited to an event (e.g., 10 people), then knowing whether 3 people versus 7 people are busy at a given time is a significant difference. With only a few colors, this difference would not necessarily be clear. Therefore, we decided to use a smooth color gradient from green to red depending on how many people are busy. Hovering over a time slot would display a popover showing which specific invitees were unavailable at the given time.
+
+<P>
+Another interesting decision to make was how to properly deal with overlapping events. We explored the algorithms of iCal and Google Calendar and used these models to design a basic sketch of the ideal appearance of overlapping events. We ultimately implemented some short but clever algorithms to properly handle overlapping events roughly based on the algorithm used by iCal.
+
+<P>
+One major design/implementation decision we had to make was whether or not to open-source the creation of the calendar. We decided to implement our whole calendar from scratch because we believed that the calendar was central to our application; we determined that we should develop this critical part completely on our own. Especially after hearing speakers like Brad Smith, we felt that what is our application should be identifiably so -- even if this required a fair share of time and effort. Additionally, we spoke regarding the concept of redeveloping a friend network. However, unlike our calendar, we determined having friends and connections are not central to our application; rather, these features seemed more like secondary components. Therefore, we were comfortable importing friends from Facebook (an already-established social network). In the case of Facebook, we specifically wanted to leverage the power of a social network that already exists.
+
+<P>
+For the most part, our testing was limited to our four-member team of developers. One area that we did test throughout the month we had was the import of Google Calendar events, as there were so many possible events on Google calendar, the only way to account for everything was good QA. These tests allowed us to find many bugs, and allowed us to ensure smooth importation of Google Calendar events. However, our actual application testing wasn't as thorough. During the last 1.5 weeks prior to Dean's Date we were able to acquire more users to test our app. This testing helped reveal some bugs, and enlightened our team on features that we originally thought were intuitive but were apparently not. In retrospect, it would have been helpful to acquire more users earlier in the development process. Moving forward, we would like to do more stress testing with an increased number of users. Specifically, it is important to test how our heat map features scale as one invites more friends to an event. The average use case most likely includes just a few users; however, our application should be able to handle many more people invited to an event. 
+
+<P> <br>
+<b> What are some surprises (pleasant or not) that you found? </b>
+<ul>
+
+<li>
+We found jQuery to be a very useful tool, along with AJAX, to achieve functionality that did not require reloading the page. 
+</li>
+
+<li>
+We were pleasantly surprised to find that Django did a great job of setting up our project in terms of the MVT architecture. This made organizing our code slightly easier. 
+</li>
+
+<li>
+We were surprised by the complexity of the Google Calendar API. Particularly, the manner in which Google stores information about its events can be very difficult to keep track of and fully understand/process. For example, repeat events are saved as RRULEs, and exceptions to repeat events are stored as another variable. This required some significant work on the backend in order to successfully import all of the events that a user had on Google Calendar. 
+</li>
+
+<ul>
+<li> We also found that there were some odd exceptions to the format of a Google Calendar event request. For example, events that were imported to Google Calendar through ICE were formatted differently, so we had to deal with them separately. We, especially Sammy, had to spend a lot of time tailoring much of our Google Calendar connectivity within our application. </li>
+<li> During the importing of events, we had to mold everything in our database so that we grabbed every single one of a user's events and not just a subset of them. </li>
+</ul>
+
+<li>
+Heroku turned out to be slower than we expected or would have wanted. While it was very easy to push our website to Heroku (i.e., there were very few settings we had to change), we found that performance was not incredibly fast using the free developer accounts. There was slight but noticeable lag when we populated events for a user with a large number of events. This is something we would like to avoid, as users who keep track of many events form the primary audience we would like to target. 
+</li>
+
+</ul>
+
+<P> <br>
+<b> What choices did you make that worked out well or badly? </b>
+
+<P>
+Working with Django was a great choice for us. The Python scripting language is very natural to use and has a fair amount of built-in functionality, especially for parsing text and inputs, which was very useful on the backend. Python also handles dates incredibly gracefully, an asset when developing a calendar based application. Django also has some great plug-ins, which were useful in simplifying our application. Django was especially easy to learn and get started with rather quickly. We never had to deal with performing SQL queries or writing specific database-related code other than creating the models through Django. 
+
+<P>
+Using jQuery was also a great idea. Rolled into our use of jQuery was our use of AJAX. Although we were all new to these tools, learning how to use them was valuable because it was much easier than using plain Javascript. AJAX significantly improved the flow of our application, as it allowed us to change the display on the page without having to refresh the page each time. Essentially, jQuery and AJAX allowed us to perform all actions on one main calendar page. 
+
+<P>
+We made the decision to have dedicated event pages about halfway through the project. This significantly increased the accessibility of our application to un-registered users and made sharing events more intuitive. This decision was thus a wise choice.
+
+<P>
+We're still unclear if deciding to create our calendar from scratch was a wise or poor choice. This uncertainty is largely due to time constraints, as we do believe that a unique, identifiable calendar is a crucial portion of our sales pitch, and with more time, we would not have regretted the creation of our calendar from scratch. However, the calendar's creation turned out to be the bulk of our work. We had to account for the most obscure of cases and carefully check that we were handling every possible user interaction. This limited the number of added features we could implement in a month-and-a-half, as testing corner cases of the calendar took up much of our time. We are thus unsure if our decision was wise given the time limit. However, we must comment that we are proud of our work, and we appreciate the fact that we were able to create the calendar we did with the features it has.
+
+<P> <br>
+<b> What would you like to do if there were more time? </b>
+
+<P>
+There are many more features we would like to implement moving forward, as well as several significant bugs we would like to fix. One main feature we envision is allowing users to create and search for public events. This would work similarly to Facebook's public events, in the sense that someone could organize an event to be made available to the public. Other users could then search for public events in an area that might interest them. This would allow organizations, such as those in Princeton, to advertise events to the public and allow users, such as students, to discover such events and decide to attend. We will continue to work on this throughout the summer and hope to launch (with users) soon. We also hope to clean up our code, which we would have done before presenting had we had more time. We will most likely clean up our code in the next few weeks to increase organization and make it easier to implement new features moving forward. 
+
+<P>
+We also noticed that our website slows down slightly at different points, which we would like to address. There are several ways in which we could approach this problem. First, we could just increase the number of dynos doing work on our Heroku server. This would require a monthly payment. Alternatively, we could move to a better hosting service (e.g., AWS or EC2). We would have to do some research to determine if making such changes would actually result in a speed increase. Another thing we could do is to look for performance improvements in our code.  One possible performance improvement might involve making fewer calls to the backend, and change the GUI with as few requests to the server as possible. 
+
+<P>
+One of our big concerns is related to security, and we have thought extensively about the level of security we would like for many of our features. For example, we have dedicated pages for each of our events.  In other words, there is a direct link to each event that is added on anyone's SpareTime account. As a result, it is possible to currently view any non-secret event simply by typing in the event URL, which is easy to parse (each event has a different ID). For a release version of SpareTime, we would like to tighten access to these event pages. For example, a personal (i.e., private) event should stay personal, and the event page of such an event should only be visible to the people invited to this event. On the other hand, we could have public events visible to anyone, and such events would allow any user (not just the creator) to send invitations.
+
+<P>
+Additionally, we would like to have group functionality. That is, rather than having to add events to friends one-by-one, a user could create dedicated groups of people to be invited to an event all at once (by simply typing the name of the group). Group functionality would vastly reduce the time required to invite the same groups of people to multiple events. 
+
+<P>
+We would also like to implement picture-sharing functionality. In other words, we would like to be able to add pictures to events both before and after they happen. We believe that this would increase the social value of the calendar because people could share pictures from their calendar events directly on our application. 
+
+<P>
+Furthermore, we would like to implement an improved notification system. That is, people could opt-in or have to opt-out of being notified when they are invited to an event by email or on Facebook. This allows people who don't necessarily regularly use our app to know that they have been invited to an event or if there are any changes to an event. 
+
+<P>
+Finally, we would like to continue improving the UI/UX experience. We believe that it is of the utmost importance that our application be intuitive and easy-to-use. We want to improve the flow as a user goes through the various features of our application, and we would like to make it more obvious what is happening at each step so that a user can better take advantage of all the features our application offers.
+
+<P> <br>
+<b> How would you do things differently next time? </b>
+
+<P>
+There is not a ton that we would do differently next time. However, one thing we would have benefitted from is having better communication about the division of tasks and the functioning of the system as a whole. It can be difficult to keep track of all of the moving parts of a (potentially new and unfamiliar) large system. This includes having a better and possibly more logical division of labor, thus increasing our overall efficiency and capacity for accomplishment.
+
+<P>
+We also would have tested the system with more users earlier. Sammy did a great job of recruiting people to use the application even from the beginning; however, generally speaking, it was fairly difficult to recruit people to test our application. Later in the process, we did sit down with more users and tried to watch them play with the application, which was very helpful.  However, we definitely would have benefitted from performing more of this user testing earlier.
+
+<P> <br>
+<b> What did you learn? </b>
+
+<P>
+One of the things we learned from this project was to be ready for unexpected changes. For example, Facebook changed the way in which it handled accepting requests from localhost, and we saw this change two days before our demo. This concerned us because we had considered using localhost to demo the application, but fortunately we were able to deal with the change. Something that was completely out of our control was when the Google Calendar API was down for about an hour one night while we were working. We were fairly confused for a while because we initially assumed that something was wrong on our end, as how could Google fail? Although it wasn't our fault, it caused a lot of stress and could have been problematic had we had many real users at that time.
+
+<P>
+Many of us learned for the first time most, if not all, of the stack involved with web development, both on the frontend and the backend. Many of us did not know anything at all coming into this project, and now feel comfortable with Django, javascript, css, html, and all the features we used for SpareTime. These are very valuable skills for a future in software development. On this smaller scale project, we were able to see and write code on all ends, which gave us a really strong understanding of how the frontend and backend interact to form a website. 
+
+<P>
+Additionally, it was a valuable experience learning how to handle and deal with Heroku. Making a website work on localhost is one thing, but pushing it to the Internet comes with its own learning experiences and challenges. Understanding a bit of the technology behind web hosting will be something that helps us moving forward, especially in knowing what it takes to allow a website to scale. 
+
+<P>
+Learning how to use Git in a team context was also very helpful. We will most likely use Git or some other version control for any project in the future, so it is incredibly valuable to have developed a solid understanding of Git from this project. Git really helped us keep track of our changes, experiment with code, and view one another's experimentation without changing the master code base. It also helped us roll back any mistakes we made with our code and make sure we couldn't accidentally lose all of our work. We did run into some trouble, but overall we relied on Git extensively and benefitted significantly from its use.
+
+<P> <br>
+<b> What should next year's class learn from your experience? </b>
+
+<P>
+Next year's class should be aware of how quickly the end of the semester arrives. After spring break, there is only a little over a month-and-a-half left to complete the website before Dean's Date. Thus, it is very helpful to accomplish a lot over spring break. It was very helpful that we (particularly Mark) were able to get a lot done on the frontend over spring break, and we were all able to learn Django (and some of us even the most basic html, css, javascript) during the break so we could go straight into development in the following weeks. It is also incredibly helpful to use languages and frameworks with which somebody in the group is familiar. Pal knew Django and Heroku from past experience, so it was helpful that he could easily push all changes to Heroku and figure out how to debug related problems (as it can be frustrating for everyone in the group to try to learn something entirely new and reach a level of comfort to facilitate successful debugging). Thus, any prior knowledge/specialty in a particular area can save a lot of time and significantly increase the efficiency of the work. 
+</body>
+</html>
