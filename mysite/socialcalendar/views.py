@@ -637,7 +637,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
         d.append({
             'title': cgi.escape(e.title),
             'start': e.start.hour+e.start.minute/60.0,
-            'end': endhour+e.end.minute/60.0,
+            'end': endhour+e.end.minute/60.0 + .1,
             'day': ((e.start.weekday()+1) % 7),
             'id': eID,
             'x': xs[i]/float(widths[i]),
