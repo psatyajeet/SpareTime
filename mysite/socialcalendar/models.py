@@ -11,13 +11,14 @@ class ExceptionDate(models.Model):
 class Event(models.Model):
 
     TYPE_CHOICES = (
-        ('FL', 'Flexible'),
-        ('PR', 'Private'),
-        ('PU', 'Public'),
+        ('AVPU', 'Available-Public'),
+        ('AVPR', 'Available-Private'),
+        ('BUPU', 'Busy-Public'),
+        ('BUPR', 'Busy-Private')
     )
-    kind = models.CharField(max_length=2,
+    kind = models.CharField(max_length=4,
                             choices=TYPE_CHOICES,
-                            default='PR')
+                            default='BUPU')
     title = models.TextField(default = 'No-Title')
     location = models.TextField(default = '')
     description = models.TextField(default='No-Description')

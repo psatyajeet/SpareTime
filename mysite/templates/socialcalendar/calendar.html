@@ -192,6 +192,8 @@
         </div>
     </div>
     <!-- End Week Calendar -->
+
+    <!-- Start Month Calendar -->
     <div id="monthlyCalendar">
         <table class="table table-bordered">
             <thead>
@@ -602,6 +604,28 @@
     </div>
     <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="6"></textarea>
     <div>
+        Show me as:
+        <label class="radio inline">
+            <input type="radio" name="optionVisible" id="AV" value="AV" checked>
+            Available
+        </label>
+        <label class="radio inline">
+            <input type="radio" name="optionVisible" id="BU" value="BU">
+            Busy
+        </label>
+    </div>
+    <div>
+        Privacy
+        <label class="radio inline">
+            <input type="radio" name="optionPrivacy" id="PU" value="PU" checked>
+            Public
+        </label>
+        <label class="radio inline">
+            <input type="radio" name="optionPrivacy" id="PR" value="PR">
+            Private
+        </label>
+    </div>
+    <div>
         <label class="radio inline">
             <input type="radio" name="optionsRadios" id="PU" value="PU" checked>
             Public
@@ -717,6 +741,8 @@
         <button class="btn btn-danger" id="rejectEvent" hidden = "true">Reject</button>
     </div>
     </div>
+    <!-- End Modal -->
+
     <script type="text/javascript">
     $(document).ready(function(){
         var scrollBar = $('#scrollbar1');

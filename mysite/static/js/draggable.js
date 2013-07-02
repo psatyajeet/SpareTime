@@ -390,7 +390,7 @@ var openID = function(id) {
         $('#createEvent').hide();
         $('#eventURL').show();
         var url = 'http://sparetime.herokuapp.com/?id='+id;
-        if(data.kind == "PU" || data.kind == "FL"){
+        if(data.kind == "AVPU" || data.kind == "BUPU"){
             $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
         } else {
             $('#eventURL').html('Private Event');
@@ -682,12 +682,13 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 var createEvent = function() {
     d = invitedFriendsID;
     var radios = document.getElementsByName('optionsRadios');
-    var kind = 'PR'
+    var kind = 'BUPR'
     for (var i = 0, length = radios.length; i < length; i++) {
         if (radios[i].checked) {
             kind = (radios[i].value);
         }
     }
+    kind=$("input[@name='name']:checked").val()
 
     if ($("#repeatEventsCheckbox").is(':checked')){
         var rrule='RRULE:';
@@ -817,12 +818,13 @@ $("#deleteEventThis").click(function() {deleteEvent("this")});
 
 var editEvent = function(all) {
     var radios = document.getElementsByName('optionsRadios');
-    var kind = 'PR'
+    var kind = 'BUPR'
     for (var i = 0, length = radios.length; i < length; i++) {
         if (radios[i].checked) {
             kind = (radios[i].value);
         }
     }
+    kind=$("input[@name='name']:checked").val()
 
     if ($("#repeatEventsCheckbox").is(':checked')){
         var rrule='RRULE:';
