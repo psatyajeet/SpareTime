@@ -390,7 +390,7 @@ var openID = function(id) {
         $('#createEvent').hide();
         $('#eventURL').show();
         var url = 'http://sparetime.herokuapp.com/?id='+id;
-        if(data.kind == "PU" || data.kind == "FL"){
+        if(data.kind == "AVPU" || data.kind == "BUPU"){
             $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
         } else {
             $('#eventURL').html('Private Event');
@@ -443,7 +443,9 @@ var openID = function(id) {
         $('#eventModal').on('shown', function(){
             $('#eventName').focus();
         });
-        document.getElementById(data.kind).checked = true
+
+        document.getElementById(data.kind.substring(0,2)).checked = true
+        document.getElementById(data.kind.substring(2,4)).checked = true
 
         currentlyViewing = id;
 
@@ -682,12 +684,14 @@ $("#calendarForward").click(function() {updateCalendar(1)});
 var createEvent = function() {
     d = invitedFriendsID;
     var radios = document.getElementsByName('optionsRadios');
-    var kind = 'PR'
+    var kind = 'BUPR'
     for (var i = 0, length = radios.length; i < length; i++) {
         if (radios[i].checked) {
             kind = (radios[i].value);
         }
     }
+    kind=$('input[name=optionVisible]:checked').val()+$('input[name=optionPrivacy]:checked').val();
+    console.log(kind);
 
     if ($("#repeatEventsCheckbox").is(':checked')){
         var rrule='RRULE:';
@@ -817,12 +821,14 @@ $("#deleteEventThis").click(function() {deleteEvent("this")});
 
 var editEvent = function(all) {
     var radios = document.getElementsByName('optionsRadios');
-    var kind = 'PR'
+    var kind = 'BUPR'
     for (var i = 0, length = radios.length; i < length; i++) {
         if (radios[i].checked) {
             kind = (radios[i].value);
         }
     }
+    kind=$('input[name=optionVisible]:checked').val()+$('input[name=optionPrivacy]:checked').val();
+    console.log(kind);
 
     if ($("#repeatEventsCheckbox").is(':checked')){
         var rrule='RRULE:';
