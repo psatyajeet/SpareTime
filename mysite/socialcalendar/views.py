@@ -159,7 +159,7 @@ def getWeeks(offset=0):
 def index(request):
     if request.GET.has_key('id'):
         event = Event.objects.filter(id=findIdOfEvent(request.GET['id']))
-        if len(event) != 0 and (event[0].kind == 'PU' or event[0].kind == 'FL'):
+        if len(event) != 0 and (event[0].kind == 'AVPU' or event[0].kind == 'AVPR' or event[0].kind == 'BUPU' or event[0].kind == 'BUPR'):
             e = event[0]
             if(request.session.has_key('fbid')):
                 unseen = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID=request.GET['id'])
@@ -349,7 +349,7 @@ def submitEvent(request):
     else:
         return HttpResponseNotFound()
 
-def createEvent(start, end, recurrence, usr = None, title = "No-Title", description = "", location = "", kind = "PR", repeat = False):
+def createEvent(start, end, recurrence, usr = None, title = "No-Title", description = "", location = "", kind = "BUPR", repeat = False):
     if usr == None:
         return
     if end <= start:
@@ -442,7 +442,7 @@ def populateEvents(request):
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
 
-    events = getAllEvents(usr, first, last, ['PU', 'PR', 'FL'])
+    events = getAllEvents(usr, first, last, ['AVPU', 'AVPR', 'BUPU', 'BUPR'])
 
     d = getArrayofWeeklyEvents(events, usr)
     return HttpResponse(simplejson.dumps(d))
@@ -680,7 +680,7 @@ def populateMonthEvents(request):
         return HttpResponse(simplejson.dumps(d))
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    events = getAllEvents(usr, first, last, ['PR', 'PU', 'FL'])
+    events = getAllEvents(usr, first, last, ['AVPU', 'AVPR', 'BUPU', 'BUPR'])
     d = []
     if (len(events) == 0):
         return HttpResponse(simplejson.dumps(d))
@@ -904,23 +904,23 @@ def heatMap(request):
         last = last.replace(tzinfo=tz.gettz('UTC'))
         ratio = [[0 for x in xrange(48)] for x in xrange(7)]
         busy = [[[] for j in range(48)] for i in range(7)]
-        total = 0.0;
+        total = 0.0
 
 
         usrs = UserProfile.objects.filter(user__in=friendIDs)
-        for usr in usrs :
+        for usr in usrs:
             timeSlotConsider = [[0 for x in xrange(48)] for x in xrange(7)]
 
-            total = total+1.0;
-            events = getAllEvents(usr, first, last, ['PU'])
+            total = total+1.0
+            events = getAllEvents(usr, first, last, ['BUPU'])
 
             for event in events:
-                start = event.start;
-                end = event.end;
+                start = event.start
+                end = event.end
                 day = (start.weekday()+1) % 7
                 for i in range(int(start.hour*2+math.floor(start.minute/30.0)), int(end.hour*2+math.ceil(end.minute/30.0))):
                     if not timeSlotConsider[day][i]:
-                        ratio[day][i] += 1;
+                        ratio[day][i] += 1
                         busy[day][i].append(usr.name)
                     timeSlotConsider[day][i] = True
 
@@ -1002,7 +1002,7 @@ def gcal(request):
                       gid=event['id'],
                       repeat=recurring,
                       recurrence=recurrence,
-                      kind = 'PU',
+                      kind = 'BUPU',
                       )
             e.save()
             usr.creators.add(e);

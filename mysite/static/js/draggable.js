@@ -443,7 +443,9 @@ var openID = function(id) {
         $('#eventModal').on('shown', function(){
             $('#eventName').focus();
         });
-        document.getElementById(data.kind).checked = true
+
+        document.getElementById(data.kind.substring(0,2)).checked = true
+        document.getElementById(data.kind.substring(2,4)).checked = true
 
         currentlyViewing = id;
 
@@ -688,7 +690,8 @@ var createEvent = function() {
             kind = (radios[i].value);
         }
     }
-    kind=$("input[@name='name']:checked").val()
+    kind=$('input[name=optionVisible]:checked').val()+$('input[name=optionPrivacy]:checked').val();
+    console.log(kind);
 
     if ($("#repeatEventsCheckbox").is(':checked')){
         var rrule='RRULE:';
@@ -824,7 +827,8 @@ var editEvent = function(all) {
             kind = (radios[i].value);
         }
     }
-    kind=$("input[@name='name']:checked").val()
+    kind=$('input[name=optionVisible]:checked').val()+$('input[name=optionPrivacy]:checked').val();
+    console.log(kind);
 
     if ($("#repeatEventsCheckbox").is(':checked')){
         var rrule='RRULE:';
