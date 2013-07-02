@@ -1,42 +1,42 @@
 {% extends "socialcalendar/calendar.html" %}
 {% block calendar %}
 
-<table class="table table-bordered">
-    <thead>
+    <table class="table table-bordered">
+        <thead>
         <tr>
             {% for day in days %}
                 <th class="headings" width="14.3%">{{day.title}}</th>
             {% endfor %}
         </tr>
-    </thead>
-</table>
-
-
-<div class="calendarMonthTable">
-    <table>
-        <tbody>
-            {% for week in weeks %}
-            <tr class="calendarRow">
-                {% for day in week %}
-                {% if day.thisMonth %}
-                    {% if day.today %}
-                        <td class="calendarMonthEntry calendarToday" width="14.3%">{{day.date}}</td>
-                    {% else %}
-                        <td class="calendarMonthEntry" width="14.3%">{{day.date}}</td>
-                    {% endif %}
-                {% else %}
-                    {% if day.today %}
-                        <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%">{{day.date}}</td>
-                    {% else %}
-                        <td class="calendarMonthEntry otherMonth" width="14.3%">{{day.date}}</td>
-                    {% endif %}
-                {% endif %}
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
+        </thead>
     </table>
-</div>
+
+
+    <div class="calendarMonthTable">
+        <table>
+            <tbody>
+            {% for week in weeks %}
+                <tr class="calendarRow">
+                    {% for day in week %}
+                        {% if day.thisMonth %}
+                            {% if day.today %}
+                                <td class="calendarMonthEntry calendarToday" width="14.3%">{{day.date}}</td>
+                            {% else %}
+                                <td class="calendarMonthEntry" width="14.3%">{{day.date}}</td>
+                            {% endif %}
+                        {% else %}
+                            {% if day.today %}
+                                <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%">{{day.date}}</td>
+                            {% else %}
+                                <td class="calendarMonthEntry otherMonth" width="14.3%">{{day.date}}</td>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 
 {% endblock calendar %}

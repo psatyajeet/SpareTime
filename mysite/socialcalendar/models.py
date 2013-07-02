@@ -3,11 +3,11 @@ from django.contrib.auth.models import User
 
 class ExceptionDate(models.Model):
     exceptionTime = models.DateTimeField()
-    
-    def __unicode__(self):
-        return self.exceptionTime    
 
-        
+    def __unicode__(self):
+        return self.exceptionTime
+
+
 class Event(models.Model):
 
     TYPE_CHOICES = (
@@ -16,8 +16,8 @@ class Event(models.Model):
         ('PU', 'Public'),
     )
     kind = models.CharField(max_length=2,
-                                      choices=TYPE_CHOICES,
-                                      default='PR')
+                            choices=TYPE_CHOICES,
+                            default='PR')
     title = models.TextField(default = 'No-Title')
     location = models.TextField(default = '')
     description = models.TextField(default='No-Description')
@@ -42,7 +42,7 @@ class UserProfile(models.Model):
     events = models.ManyToManyField(Event, related_name = 'events')
     name = models.CharField(max_length=30)
     notifications = models.ManyToManyField(Event, related_name = 'notification')
-    creators = models.ManyToManyField(Event, related_name = 'creators') 
+    creators = models.ManyToManyField(Event, related_name = 'creators')
     accepted = models.ManyToManyField(Event, related_name='accepted')
     rejected = models.ManyToManyField(Event, related_name ='rejected')
     unanswered = models.ManyToManyField(Event, related_name='unanswered')
@@ -54,9 +54,9 @@ class UserProfile(models.Model):
 class Name(models.Model):
     name = models.CharField(max_length=30)
     linkedEvent = models.ForeignKey(Event,related_name = 'linkedEvent')
-    
+
     def __unicode__(self):
-        return self.name     
+        return self.name
 
 class Comment(models.Model):
     comment = models.TextField(default='')
@@ -66,7 +66,7 @@ class Comment(models.Model):
     event = models.ForeignKey(Event, related_name = 'event')
     commentID = models.TextField(default = '')
     def __unicode__(self):
-        return self.comment 
+        return self.comment
 
 class Unseen(models.Model):
     people = models.ForeignKey("UserProfile", related_name = 'unseen')

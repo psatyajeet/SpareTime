@@ -1,661 +1,661 @@
 {% extends "template.html" %}
 {% block main %}
-<script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.tinyscrollbar.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}/timePicker/js/bootstrap-datetimepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/tinyscrollbar.css" />
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/timePicker/css/bootstrap-datetimepicker.min.css"/>
-<!--
-   <script src="http://connect.facebook.net/en_US/all.js"></script>
-   
-   <fb:login-button autologoutlink="true" onlogin="OnRequestPermission();">
-   </fb:login-button>
-   -->
-<!--Add a button for the user to click to initiate auth sequence
-<button id="lgoutgcal" onclick="logoutGmail()" class = "btn">Logout Gmail</button>
-<button type = "button" id="authorize-button" onclick="handleClientLoad()" class="btn btn-success" >Import Gmail</button>
- -->
-<script>
-    $("#notificationButton").show()
-    $("#dLabel").show()
+    <script type="text/javascript" src="{{ STATIC_URL }}/js/jquery.tinyscrollbar.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/timePicker/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/tinyscrollbar.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/timePicker/css/bootstrap-datetimepicker.min.css"/>
+    <!--
+       <script src="http://connect.facebook.net/en_US/all.js"></script>
 
-   var logoutGmail = function(){
-    window.open('https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8000/', '_self');
-   }
-</script>
-<script type="text/javascript">
-   // Enter a client ID for a web application from the Google Developer Console.
-   // The provided clientId will only work if the sample is run directly from
-   // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
-   // In your Developer Console project, add a JavaScript origin that corresponds to the domain
-   // where you will be running the script.
-   var clientId = '984176055001-8d2phedubon1coodjcrti1m0r198mp7a.apps.googleusercontent.com';
-   
-   // Enter the API key from the Google Develoepr Console - to handle any unauthenticated
-   // requests in the code.
-   // The provided key works for this sample only when run from
-   // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
-   // To use in your own application, replace this API key with your own.
-   var apiKey = 'AIzaSyBWD6GSRwVl4lDZHFuzzPsRPb9cG0f8vKc';
-   
-   // To enter one or more authentication scopes, refer to the documentation for the API.
-   var scopes = 'https://www.googleapis.com/auth/calendar';
-   
-   // Use a button to handle authentication the first time.
-   function handleClientLoad() {
-     gapi.client.setApiKey(apiKey);
-     window.setTimeout(checkAuth,1);
-   }
-   
-   function checkAuth() {
-     gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-   }
-   
-   
-   function handleAuthResult(authResult) {
-     if (authResult && !authResult.error) {
-       getGoogleEvents();
-   } else {
-     alert("Couldn't authorize")
-   }
-   }
-   
-   function handleAuthClick(event) {
-   gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
-   return false;
-   }
-   
-   // Load the API and make an API call.  Display the results on the screen.
-   function getGoogleEvents() {
-   
-     var request = gapi.client.request({
-         'path': '/calendar/v3/users/me/calendarList',
-     });
-     request.execute(function (resp) { 
-         $.each(resp.items, function (index, dat){
-             if(dat.id.indexOf("#") == -1){
-                 var restRequest = gapi.client.request({
-                     'path': '/calendar/v3/calendars/'+dat.id+'/events',
-                     'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-02-01T16:00:00-04:00'}  
-                 });
-   
-                 restRequest.execute(function(resp) { 
-                     gcal(resp); 
-                 });
-             }       
-         });
-     });
-   }
-   
-</script>
-<script src="https://apis.google.com/js/client.js"></script>
-<div id="notificationLocation"></div>
-<div class="row">
-   <div class="span1"><button type="button" id="calendarBack" class="btn btn-block btn-primary">&lt&lt</button></div>
-   <div class="span1"><button type="button" id="calendarToday" class="btn btn-block btn-primary">Today</button></div>
-   <div class="span1"><button type="button" id="calendarForward" class="btn btn-block btn-primary">&gt&gt</button></div>
-   <div class="span6">
-      <h4 id="weekname">{{ header }}</h4>
-   </div>
-   <div class="span1"></div>
+       <fb:login-button autologoutlink="true" onlogin="OnRequestPermission();">
+       </fb:login-button>
+       -->
+    <!--Add a button for the user to click to initiate auth sequence
+    <button id="lgoutgcal" onclick="logoutGmail()" class = "btn">Logout Gmail</button>
+    <button type = "button" id="authorize-button" onclick="handleClientLoad()" class="btn btn-success" >Import Gmail</button>
+     -->
+    <script>
+        $("#notificationButton").show()
+        $("#dLabel").show()
+
+        var logoutGmail = function(){
+            window.open('https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8000/', '_self');
+        }
+    </script>
+    <script type="text/javascript">
+        // Enter a client ID for a web application from the Google Developer Console.
+        // The provided clientId will only work if the sample is run directly from
+        // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
+        // In your Developer Console project, add a JavaScript origin that corresponds to the domain
+        // where you will be running the script.
+        var clientId = '984176055001-8d2phedubon1coodjcrti1m0r198mp7a.apps.googleusercontent.com';
+
+        // Enter the API key from the Google Develoepr Console - to handle any unauthenticated
+        // requests in the code.
+        // The provided key works for this sample only when run from
+        // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
+        // To use in your own application, replace this API key with your own.
+        var apiKey = 'AIzaSyBWD6GSRwVl4lDZHFuzzPsRPb9cG0f8vKc';
+
+        // To enter one or more authentication scopes, refer to the documentation for the API.
+        var scopes = 'https://www.googleapis.com/auth/calendar';
+
+        // Use a button to handle authentication the first time.
+        function handleClientLoad() {
+            gapi.client.setApiKey(apiKey);
+            window.setTimeout(checkAuth,1);
+        }
+
+        function checkAuth() {
+            gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+        }
 
 
-   <div class="span1"><button type="button" id="monthlyButton" class="btn btn-block btn-primary">Monthly</button></div>
-   <div class="span1"><button type="button" id="weeklyButton" class="btn btn-block btn-primary">Weekly</button></div>
-</div>
-<!--
-   <div class="row">
-       <div class="span12"><button id="gcal" type="button" class="btn btn-block btn-primary">Do Google Calendar Stuff</button></div>
-   </div>
-   -->
-<div class="row">
-   <div class="span12">
-      <p></p>
-   </div>
-</div>
-<!-- Start Week Calendar -->
-<div id="weeklyCalendar">
-   <table class="table table-bordered">
-      <thead>
-         <tr>
-            <th width="5.5%"></th>
-            {% for day in days %}
-            <th class="headings weekly" width="13.5%">{{day.title}}</th>
-            {% endfor %}
-         </tr>
-      </thead>
-   </table>
-   <div id="scrollbar1" class="noSelect">
-      <div class="scrollbar">
-         <div class="track">
-            <div class="thumb">
-               <div class="end"></div>
-            </div>
-         </div>
-      </div>
-      <div class="viewport">
-          <div id="blackScreen"> 
-              <div id="noValidFriends">
-                  <h3><center>You Only Invited Friends Who Don't Have SpareTime.</center></h3>
-                  <h3><center>Try Again With At Least One Friend Who Has The App.</center></h3>
-                  <h3><center>Or Make An Event And Send Out The Event Page Link For Anyone To Respond.</center></h3>
-                  <h1><center>Click To Continue</center></h1>
-              </div>
-              <div id="validFriends">
-                  <h3><center>Drag To Create An Event To Invite The Friends You Just Added.</center></h3>
-                  <h3><center>Time slots become more green with increased availability.</center></h3>
-                  <h3><center>Time slots become more red with decreased availability.</center></h3>
-                  <h1><center>Click To Begin</center></h1>
-              </div>
-          </div>
-          <div>
-              <div class="overview">
+        function handleAuthResult(authResult) {
+            if (authResult && !authResult.error) {
+                getGoogleEvents();
+            } else {
+                alert("Couldn't authorize")
+            }
+        }
 
-                  <div class='dragged'></div>
-                  <div class="calendarTable">
-                      <table>
-                          <tbody>
-                              {% for hour in hours %}
-                              <tr class="calendarRow">
-                                  <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
-                                  {% for day in days %}
-                                  {% if day.today %}
-                                  <td class="calendarEntry calendarToday" width="13.5%">
-                                      <div class="toolTipDiv"></div>
-                                  </td>
-                                  {% else %}
-                                  <td class="calendarEntry" width="13.5%">
-                                      <div class="toolTipDiv"></div>
-                                  </td>
-                                  {% endif %}
-                                  {% endfor %}
-                              </tr>
-                              <tr class="calendarRow">
-                                  {% for day in days %}
-                                  {% if day.today %}
-                                  <td class="calendarHalfHour calendarToday" width="13.5%">
-                                      <div class="toolTipDiv"></div>
-                                  </td>
-                                  {% else %}
-                                  <td class="calendarHalfHour" width="13.5%">
-                                      <div class="toolTipDiv"></div>
-                                  </td>
-                                  {% endif %}
-                                  {% endfor %}
-                              </tr>
-                              {% endfor %}
-                          </tbody>
-                      </table>
-                  </div>
-              </div>
-         </div>
-      </div>
-   </div>
-</div>
-<!-- End Week Calendar -->
-<div id="monthlyCalendar">
-   <table class="table table-bordered">
-      <thead>
-         <tr>
-            {% for day in monthDays %}
-            <th class="headings monthly" width="14.3%">{{day.title}}</th>
-            {% endfor %}
-         </tr>
-      </thead>
-   </table>
-   <div class="calendarMonthTable">
-      <table>
-         <tbody>
-            {% for week in monthWeeks %}
-            <tr class="calendarRow">
-               {% for day in week %}
-               {% if day.thisMonth %}
-               {% if day.today %}
-               <td class="calendarMonthEntry calendarToday" width="14.3%">
-                  {{day.date}}
-                  <div></div>
-               </td>
-               {% else %}
-               <td class="calendarMonthEntry" width="14.3%">
-                  {{day.date}}
-                  <div></div>
-               </td>
-               {% endif %}
-               {% else %}
-               {% if day.today %}
-               <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%">
-                  {{day.date}}
-                  <div></div>
-               </td>
-               {% else %}
-               <td class="calendarMonthEntry otherMonth" width="14.3%">
-                  {{day.date}}
-                  <div></div>
-               </td>
-               {% endif %}
-               {% endif %}
-               {% endfor %}
+        function handleAuthClick(event) {
+            gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
+            return false;
+        }
+
+        // Load the API and make an API call.  Display the results on the screen.
+        function getGoogleEvents() {
+
+            var request = gapi.client.request({
+                'path': '/calendar/v3/users/me/calendarList',
+            });
+            request.execute(function (resp) {
+                $.each(resp.items, function (index, dat){
+                    if(dat.id.indexOf("#") == -1){
+                        var restRequest = gapi.client.request({
+                            'path': '/calendar/v3/calendars/'+dat.id+'/events',
+                            'params': {'timeMax': '2014-01-01T16:00:00-04:00', 'timeMin': '2013-02-01T16:00:00-04:00'}
+                        });
+
+                        restRequest.execute(function(resp) {
+                            gcal(resp);
+                        });
+                    }
+                });
+            });
+        }
+
+    </script>
+    <script src="https://apis.google.com/js/client.js"></script>
+    <div id="notificationLocation"></div>
+    <div class="row">
+        <div class="span1"><button type="button" id="calendarBack" class="btn btn-block btn-primary">&lt&lt</button></div>
+        <div class="span1"><button type="button" id="calendarToday" class="btn btn-block btn-primary">Today</button></div>
+        <div class="span1"><button type="button" id="calendarForward" class="btn btn-block btn-primary">&gt&gt</button></div>
+        <div class="span6">
+            <h4 id="weekname">{{ header }}</h4>
+        </div>
+        <div class="span1"></div>
+
+
+        <div class="span1"><button type="button" id="monthlyButton" class="btn btn-block btn-primary">Monthly</button></div>
+        <div class="span1"><button type="button" id="weeklyButton" class="btn btn-block btn-primary">Weekly</button></div>
+    </div>
+    <!--
+       <div class="row">
+           <div class="span12"><button id="gcal" type="button" class="btn btn-block btn-primary">Do Google Calendar Stuff</button></div>
+       </div>
+       -->
+    <div class="row">
+        <div class="span12">
+            <p></p>
+        </div>
+    </div>
+    <!-- Start Week Calendar -->
+    <div id="weeklyCalendar">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th width="5.5%"></th>
+                {% for day in days %}
+                    <th class="headings weekly" width="13.5%">{{day.title}}</th>
+                {% endfor %}
             </tr>
-            {% endfor %}
-         </tbody>
-      </table>
-   </div>
-</div>
-<!-- End of Month Calendar -->
-<div class="row">
-   <div class="span12">
-      <p></p>
-   </div>
-</div>
-<div class="btn-group" data-toggle="buttons-radio">
-   <div class="row">
-      <div class="span3"></div>
-      <div class="span3"><button type="button" id="makeEvent" class="btn btn-block btn-inverse">Make Event</button></div>
-      <div class="span0"></div>
-      <div class="span3"><button type="button" id="addFriends" class="btn btn-block btn-inverse">Invite Friends</button></div>
-      <div class="span3"></div>
-   </div>
-</div>
-<div class="row">
-   <div class="span12">
-      <p></p>
-   </div>
-</div>
-<!-- Friend Modal -->
-<div id="friendModal" class="modal hide fade">
-   <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Invite Friends</h3>
-   </div>
-   <div class="modal-body">
-      <p>Add friends to invite to your event:</p>
-      <input type="text" class="friendComplete" placeholder="Type a friend's name...">
-      <div class="row-fluid">
-         <div class="invitedFriends">
-         </div>
-      </div>
-   </div>
-   <div class="modal-footer">
-      <a href="#" id="chooseFriendsCancel" class="btn">Cancel</a>
-      <a href="#" id="showFriendAvailability" class="btn btn-primary">Show Availability</a>
-   </div>
-</div>
-<!-- End Friend Modal -->
+            </thead>
+        </table>
+        <div id="scrollbar1" class="noSelect">
+            <div class="scrollbar">
+                <div class="track">
+                    <div class="thumb">
+                        <div class="end"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="viewport">
+                <div id="blackScreen">
+                    <div id="noValidFriends">
+                        <h3><center>You Only Invited Friends Who Don't Have SpareTime.</center></h3>
+                        <h3><center>Try Again With At Least One Friend Who Has The App.</center></h3>
+                        <h3><center>Or Make An Event And Send Out The Event Page Link For Anyone To Respond.</center></h3>
+                        <h1><center>Click To Continue</center></h1>
+                    </div>
+                    <div id="validFriends">
+                        <h3><center>Drag To Create An Event To Invite The Friends You Just Added.</center></h3>
+                        <h3><center>Time slots become more green with increased availability.</center></h3>
+                        <h3><center>Time slots become more red with decreased availability.</center></h3>
+                        <h1><center>Click To Begin</center></h1>
+                    </div>
+                </div>
+                <div>
+                    <div class="overview">
 
-<!-- Modal -->
-<div id="eventModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-   <form>
-      <div class="modal-header">
-         <ul class="nav nav-tabs">
+                        <div class='dragged'></div>
+                        <div class="calendarTable">
+                            <table>
+                                <tbody>
+                                {% for hour in hours %}
+                                    <tr class="calendarRow">
+                                        <td class="hourEntry" rowspan="2" width="5.5%">{{hour}}</td>
+                                        {% for day in days %}
+                                            {% if day.today %}
+                                                <td class="calendarEntry calendarToday" width="13.5%">
+                                                    <div class="toolTipDiv"></div>
+                                                </td>
+                                            {% else %}
+                                                <td class="calendarEntry" width="13.5%">
+                                                    <div class="toolTipDiv"></div>
+                                                </td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr class="calendarRow">
+                                        {% for day in days %}
+                                            {% if day.today %}
+                                                <td class="calendarHalfHour calendarToday" width="13.5%">
+                                                    <div class="toolTipDiv"></div>
+                                                </td>
+                                            {% else %}
+                                                <td class="calendarHalfHour" width="13.5%">
+                                                    <div class="toolTipDiv"></div>
+                                                </td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Week Calendar -->
+    <div id="monthlyCalendar">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                {% for day in monthDays %}
+                    <th class="headings monthly" width="14.3%">{{day.title}}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+        </table>
+        <div class="calendarMonthTable">
+            <table>
+                <tbody>
+                {% for week in monthWeeks %}
+                    <tr class="calendarRow">
+                        {% for day in week %}
+                            {% if day.thisMonth %}
+                                {% if day.today %}
+                                    <td class="calendarMonthEntry calendarToday" width="14.3%">
+                                        {{day.date}}
+                                        <div></div>
+                                    </td>
+                                {% else %}
+                                    <td class="calendarMonthEntry" width="14.3%">
+                                        {{day.date}}
+                                        <div></div>
+                                    </td>
+                                {% endif %}
+                            {% else %}
+                                {% if day.today %}
+                                    <td class="calendarMonthEntry otherMonth calendarToday" width="14.3%">
+                                        {{day.date}}
+                                        <div></div>
+                                    </td>
+                                {% else %}
+                                    <td class="calendarMonthEntry otherMonth" width="14.3%">
+                                        {{day.date}}
+                                        <div></div>
+                                    </td>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- End of Month Calendar -->
+    <div class="row">
+        <div class="span12">
+            <p></p>
+        </div>
+    </div>
+    <div class="btn-group" data-toggle="buttons-radio">
+        <div class="row">
+            <div class="span3"></div>
+            <div class="span3"><button type="button" id="makeEvent" class="btn btn-block btn-inverse">Make Event</button></div>
+            <div class="span0"></div>
+            <div class="span3"><button type="button" id="addFriends" class="btn btn-block btn-inverse">Invite Friends</button></div>
+            <div class="span3"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <p></p>
+        </div>
+    </div>
+    <!-- Friend Modal -->
+    <div id="friendModal" class="modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Invite Friends</h3>
+        </div>
+        <div class="modal-body">
+            <p>Add friends to invite to your event:</p>
+            <input type="text" class="friendComplete" placeholder="Type a friend's name...">
+            <div class="row-fluid">
+                <div class="invitedFriends">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="chooseFriendsCancel" class="btn">Cancel</a>
+            <a href="#" id="showFriendAvailability" class="btn btn-primary">Show Availability</a>
+        </div>
+    </div>
+    <!-- End Friend Modal -->
+
+    <!-- Modal -->
+    <div id="eventModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <form>
+    <div class="modal-header">
+        <ul class="nav nav-tabs">
             <li class="active"><a href="#eventInformationTab" data-toggle="tab">Event Information</a></li>
             <li><a href="#commentsTab" data-toggle="tab">Comments</a></li>
             <li><a href="#peopleTab" data-toggle="tab">People</a></li>
             <li><a href="#inviteTab" data-toggle="tab">Invite</a></li>
-         </ul>
-         <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
-      </div>
-      <div class="modal-body" id="eventModalBody">
-         <div id="modalEventInformation">
-             <div id="modalEventEditable">
-            <h3 id="myModalLabel"><input id="eventName" class="input-block-level" type="text" placeholder="Event Name"></h3>
-            <div class="row-fluid">
-               <div class="span6">
-                  <div id="datetimepicker" class="input-append datetimepicker">
-                     <input id="startTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+        </ul>
+        <!--    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> -->
+    </div>
+    <div class="modal-body" id="eventModalBody">
+    <div id="modalEventInformation">
+    <div id="modalEventEditable">
+    <h3 id="myModalLabel"><input id="eventName" class="input-block-level" type="text" placeholder="Event Name"></h3>
+    <div class="row-fluid">
+        <div class="span6">
+            <div id="datetimepicker" class="input-append datetimepicker">
+                <input id="startTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                      <span class="add-on">
                      <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                      </span>
-                  </div>
-               </div>
-               <div class="span6">
-                  <div id="datetimepicker2" class="input-append datetimepicker">
-                     <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+            </div>
+        </div>
+        <div class="span6">
+            <div id="datetimepicker2" class="input-append datetimepicker">
+                <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                      <span class="add-on">
                      <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                      </span>
-                  </div>
-               </div>
             </div>
-            <div class="row-fluid">
-               <div class="span12">
-                  <input id="eventLocation" class="input-block-level" type="text" placeholder="Event Location">
-               </div>
-            </div>
-            <div id="repeat-stuff">
-               <label class="checkbox">
-               <input type="checkbox" name="repeatEvents" id="repeatEventsCheckbox" value="repeat">
-               Repeat...
-               </label>
-               <div class="hide" id="modal-repeat">
-                  Repeats: 
-                  <select id="repeat-option-time-period">
-                     <option value="daily">Daily</option>
-                     <option value="weekly">Weekly</option>
-                     <option value="monthly">Monthly</option>
-                     <option value="yearly">Yearly</option>
-                  </select>
-               </div>
-               <div class="hide" id="repeat-daily">
-                  <div>
-                     Repeats every : 
-                     <select class="span1" id="dinterval">
-                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <input id="eventLocation" class="input-block-level" type="text" placeholder="Event Location">
+        </div>
+    </div>
+    <div id="repeat-stuff">
+        <label class="checkbox">
+            <input type="checkbox" name="repeatEvents" id="repeatEventsCheckbox" value="repeat">
+            Repeat...
+        </label>
+        <div class="hide" id="modal-repeat">
+            Repeats:
+            <select id="repeat-option-time-period">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+        </div>
+        <div class="hide" id="repeat-daily">
+            <div>
+                Repeats every :
+                <select class="span1" id="dinterval">
+                    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
                         <option>{{forloop.counter}}</option>
-                        {% endfor  %}
-                     </select>
-                     days
-                  </div>
-                  <!--
-                  <div class="row-fluid">
-                     <div class="span2">
-                        Starts on: 
-                     </div>
-                     <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                        <span class="add-on">
-                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                        </span>
-                     </div>
-                  </div>
-               -->
-                  Ends:
-                  <div>
-                     <label class="radio">
-                     <input type="radio" name="endRadios" id="dNever" value="Never" checked></input>
-                     Never
-                     </label>
-                     <label class="radio">
-                     <input type="radio" name="endRadios" id= "dAfter" value="After">
-                     After <input id="dafterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
-                     </input>
-                     </label>
-                     <label class="radio">
-                        <div class="row-fluid">
-                           <div class="span1">
-                              <input type="radio" name="endRadios" id="dOn"value="On"></input>
-                              On 
-                           </div>
-                           <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                              <input id="donEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                    {% endfor  %}
+                </select>
+                days
+            </div>
+            <!--
+            <div class="row-fluid">
+               <div class="span2">
+                  Starts on:
+               </div>
+               <div id="datetimepicker2" class="input-append span6 datetimepicker">
+                  <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                  <span class="add-on">
+                  <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                  </span>
+               </div>
+            </div>
+         -->
+            Ends:
+            <div>
+                <label class="radio">
+                    <input type="radio" name="endRadios" id="dNever" value="Never" checked></input>
+                    Never
+                </label>
+                <label class="radio">
+                    <input type="radio" name="endRadios" id= "dAfter" value="After">
+                    After <input id="dafterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
+                    </input>
+                </label>
+                <label class="radio">
+                    <div class="row-fluid">
+                        <div class="span1">
+                            <input type="radio" name="endRadios" id="dOn"value="On"></input>
+                            On
+                        </div>
+                        <div id="datetimepicker2" class="input-append span6 datetimepicker">
+                            <input id="donEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                               <span class="add-on">
                               <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                               </span>
-                           </div>
                         </div>
-                     </label>
-                  </div>
-               </div>
-               <div class="hide" id="repeat-weekly">
-                  <div>
-                     Repeats every : 
-                     <select class="span1" id="winterval">
-                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-                        <option>{{forloop.counter}}</option>
-                        {% endfor  %}
-                     </select>
-                     weeks
-                  </div>
-                  <div>
-                     Repeat on: 
-                     <label class="checkbox inline">
-                     <input type="checkbox" name="repeatOn" id="weekSU" value="SU"> Su
-                     </label>
-                     <label class="checkbox inline">
-                     <input type="checkbox" name="repeatOn" id="weekMO" value="MO"> M
-                     </label>
-                     <label class="checkbox inline">
-                     <input type="checkbox" name="repeatOn" id="weekTU" value="TU"> T
-                     </label>
-                     <label class="checkbox inline">
-                     <input type="checkbox" name="repeatOn" id="weekWE" value="WE"> W
-                     </label>
-                     <label class="checkbox inline">
-                     <input type="checkbox" name="repeatOn" id="weekTH" value="TH"> Th
-                     </label>
-                     <label class="checkbox inline">
-                     <input type="checkbox" name="repeatOn" id="weekFR" value="FR"> F
-                     </label>
-                     <label class="checkbox inline">
-                     <input type="checkbox" name="repeatOn" id="weekSA" value="SA"> Sa
-                     </label>
-                  </div>
-                  <!--
-                  <div class="row-fluid">
-                     <div class="span2">
-                        Starts on: 
-                     </div>
-                     <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                        <span class="add-on">
-                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                        </span>
-                     </div>
                     </div>
-                  -->
-                     <div>
-                        Ends:
-                        <div>
-                           <label class="radio">
-                           <input type="radio" name="endRadios" id="wNever" value="Never" checked></input>
-                           Never
-                           </label>
-                           <label class="radio">
-                           <input type="radio" name="endRadios" id= "wAfter" value="After">
-                           After <input id="wafterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
-                           </input>
-                           </label>
-                           <label class="radio">
-                              <div class="row-fluid">
-                                 <div class="span1">
-                                    <input type="radio" name="endRadios" id="wOn" value="On"></input>
-                                    On 
-                                 </div>
-                                 <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                                    <input id="wonEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                </label>
+            </div>
+        </div>
+        <div class="hide" id="repeat-weekly">
+            <div>
+                Repeats every :
+                <select class="span1" id="winterval">
+                    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                        <option>{{forloop.counter}}</option>
+                    {% endfor  %}
+                </select>
+                weeks
+            </div>
+            <div>
+                Repeat on:
+                <label class="checkbox inline">
+                    <input type="checkbox" name="repeatOn" id="weekSU" value="SU"> Su
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" name="repeatOn" id="weekMO" value="MO"> M
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" name="repeatOn" id="weekTU" value="TU"> T
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" name="repeatOn" id="weekWE" value="WE"> W
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" name="repeatOn" id="weekTH" value="TH"> Th
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" name="repeatOn" id="weekFR" value="FR"> F
+                </label>
+                <label class="checkbox inline">
+                    <input type="checkbox" name="repeatOn" id="weekSA" value="SA"> Sa
+                </label>
+            </div>
+            <!--
+            <div class="row-fluid">
+               <div class="span2">
+                  Starts on:
+               </div>
+               <div id="datetimepicker2" class="input-append span6 datetimepicker">
+                  <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                  <span class="add-on">
+                  <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                  </span>
+               </div>
+              </div>
+            -->
+            <div>
+                Ends:
+                <div>
+                    <label class="radio">
+                        <input type="radio" name="endRadios" id="wNever" value="Never" checked></input>
+                        Never
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="endRadios" id= "wAfter" value="After">
+                        After <input id="wafterOccurrences" class="span2 input-block-level" type="text"></input> Occurrences
+                        </input>
+                    </label>
+                    <label class="radio">
+                        <div class="row-fluid">
+                            <div class="span1">
+                                <input type="radio" name="endRadios" id="wOn" value="On"></input>
+                                On
+                            </div>
+                            <div id="datetimepicker2" class="input-append span6 datetimepicker">
+                                <input id="wonEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                                     <span class="add-on">
                                     <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                                     </span>
-                                 </div>
-                              </div>
-                           </label>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-               </div>
-               <div class="hide" id="repeat-monthly">
-                  <div>
-                     Repeats every : 
-                     <select class="span1" id="minterval">
-                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-                        <option>{{forloop.counter}}</option>
-                        {% endfor  %}
-                     </select>
-                     months
-                  </div>
-                  <div>
-                     Repeat by:
-                     <label class="radio inline">
-                     <input type="radio" name="monthly-repeat-by" id="daymonth" value="daymonth" checked>
-                     day of the month
-                     </label>
-                     <label class="radio inline">
-                     <input type="radio" name="monthly-repeat-by" id="dayweek" value="dayweek">
-                     day of the week
-                     </label>
-                  </div>
-                  <div class="hide" id="repeat-by-info">
-                     <div>
-                        Repeats on : 
-                        <select class="span2" id="weekinmonth">
-                           <option value="1">First</option>
-                           <option value="2">Second</option>
-                           <option value="3">Third</option>
-                           <option value="4">Fourth</option>
-                           <option value="5">Fifth</option>
-                        </select>
-                     </div>
-                     <div>
-                        Repeat on: 
-                        <label class="radio inline">
-                        <input type="radio" name="repeatOn" id="mSU" value="SU"> Su
-                        </label>
-                        <label class="radio inline">
-                        <input type="radio" name="repeatOn" id="mMO" value="MO"> M
-                        </label>
-                        <label class="radio inline">
-                        <input type="radio" name="repeatOn" id="mTU" value="TU"> T
-                        </label>
-                        <label class="radio inline">
-                        <input type="radio" name="repeatOn" id="mWE" value="WE"> W
-                        </label>
-                        <label class="radio inline">
-                        <input type="radio" name="repeatOn" id="mTH" value="TH"> Th
-                        </label>
-                        <label class="radio inline">
-                        <input type="radio" name="repeatOn" id="mFR" value="FR"> F
-                        </label>
-                        <label class="radio inline">
-                        <input type="radio" name="repeatOn" id="mSA" value="SA"> Sa
-                        </label>
-                     </div>
-                  </div>
-                  <!--
-                  <div class="row-fluid">
-                     <div class="span2">
-                        Starts on: 
-                     </div>
-                     <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                        <span class="add-on">
-                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                        </span>
-                     </div>
-                  </div>
-               -->
-                  <div class="row-fluid">
-                     Ends: 
-                     <label class="radio">
-                     <input type="radio" name="endRadios" value="mNever" checked>
-                     Never
-                     </label>
-                     <label class="radio">
-                     <input type="radio" name="endRadios" id="mAfter" value="After">
-                     After <input id="mafterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
-                     </label>
-                     <label class="radio">
-                        <div class="row-fluid">
-                           <div class="span1">
-                              <input type="radio" name="endRadios" id="mOn" value="On">
-                              On 
-                           </div>
-                           <div id="datetimepicker2" class="input-append span6 datetimepicker">
-                              <input id="monEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hide" id="repeat-monthly">
+        <div>
+            Repeats every :
+            <select class="span1" id="minterval">
+                {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                    <option>{{forloop.counter}}</option>
+                {% endfor  %}
+            </select>
+            months
+        </div>
+        <div>
+            Repeat by:
+            <label class="radio inline">
+                <input type="radio" name="monthly-repeat-by" id="daymonth" value="daymonth" checked>
+                day of the month
+            </label>
+            <label class="radio inline">
+                <input type="radio" name="monthly-repeat-by" id="dayweek" value="dayweek">
+                day of the week
+            </label>
+        </div>
+        <div class="hide" id="repeat-by-info">
+            <div>
+                Repeats on :
+                <select class="span2" id="weekinmonth">
+                    <option value="1">First</option>
+                    <option value="2">Second</option>
+                    <option value="3">Third</option>
+                    <option value="4">Fourth</option>
+                    <option value="5">Fifth</option>
+                </select>
+            </div>
+            <div>
+                Repeat on:
+                <label class="radio inline">
+                    <input type="radio" name="repeatOn" id="mSU" value="SU"> Su
+                </label>
+                <label class="radio inline">
+                    <input type="radio" name="repeatOn" id="mMO" value="MO"> M
+                </label>
+                <label class="radio inline">
+                    <input type="radio" name="repeatOn" id="mTU" value="TU"> T
+                </label>
+                <label class="radio inline">
+                    <input type="radio" name="repeatOn" id="mWE" value="WE"> W
+                </label>
+                <label class="radio inline">
+                    <input type="radio" name="repeatOn" id="mTH" value="TH"> Th
+                </label>
+                <label class="radio inline">
+                    <input type="radio" name="repeatOn" id="mFR" value="FR"> F
+                </label>
+                <label class="radio inline">
+                    <input type="radio" name="repeatOn" id="mSA" value="SA"> Sa
+                </label>
+            </div>
+        </div>
+        <!--
+        <div class="row-fluid">
+           <div class="span2">
+              Starts on:
+           </div>
+           <div id="datetimepicker2" class="input-append span6 datetimepicker">
+              <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+              <span class="add-on">
+              <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+              </span>
+           </div>
+        </div>
+     -->
+        <div class="row-fluid">
+            Ends:
+            <label class="radio">
+                <input type="radio" name="endRadios" value="mNever" checked>
+                Never
+            </label>
+            <label class="radio">
+                <input type="radio" name="endRadios" id="mAfter" value="After">
+                After <input id="mafterOccurrences" class="span1 input-block-level" type="text" placeholder=""> Occurrences
+            </label>
+            <label class="radio">
+                <div class="row-fluid">
+                    <div class="span1">
+                        <input type="radio" name="endRadios" id="mOn" value="On">
+                        On
+                    </div>
+                    <div id="datetimepicker2" class="input-append span6 datetimepicker">
+                        <input id="monEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                               <span class="add-on">
                               <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                               </span>
-                           </div>
-                        </div>
-                     </label>
-                  </div>
-               </div>
-               <div class="hide" id="repeat-yearly">
-                  <div>
-                     Repeats every :
-                     <select class="span1" id="yinterval">
-                        {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
-                        <option>{{forloop.counter}}</option>
-                        {% endfor %}
-                     </select>
-                     years
-                  </div>
-                  <!--
-                  <div>
-                     Starts on:
-                     <div id="datetimepicker2" class="input-append datetimepicker">
-                        <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
-                        <span class="add-on">
-                        <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-                        </span>
-                     </div>
-                  </div>
-               -->
-                  <div>
-                     Ends:
-                     <label class="radio">
-                     <input type="radio" name="endRadios" value="yNever" checked>
-                     Never
-                     </label>
-                     <label class="radio">
-                     <input type="radio" name="endRadios" id="yAfter" value="After">
-                     After <input id="yafterOccurrences" class="span1 input-block-level" type="text" placeholder=""> occurrences
-                     </label>
-                     <label class="radio">
-                        <input type="radio" name="endRadios" id= "yOn" value="On">
-                        On
-                        <div id="datetimepicker2" class="input-append datetimepicker">
-                           <input id="yonEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </div>
+    <div class="hide" id="repeat-yearly">
+        <div>
+            Repeats every :
+            <select class="span1" id="yinterval">
+                {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+                    <option>{{forloop.counter}}</option>
+                {% endfor %}
+            </select>
+            years
+        </div>
+        <!--
+        <div>
+           Starts on:
+           <div id="datetimepicker2" class="input-append datetimepicker">
+              <input id="endTime" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
+              <span class="add-on">
+              <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+              </span>
+           </div>
+        </div>
+     -->
+        <div>
+            Ends:
+            <label class="radio">
+                <input type="radio" name="endRadios" value="yNever" checked>
+                Never
+            </label>
+            <label class="radio">
+                <input type="radio" name="endRadios" id="yAfter" value="After">
+                After <input id="yafterOccurrences" class="span1 input-block-level" type="text" placeholder=""> occurrences
+            </label>
+            <label class="radio">
+                <input type="radio" name="endRadios" id= "yOn" value="On">
+                On
+                <div id="datetimepicker2" class="input-append datetimepicker">
+                    <input id="yonEndRepeat" data-format="MM/dd/yyyy HH:mm PP" type="text"></input>
                            <span class="add-on">
                            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
                            </span>
-                        </div>
-                     </label>
-                  </div>
-               </div>
-                        <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="6"></textarea>
-                     <div>
-            <label class="radio inline">
+                </div>
+            </label>
+        </div>
+    </div>
+    <textarea id="eventDescription" class="input-block-level" placeholder="Event Description..." rows="6"></textarea>
+    <div>
+        <label class="radio inline">
             <input type="radio" name="optionsRadios" id="PU" value="PU" checked>
             Public
-            </label>
-            <label class="radio inline">
+        </label>
+        <label class="radio inline">
             <input type="radio" name="optionsRadios" id="PR" value="PR">
             Secret
-            </label>
-            <label class="radio inline">
+        </label>
+        <label class="radio inline">
             <input type="radio" name="optionsRadios" id="FL" value="FL">
             Flexible
-            </label>
-         </div>
+        </label>
+    </div>
 
-     </div>
-     <div id="modalEventNotEditable">
-         <h3 id="nonEditableTitle">
-         </h3>
-            <div class="row-fluid">
-               <div class="span6">
-                   <div id="nonEditableStartTime">
-                   </div>
-               </div>
-               <div class="span6">
-                   <div id="nonEditableEndTime">
-                   </div>
-               </div>
+    </div>
+    <div id="modalEventNotEditable">
+        <h3 id="nonEditableTitle">
+        </h3>
+        <div class="row-fluid">
+            <div class="span6">
+                <div id="nonEditableStartTime">
+                </div>
             </div>
-            <div class="row-fluid">
-               <div class="span12">
-                   <div id="nonEditableLocation">
-                   </div>
-               </div>
+            <div class="span6">
+                <div id="nonEditableEndTime">
+                </div>
             </div>
-            <div class="row-fluid">
-               <div class="span12">
-                   <div id="nonEditableDescription">
-                   </div>
-               </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div id="nonEditableLocation">
+                </div>
             </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span12">
+                <div id="nonEditableDescription">
+                </div>
+            </div>
+        </div>
 
-     </div>
-     <div class="row-fluid">
-         <span="span12">
-             Direct Link: <span id="eventURL"></span>
-         </span>
-     </div>
- </div>
+    </div>
+    <div class="row-fluid">
+        <span="span12">
+        Direct Link: <span id="eventURL"></span>
+        </span>
+    </div>
+    </div>
 
 
 
 
-      <div id="modalPeople">
-         <div class="row-fluid">
+    <div id="modalPeople">
+        <div class="row-fluid">
             <span="span12">
             <div class="eventHeading">Creators</div>
             <div id="createdEvent"></div>
@@ -670,384 +670,384 @@
             <div id="needToRespondToEvent"></div>
             <br>
             </span>
-         </div>
-      </div>
-      <div id="modalComments">
-         <div class="row-fluid">
+        </div>
+    </div>
+    <div id="modalComments">
+        <div class="row-fluid">
             <div class="input-append">
-               <input class="span11" id="commentTextBox" type="text" placeholder="Add a comment...">
-               <button class="btn" type="button" id="postComment">Post</button>
+                <input class="span11" id="commentTextBox" type="text" placeholder="Add a comment...">
+                <button class="btn" type="button" id="postComment">Post</button>
             </div>
             <div id="commentSpace">
             </div>
 
-         </div>
-      </div>
-      <div id="modalInvite">
-         <p>Add friends to invite to your event:</p>
-         <div class="row-fluid">
-            <div class = "span5">      
-               <input type="text" class="friendComplete" placeholder = "Type a friend's name...">
+        </div>
+    </div>
+    <div id="modalInvite">
+        <p>Add friends to invite to your event:</p>
+        <div class="row-fluid">
+            <div class = "span5">
+                <input type="text" class="friendComplete" placeholder = "Type a friend's name...">
             </div>
             <div class = "span2">
-               <button class="btn btn-primary" type="button" id="inviteFriends">Invite!</button>
+                <button class="btn btn-primary" type="button" id="inviteFriends">Invite!</button>
             </div>
             <div class = "span4 alert alert-success" id = "InvitedNotif" hidden="true" style= "margin-top:-5px">
-               <center>  Invited! <i class="icon-ok" style = "margin-left: 25px">    </i> </center>
+                <center>  Invited! <i class="icon-ok" style = "margin-left: 25px">    </i> </center>
             </div>
             <div class = "alert alert-error" id = "InvitedNotifError" hidden="true" style= "margin-top:-5px; margin-left:300px">
-               <center>  Error! Already invited. <i class="icon-remove" style = "margin-left: 15px">    </i> </center>
-            </div>            
-         </div>
-         <div class="row-fluid">
-              <div class="invitedFriends">
-               </div>
-         </div>
-         </div>
-      </div>
-   </form>
-   <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-      <button class="btn btn-danger" id="deleteEvent" hidden = "true">Delete</button>
-      <button class="btn btn-danger" id="deleteEventThis" hidden = "true">Delete This Occurence</button>
-      <button class="btn btn-primary" id="editEvent" hidden = "true">Edit</button>
-      <button class="btn btn-primary" id="editEventThis" hidden = "true">Edit This</button>
-      <button class="btn btn-primary" id="createEvent" hidden = "true">Create</button>
-      <button class="btn btn-success" id="acceptEvent" hidden = "true">Accept</button>
-      <button class="btn btn-danger" id="rejectEvent" hidden = "true">Reject</button>
-   </div>
-</div>
-<script type="text/javascript">
-   $(document).ready(function(){          
-       var scrollBar = $('#scrollbar1');
-       scrollBar.tinyscrollbar({wheel: 34});
-       scrollBar.tinyscrollbar_update(272);
-       if (format == "weekly")
-           $("#monthlyCalendar").hide();
-       else
-           $("#weeklyCalendar").hide();
-    {% if hasNotification %}
-        addExclamation($('#notificationButton').parent(), "notificationExclamation");
-    {% endif %}
+                <center>  Error! Already invited. <i class="icon-remove" style = "margin-left: 15px">    </i> </center>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="invitedFriends">
+            </div>
+        </div>
+    </div>
+    </div>
+    </form>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button class="btn btn-danger" id="deleteEvent" hidden = "true">Delete</button>
+        <button class="btn btn-danger" id="deleteEventThis" hidden = "true">Delete This Occurence</button>
+        <button class="btn btn-primary" id="editEvent" hidden = "true">Edit</button>
+        <button class="btn btn-primary" id="editEventThis" hidden = "true">Edit This</button>
+        <button class="btn btn-primary" id="createEvent" hidden = "true">Create</button>
+        <button class="btn btn-success" id="acceptEvent" hidden = "true">Accept</button>
+        <button class="btn btn-danger" id="rejectEvent" hidden = "true">Reject</button>
+    </div>
+    </div>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        var scrollBar = $('#scrollbar1');
+        scrollBar.tinyscrollbar({wheel: 34});
+        scrollBar.tinyscrollbar_update(272);
+        if (format == "weekly")
+            $("#monthlyCalendar").hide();
+        else
+            $("#weeklyCalendar").hide();
+        {% if hasNotification %}
+            addExclamation($('#notificationButton').parent(), "notificationExclamation");
+        {% endif %}
 
-          $('#modal-repeat').hide()
-       if($("#repeatEventsCheckbox").is(':checked')){
-           $('#modal-repeat').show()
-           if($('#repeat-option-time-period').val()=="daily"){
-               $('#repeat-daily').show()
-           }
-           else if($('#repeat-option-time-period').val()=="weekly"){
-               $('#repeat-weekly').show()
-           }
-           else if($('#repeat-option-time-period').val()=="monthly"){
-               $('#repeat-monthly').show()
-               if($('#dayweek').is(':checked')){
-                   $('#repeat-by-info').show();
-               }
-           }
-           else if($('#repeat-option-time-period').val()=="yearly"){
-               $('#repeat-yearly').show()
-           }
-       }
-       else{
-           $('#modal-repeat').hide()
-           $('#repeat-daily').hide()
-           $('#repeat-weekly').hide()
-           $('#repeat-monthly').hide()
-           $('#repeat-yearly').hide()            
-       }
-   
-       $('#repeatEventsCheckbox').change(function (){
-           $('#modal-repeat').hide()
-           if($(this).is(':checked')){
-               $('#modal-repeat').show()
-               if($('#repeat-option-time-period').val()=="daily"){
-                   $('#repeat-daily').show()
-               }
-               else if($('#repeat-option-time-period').val()=="weekly"){
-                   $('#repeat-weekly').show()
-               }
-               else if($('#repeat-option-time-period').val()=="monthly"){
-                   $('#repeat-monthly').show()
-               }
-               else if($('#repeat-option-time-period').val()=="yearly"){
-                   $('#repeat-yearly').show()
-               }
-           }
-           else{
-               $('#modal-repeat').hide()
-               $('#repeat-daily').hide()
-               $('#repeat-weekly').hide()
-               $('#repeat-monthly').hide()
-               $('#repeat-yearly').hide()            
-           }
-       });
-   
-       $('#repeat-option-time-period').change(function (){
-           $('#repeat-daily').hide()
-           $('#repeat-weekly').hide()
-           $('#repeat-monthly').hide()
-           $('#repeat-yearly').hide()
-           if($(this).val()=="daily"){
-               $('#repeat-daily').show()
-           }
-           else if($(this).val()=="weekly"){
-               $('#repeat-weekly').show()
-           }
-           else if($(this).val()=="monthly"){
-               $('#repeat-monthly').show()
-           }
-           else if($(this).val()=="yearly"){
-               $('#repeat-yearly').show()
-           }
-       });
-   
-       $('#daymonth').change(function(){
-           if($(this).is(':checked')){
-               $('#repeat-by-info').hide();
-           }
-           else
-           {
-               $('#repeat-by-info').show();
-           }
-       });
-   
-       $('#dayweek').change(function(){
-           if($(this).is(':checked')){
-               $('#repeat-by-info').show();
-           }
-           else
-           {
-               $('#repeat-by-info').hide();
-           }
-       });
-   
-   });
-   
-   var format = "{{format}}";
-   
-   $("#repeatPopover").popover()
-   
-   var clearModal = function () {
-       $("#eventName").val("");
-       $("#eventDescription").val("");
-       $("#eventLocation").val("");
-       $('#editEvent').hide();
-       $('#deleteEvent').hide();
-       $('#acceptEvent').hide();
-       $('#rejectEvent').hide();
+        $('#modal-repeat').hide()
+        if($("#repeatEventsCheckbox").is(':checked')){
+            $('#modal-repeat').show()
+            if($('#repeat-option-time-period').val()=="daily"){
+                $('#repeat-daily').show()
+            }
+            else if($('#repeat-option-time-period').val()=="weekly"){
+                $('#repeat-weekly').show()
+            }
+            else if($('#repeat-option-time-period').val()=="monthly"){
+                $('#repeat-monthly').show()
+                if($('#dayweek').is(':checked')){
+                    $('#repeat-by-info').show();
+                }
+            }
+            else if($('#repeat-option-time-period').val()=="yearly"){
+                $('#repeat-yearly').show()
+            }
+        }
+        else{
+            $('#modal-repeat').hide()
+            $('#repeat-daily').hide()
+            $('#repeat-weekly').hide()
+            $('#repeat-monthly').hide()
+            $('#repeat-yearly').hide()
+        }
 
-       $("#modalEventEditable").show();
-       $("#modalEventNotEditable").hide();
+        $('#repeatEventsCheckbox').change(function (){
+            $('#modal-repeat').hide()
+            if($(this).is(':checked')){
+                $('#modal-repeat').show()
+                if($('#repeat-option-time-period').val()=="daily"){
+                    $('#repeat-daily').show()
+                }
+                else if($('#repeat-option-time-period').val()=="weekly"){
+                    $('#repeat-weekly').show()
+                }
+                else if($('#repeat-option-time-period').val()=="monthly"){
+                    $('#repeat-monthly').show()
+                }
+                else if($('#repeat-option-time-period').val()=="yearly"){
+                    $('#repeat-yearly').show()
+                }
+            }
+            else{
+                $('#modal-repeat').hide()
+                $('#repeat-daily').hide()
+                $('#repeat-weekly').hide()
+                $('#repeat-monthly').hide()
+                $('#repeat-yearly').hide()
+            }
+        });
 
-       $("#commentTextBox").val("");
-       $(".friendComplete").val("");
+        $('#repeat-option-time-period').change(function (){
+            $('#repeat-daily').hide()
+            $('#repeat-weekly').hide()
+            $('#repeat-monthly').hide()
+            $('#repeat-yearly').hide()
+            if($(this).val()=="daily"){
+                $('#repeat-daily').show()
+            }
+            else if($(this).val()=="weekly"){
+                $('#repeat-weekly').show()
+            }
+            else if($(this).val()=="monthly"){
+                $('#repeat-monthly').show()
+            }
+            else if($(this).val()=="yearly"){
+                $('#repeat-yearly').show()
+            }
+        });
 
-       $('#modal-repeat').hide();
-       $('#repeat-daily').hide();
-       $('#repeat-weekly').hide();
-       $('#repeat-monthly').hide();
-       $('#repeat-by-info').hide();
-       $('#repeat-yearly').hide();
+        $('#daymonth').change(function(){
+            if($(this).is(':checked')){
+                $('#repeat-by-info').hide();
+            }
+            else
+            {
+                $('#repeat-by-info').show();
+            }
+        });
 
-       $('#repeatEventsCheckbox').attr('checked', false);
-       $('#repeat-option-time-period').val('daily');
+        $('#dayweek').change(function(){
+            if($(this).is(':checked')){
+                $('#repeat-by-info').show();
+            }
+            else
+            {
+                $('#repeat-by-info').hide();
+            }
+        });
+
+    });
+
+    var format = "{{format}}";
+
+    $("#repeatPopover").popover()
+
+    var clearModal = function () {
+        $("#eventName").val("");
+        $("#eventDescription").val("");
+        $("#eventLocation").val("");
+        $('#editEvent').hide();
+        $('#deleteEvent').hide();
+        $('#acceptEvent').hide();
+        $('#rejectEvent').hide();
+
+        $("#modalEventEditable").show();
+        $("#modalEventNotEditable").hide();
+
+        $("#commentTextBox").val("");
+        $(".friendComplete").val("");
+
+        $('#modal-repeat').hide();
+        $('#repeat-daily').hide();
+        $('#repeat-weekly').hide();
+        $('#repeat-monthly').hide();
+        $('#repeat-by-info').hide();
+        $('#repeat-yearly').hide();
+
+        $('#repeatEventsCheckbox').attr('checked', false);
+        $('#repeat-option-time-period').val('daily');
 
 
-       $('#dinterval').val('1');
-       $('#dNever').prop('checked', false);
-       $('#dAfter').prop('checked', false);
-       $('#dafterOccurrences').val('');
-       $('#dOn').prop('checked', false);
-       $('#donEndRepeat').val('');
+        $('#dinterval').val('1');
+        $('#dNever').prop('checked', false);
+        $('#dAfter').prop('checked', false);
+        $('#dafterOccurrences').val('');
+        $('#dOn').prop('checked', false);
+        $('#donEndRepeat').val('');
 
-       $('#winterval').val('1');
-       $('[name="repeatOn"]').prop('checked', false);
-       $('#wNever').prop('checked', false);
-       $('#wAfter').prop('checked', false);
-       $('#wafterOccurrences').val('');
-       $('#wOn').prop('checked', false);
-       $('#wonEndRepeat').val('');
+        $('#winterval').val('1');
+        $('[name="repeatOn"]').prop('checked', false);
+        $('#wNever').prop('checked', false);
+        $('#wAfter').prop('checked', false);
+        $('#wafterOccurrences').val('');
+        $('#wOn').prop('checked', false);
+        $('#wonEndRepeat').val('');
 
-       $('#minterval').val('1');
-       $('#daymonth').prop('checked', true);
-       $('#dayweek').prop('checked', false);
-       $('#weekinmonth').val('1');
-       $('#mNever').prop('checked', false);
-       $('#mAfter').prop('checked', false);
-       $('#mafterOccurrences').val('');
-       $('#mOn').prop('checked', false);
-       $('#monEndRepeat').val('');
+        $('#minterval').val('1');
+        $('#daymonth').prop('checked', true);
+        $('#dayweek').prop('checked', false);
+        $('#weekinmonth').val('1');
+        $('#mNever').prop('checked', false);
+        $('#mAfter').prop('checked', false);
+        $('#mafterOccurrences').val('');
+        $('#mOn').prop('checked', false);
+        $('#monEndRepeat').val('');
 
-       $('#yinterval').val('1');
-       $('#yNever').prop('checked', false);
-       $('#yAfter').prop('checked', false);
-       $('#yafterOccurrences').val('');
-       $('#yOn').prop('checked', false);
-       $('#yonEndRepeat').val('');
-   }
-   
-   var dates = new Array();
-   {% for date in dates %}
-   dates.push(new Date({{ date.year }},
-       {{ date.month }},
-       {{ date.day }}));
-   {% endfor %}
-   
-   var gcal = function(resp) {
-       $.post('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
-       }).done(function() {
-           populateEvents();
-       });
-   }
-   
-   
-   $("#gcal").click(gcal);
-   
-   
-   
-   var changeFormat = function(newFormat) {
-       $.get('changeFormat', {'format': newFormat}, function (data, status) {
-           uncolorCells();
-           removeToolTips();
-           format = newFormat;
-           formatCalendar(format, data);
-       }, "json").done( function() {
-   
-           populateEvents();
-   
-       });};
-   
-   
-       $("#weeklyButton").click(function() {
-           $("#monthlyCalendar").hide();
-           $('.event').remove();
-           $("#weeklyCalendar").show();
-           format = "weekly";
-           changeFormat("weekly");
-       });
-   
-       $("#monthlyButton").click(function() {
-           format = "monthly";
-           changeFormat("monthly");
-           $("#monthlyCalendar").show();
-           $("#weeklyCalendar").hide();
-       });
-   
-   
-   
-       var invitedFriendsID = [];
-       var nonRemovedFriends = [];
-   
-       var addFriend = function(item) {
-           var $invited = $('.invitedFriends');
-           var $friendComplete = $('.friendComplete');
-           $invited.append('<span class="invitedFriend" ><span>' + item + '</span><span class="friendCloseBox">X</span></span>');
-           $friendComplete.val("");
-           var index = friendNames.indexOf(item);
-           invitedFriendsID.push(friends[index].id);
-           index = nonRemovedFriends.indexOf(item);
-           nonRemovedFriends.splice(index, 1);
-       }
-   
-       $(document).on('click', '.friendCloseBox', function() {
-           var name = $(this).siblings().html();
-           var index = friendNames.indexOf(name);
-           var index2 = invitedFriendsID.indexOf(friends[index].id);
-           invitedFriendsID.splice(index2, 1);
-           $(this).parent().remove();
-           nonRemovedFriends.push(name);
-       });
- 
-       $('.friendComplete').typeahead({
-           source: function() {
-               $("#InvitedNotif").hide() 
-               $("#InvitedNotifError").hide()
-               return nonRemovedFriends;
-           }, 
-           'updater': addFriend,
-           open: function (event, ui) {
-               $('.ui-autocomplete').css('z-index', '99999');
-           }});
-   
-   
-       $('#friendModal').modal({'show': false, 'keyboard': true});
-   
-       $('#friendModal').on('shown', function() {
-           $('.friendComplete').val("");
-           $('.friendComplete').focus();
-       });
-   
-       $("#chooseFriendsCancel").on("click", function() {
-           $('#friendModal').modal('hide');
-       });
-   
-       $("#showFriendAvailability").on("click", function() {
-           $("#monthlyCalendar").hide();
-           $('.event').remove();
-           $("#weeklyCalendar").show();
-           format = "weekly";
-           changeFormat("weekly");
+        $('#yinterval').val('1');
+        $('#yNever').prop('checked', false);
+        $('#yAfter').prop('checked', false);
+        $('#yafterOccurrences').val('');
+        $('#yOn').prop('checked', false);
+        $('#yonEndRepeat').val('');
+    }
 
-           $('#friendModal').modal('hide');
-   
-           if (invitedFriendsID.length > 0) {
-               var inputData = JSON.stringify(invitedFriendsID);
-               $.post('heatMap', {'data': {'param': inputData}}, function (data, status) {
-                   var values = [];
-                   var busy = [];
-                   $.each(data, function(index, dat) {
-                       values.push(dat.ratios);
-                       busy.push(dat.busy);
-                       });
-                   if (busy.length === 0) {
-                        uncolorCells();
-                        removeToolTips();
-                        showBlackScreen(false);
-                   } else {
-                       showBlackScreen(true);
-                       colorCells(values);
-                       removeToolTips()
-                       addToolTips(busy);
-                   }
-               }, "json");
-           }
-       });
-   
+    var dates = new Array();
+    {% for date in dates %}
+        dates.push(new Date({{ date.year }},
+                {{ date.month }},
+                {{ date.day }}));
+    {% endfor %}
+
+    var gcal = function(resp) {
+        $.post('gcal', {'responseJSON' : JSON.stringify(resp)}, function (data, status) {
+        }).done(function() {
+                    populateEvents();
+                });
+    }
+
+
+    $("#gcal").click(gcal);
+
+
+
+    var changeFormat = function(newFormat) {
+        $.get('changeFormat', {'format': newFormat}, function (data, status) {
+            uncolorCells();
+            removeToolTips();
+            format = newFormat;
+            formatCalendar(format, data);
+        }, "json").done( function() {
+
+                    populateEvents();
+
+                });};
+
+
+    $("#weeklyButton").click(function() {
+        $("#monthlyCalendar").hide();
+        $('.event').remove();
+        $("#weeklyCalendar").show();
+        format = "weekly";
+        changeFormat("weekly");
+    });
+
+    $("#monthlyButton").click(function() {
+        format = "monthly";
+        changeFormat("monthly");
+        $("#monthlyCalendar").show();
+        $("#weeklyCalendar").hide();
+    });
+
+
+
+    var invitedFriendsID = [];
+    var nonRemovedFriends = [];
+
+    var addFriend = function(item) {
+        var $invited = $('.invitedFriends');
+        var $friendComplete = $('.friendComplete');
+        $invited.append('<span class="invitedFriend" ><span>' + item + '</span><span class="friendCloseBox">X</span></span>');
+        $friendComplete.val("");
+        var index = friendNames.indexOf(item);
+        invitedFriendsID.push(friends[index].id);
+        index = nonRemovedFriends.indexOf(item);
+        nonRemovedFriends.splice(index, 1);
+    }
+
+    $(document).on('click', '.friendCloseBox', function() {
+        var name = $(this).siblings().html();
+        var index = friendNames.indexOf(name);
+        var index2 = invitedFriendsID.indexOf(friends[index].id);
+        invitedFriendsID.splice(index2, 1);
+        $(this).parent().remove();
+        nonRemovedFriends.push(name);
+    });
+
+    $('.friendComplete').typeahead({
+        source: function() {
+            $("#InvitedNotif").hide()
+            $("#InvitedNotifError").hide()
+            return nonRemovedFriends;
+        },
+        'updater': addFriend,
+        open: function (event, ui) {
+            $('.ui-autocomplete').css('z-index', '99999');
+        }});
+
+
+    $('#friendModal').modal({'show': false, 'keyboard': true});
+
+    $('#friendModal').on('shown', function() {
+        $('.friendComplete').val("");
+        $('.friendComplete').focus();
+    });
+
+    $("#chooseFriendsCancel").on("click", function() {
+        $('#friendModal').modal('hide');
+    });
+
+    $("#showFriendAvailability").on("click", function() {
+        $("#monthlyCalendar").hide();
+        $('.event').remove();
+        $("#weeklyCalendar").show();
+        format = "weekly";
+        changeFormat("weekly");
+
+        $('#friendModal').modal('hide');
+
+        if (invitedFriendsID.length > 0) {
+            var inputData = JSON.stringify(invitedFriendsID);
+            $.post('heatMap', {'data': {'param': inputData}}, function (data, status) {
+                var values = [];
+                var busy = [];
+                $.each(data, function(index, dat) {
+                    values.push(dat.ratios);
+                    busy.push(dat.busy);
+                });
+                if (busy.length === 0) {
+                    uncolorCells();
+                    removeToolTips();
+                    showBlackScreen(false);
+                } else {
+                    showBlackScreen(true);
+                    colorCells(values);
+                    removeToolTips()
+                    addToolTips(busy);
+                }
+            }, "json");
+        }
+    });
+
     var clearFriends = function() {
         $('.invitedFriends').html("");
         invitedFriendsID = [];
         nonRemovedFriends = friendNames.slice(0);
     }
 
-       $("#addFriends").on("click", function() {
-            clearFriends();
-           $("#friendModal").modal('show');
-       });
-   
-   // test make event button
-   $("#makeEvent").on("click", function() {
-       clearModal();
-       $('#createEvent').show();
-       $('a[href=#eventInformationTab]').tab('show');
-       $('#deleteEvent').hide();
-       $('#editEvent').hide();
+    $("#addFriends").on("click", function() {
+        clearFriends();
+        $("#friendModal").modal('show');
+    });
+
+    // test make event button
+    $("#makeEvent").on("click", function() {
+        clearModal();
+        $('#createEvent').show();
+        $('a[href=#eventInformationTab]').tab('show');
+        $('#deleteEvent').hide();
+        $('#editEvent').hide();
         $('#deleteEventThis').hide();
         $('#editEventThis').hide()
-      
-       $('#eventModal').modal();
-       $('#eventModal').on('shown', function(){                    
-           $('#eventName').focus();
-       });
-       $("#startTime").val("");
-       $("#endTime").val("");
-   });
-   
-   var $cells = $(".calendarEntry, .calendarHalfHour");
 
-   var showBlackScreen = function(validFriends) {
+        $('#eventModal').modal();
+        $('#eventModal').on('shown', function(){
+            $('#eventName').focus();
+        });
+        $("#startTime").val("");
+        $("#endTime").val("");
+    });
+
+    var $cells = $(".calendarEntry, .calendarHalfHour");
+
+    var showBlackScreen = function(validFriends) {
         var $black = $('#blackScreen');
-        
+
         if (validFriends) {
             $('#noValidFriends').hide();
             $('#validFriends').show();
@@ -1060,73 +1060,73 @@
         $calendar.hide();
 
         $black.on('click', function() {
-                $black.hide();
-                $calendar.show();
-                $('.event').remove();
-                populateEvents();
-                });
-   }
+            $black.hide();
+            $calendar.show();
+            $('.event').remove();
+            populateEvents();
+        });
+    }
 
-   var colorCells = function(values) {
+    var colorCells = function(values) {
 
-       $cells.each(function(index, cell) {
-   
-           $(cell).css("background-color", "hsl("+(Math.floor(120*values[index]))+", 70%, 65%)");
-       });
-   };
-   
-   var addToolTips = function(values) {
-       $cells.each(function(index, cell) {
-   
-           $child = $(cell).children().first();
-           var cantCome = '<em>Unavailable Friends:</em><br>';
-           var count = 0;
-           $.each(values[index], function(index2, id) {
-   
-              /* var top = friends.length;
-               var bot = 0;
-               var i = Math.floor(top/2);
-                   // Binary Search
-                   while (friends[i].id != id && top!=bot) {
-                       var intID1 = parseInt(friends[i].id);
-                       var intID2 = parseInt(id);
-                       if (intID1 > intID2) {
-                           top = i;
-                           i = Math.floor((bot + i) /2);
-                       } else {
-                           bot = i;
-                           i = Math.ceil((top + i) / 2);
-                       }
-                   }*/
-   
-                   cantCome += (id)+'<br>';
-                   count++;
-               });
-           if (count == 0)
-               cantCome += 'None';
-           var place = 'right';
-           if (index % 7 > 3)
-               place = 'left';
-           $child.tooltip({html: true, title: cantCome, placement: place, container: "body"});
-       });
-   };
-   
-   var uncolorCells = function() {
-       $cells.css("background-color", "");
-       invitedFriendsID = [];
-   }
-   
-   var removeToolTips = function(values) {
-       $cells.each(function(index, cell) {
-   
-           $child = $(cell).children().first();
-           $child.tooltip('destroy');
-       });
-   };
-   
+        $cells.each(function(index, cell) {
 
-   
-</script>
-<script type="text/javascript" src="{{ STATIC_URL }}/js/draggable.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}/js/facebook.js"></script>
+            $(cell).css("background-color", "hsl("+(Math.floor(120*values[index]))+", 70%, 65%)");
+        });
+    };
+
+    var addToolTips = function(values) {
+        $cells.each(function(index, cell) {
+
+            $child = $(cell).children().first();
+            var cantCome = '<em>Unavailable Friends:</em><br>';
+            var count = 0;
+            $.each(values[index], function(index2, id) {
+
+                /* var top = friends.length;
+                 var bot = 0;
+                 var i = Math.floor(top/2);
+                 // Binary Search
+                 while (friends[i].id != id && top!=bot) {
+                 var intID1 = parseInt(friends[i].id);
+                 var intID2 = parseInt(id);
+                 if (intID1 > intID2) {
+                 top = i;
+                 i = Math.floor((bot + i) /2);
+                 } else {
+                 bot = i;
+                 i = Math.ceil((top + i) / 2);
+                 }
+                 }*/
+
+                cantCome += (id)+'<br>';
+                count++;
+            });
+            if (count == 0)
+                cantCome += 'None';
+            var place = 'right';
+            if (index % 7 > 3)
+                place = 'left';
+            $child.tooltip({html: true, title: cantCome, placement: place, container: "body"});
+        });
+    };
+
+    var uncolorCells = function() {
+        $cells.css("background-color", "");
+        invitedFriendsID = [];
+    }
+
+    var removeToolTips = function(values) {
+        $cells.each(function(index, cell) {
+
+            $child = $(cell).children().first();
+            $child.tooltip('destroy');
+        });
+    };
+
+
+
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/js/draggable.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/js/facebook.js"></script>
 {% endblock main %}

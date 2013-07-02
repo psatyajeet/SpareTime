@@ -24,7 +24,7 @@ from socialcalendar.models import Unseen
 
 from itertools import chain
 
-import json  
+import json
 
 import random
 
@@ -73,7 +73,7 @@ def getDays(offset=0):
                       "day": (first.day)})
 
         days[i]['title'] += " "+first.strftime("%m/").lstrip("0") + \
-            first.strftime("%d").lstrip("0")
+                            first.strftime("%d").lstrip("0")
 
         first = first + delta
 
@@ -117,8 +117,8 @@ def getWeeks(offset=0):
     for i in range(first):
         isToday = False
         if (today.year == previousMonth.year and
-           today.month == previousMonth.month and
-           today.day == previousMonthrange+i-first):
+                    today.month == previousMonth.month and
+                    today.day == previousMonthrange+i-first):
 
             isToday = True
 
@@ -129,8 +129,8 @@ def getWeeks(offset=0):
     for i in range(first, monthrange+first):
         isToday = False
         if (current.year == today.year and
-           current.month == today.month and
-           i == current.day - first + 1):
+                    current.month == today.month and
+                    i == current.day - first + 1):
 
             isToday = True
         dates.append({"date": i-first+1, "thisMonth": True, "today": isToday})
@@ -142,8 +142,8 @@ def getWeeks(offset=0):
     for i in range(monthrange+first+1, monthrange+first+8):
         isToday = False
         if (today.year == nextMonth.year and
-           today.month == nextMonth.month and
-           today.day == i - monthrange - first):
+                    today.month == nextMonth.month and
+                    today.day == i - monthrange - first):
 
             isToday = True
 
@@ -165,34 +165,34 @@ def index(request):
                 unseen = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID=request.GET['id'])
                 for u in unseen:
                     e.unseen.remove(u)
-            creators = list(e.creators.all().values())  
+            creators = list(e.creators.all().values())
             if e.description == '':
-                e.description = "No-Description"   
+                e.description = "No-Description"
             i = 0
-            if request.session.has_key('fbid'): 
-                i = 1 
+            if request.session.has_key('fbid'):
+                i = 1
             eid = request.GET['id']
             location = e.location;
             if location == "":
                 location = "No-Location"
             context = {
-            'title': e.title,
-            'description':e.description,
-            'location':location,
-            'start': e.start.strftime(dateString),  
-            'end': e.end.strftime(dateString),
-            'creators' : creators,
-            'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
-            'comments': getListOfCommentsNotReverse(e, request.GET['id']),
-            'rejected' : list(e.rejected.all().values()),
-            'id':eid,
-            'loggedIn': i,
-            }
+                'title': e.title,
+                'description':e.description,
+                'location':location,
+                'start': e.start.strftime(dateString),
+                'end': e.end.strftime(dateString),
+                'creators' : creators,
+                'coming' : list(e.events.all().values())+list(e.linkedEvent.all().values()),
+                'comments': getListOfCommentsNotReverse(e, request.GET['id']),
+                'rejected' : list(e.rejected.all().values()),
+                'id':eid,
+                'loggedIn': i,
+                }
             return render(request, 'socialcalendar/event.html', context)
-    
+
     if request.session.get('fbid')==None:
         return render(request, 'homepage.html')
-        
+
     if (not request.session.__contains__('whichweek')):
         request.session['whichweek'] = 0
 
@@ -221,7 +221,7 @@ def index(request):
         'monthDays': monthDays,
         'monthWeeks': monthWeeks,
         'hasNotification': usr.notifications.count() > 0,
-    }
+        }
 
     return render(request, 'socialcalendar/calendar.html', context)
 
@@ -270,7 +270,7 @@ def goToEvent(request):
         sunday2 = sunday2.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
         print sunday1, sunday2
         request.session['whichweek'] = int((sunday2 - sunday1).days/7.0)
-        
+
         days, hours, dates, header = getDays(request.session['whichweek'])
         d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse(simplejson.dumps(d))
@@ -332,11 +332,11 @@ def submitEvent(request):
         if request.POST.has_key('RRULE'):
             rrule = getrrule(request.POST['RRULE'])
             repeat = True
-        
+
         title = "No-Title"
 
         if(len(request.POST['title']) != 0):
-            title = request.POST['title'] 
+            title = request.POST['title']
 
         usr = UserProfile.objects.get(user=request.session['fbid'])
         e = createEvent(start=startDate, end=endDate, recurrence = rrule, usr = usr, title=title, description=request.POST['description'], location=request.POST['location'], kind = request.POST['kind'], repeat = repeat)
@@ -344,7 +344,7 @@ def submitEvent(request):
         if(request.POST.has_key('friendIDs')):
             friendIDs = json.loads(request.POST['friendIDs'])
             storeNotificationForFriends(friendIDs, e)
-        #d = {'header': header, 'days': days, 'dates': dates}
+            #d = {'header': header, 'days': days, 'dates': dates}
         return HttpResponse()
     else:
         return HttpResponseNotFound()
@@ -353,7 +353,7 @@ def createEvent(start, end, recurrence, usr = None, title = "No-Title", descript
     if usr == None:
         return
     if end <= start:
-       end = start + timedelta(minutes = 30) 
+        end = start + timedelta(minutes = 30)
     e = Event(
         title=title,
         description=description,
@@ -363,7 +363,7 @@ def createEvent(start, end, recurrence, usr = None, title = "No-Title", descript
         kind = kind,
         recurrence = recurrence,
         repeat = repeat,
-    )
+        )
     e.save()
     usr.creators.add(e)
     usr.events.add(e)
@@ -373,20 +373,20 @@ def createEvent(start, end, recurrence, usr = None, title = "No-Title", descript
 def getrrule(rrule):
     rule = str(rrule);
     until = re.findall(r"../../.............", str(rrule));
-    if len(until) > 0: 
+    if len(until) > 0:
         date = datetime.strptime(until[0], dateString)
-        rule = str(rule).replace(until[0], date.strftime(untilString)) 
+        rule = str(rule).replace(until[0], date.strftime(untilString))
     return rule
 
 def getNotifications(user):
     events = user.notifications.all();
     d = []
-    for event in events:     
+    for event in events:
         d.append({
             'id':event.id,
             'creators':getCreators(event),
             'title':event.title
-            });
+        });
     return d
 
 
@@ -426,7 +426,7 @@ def getNotificationsRequest(request):
 
 @csrf_protect
 def populateEvents(request):
-    
+
     today = datetime.today() + timedelta(request.session['whichweek']*7)
     today = today.replace(hour=0, minute=0, second=0, microsecond=0)
     delta = timedelta((today.weekday()+1) % 7)
@@ -435,13 +435,13 @@ def populateEvents(request):
 
     first = first.replace(tzinfo=tz.gettz('UTC'))
     last = last.replace(tzinfo=tz.gettz('UTC'))
-    
+
     if (not request.session.__contains__('fbid')):
         d = []
         return HttpResponse(simplejson.dumps(d))
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
-    
+
     events = getAllEvents(usr, first, last, ['PU', 'PR', 'FL'])
 
     d = getArrayofWeeklyEvents(events, usr)
@@ -455,14 +455,14 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     # groupEnd = 0
     # last = 0 
 
-#    print "events: ", events
+    #    print "events: ", events
 
- #   '''
-  #  print "length:", len(events)
-   # print "events:", events
+    #   '''
+    #  print "length:", len(events)
+    # print "events:", events
     #print "usr:", usr
-   # print events[0]
-   # '''
+    # print events[0]
+    # '''
 
     if(len(events) == 0): # if the usr doesn't have any events in the given week
         return d # return an empty array
@@ -475,12 +475,12 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     widths = [] # array of event widths
     xs = [] # x positions of events
 
- #   '''
-  #  currDate = events[0].start.date() # initialized to date of first event
-   # print "test: ", (events[1].start.hour + events[1].start.minute/60.0)
+    #   '''
+    #  currDate = events[0].start.date() # initialized to date of first event
+    # print "test: ", (events[1].start.hour + events[1].start.minute/60.0)
     #print "date: ", currDate
     #'''
-    
+
     # HERE!
 
     # get the date of the first event
@@ -505,7 +505,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
         if events[i].start.date() == currDate:
             # only way it could be first in this case is if it's the very first event
             if first:
-     #           print "THIS OCCURS NOW!"
+            #           print "THIS OCCURS NOW!"
                 groupStart = i
                 first = False
 
@@ -521,13 +521,13 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
                     x += 1
                     #xs.append(x)
 
-                # else (start time is at least 30 min after most recent start time)
-    #                 assign widths to all items in previous group (groupStart, i) -- not including i
-    #                 start a new group (set groupStart = i and set x = 0)
-    #                 give new group higher precedence in terms of overlay
-                else: 
+                    # else (start time is at least 30 min after most recent start time)
+                    #                 assign widths to all items in previous group (groupStart, i) -- not including i
+                    #                 start a new group (set groupStart = i and set x = 0)
+                    #                 give new group higher precedence in terms of overlay
+                else:
                     for j in range(groupStart, i):
-#                        print "j:", j
+                    #                        print "j:", j
                         widths.append(x+1)
                     groupStart = i
                     x = 0
@@ -536,7 +536,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
         # event is on a date different from the previous event
         else:
             for j in range(groupStart, i):
- #               print "j:", j
+            #               print "j:", j
                 widths.append(x+1)
             currDate = events[i].start.date() # reset the current date
             # reset variables
@@ -556,7 +556,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     # # this is probably very necessary
     # after loop finishes, set widths for (groupStart, i) (not including i)
     for j in range(groupStart, i):
-      #  print "j:", j
+    #  print "j:", j
         widths.append(x+1)
 
     '''
@@ -615,16 +615,16 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     # print len(widths)
 
     for i in range(len(events)):
-#        print "xs length:", len(xs)
- #       print "widths length:", len(widths)
+    #        print "xs length:", len(xs)
+    #       print "widths length:", len(widths)
 
-#        print "xs:", xs
- #       print "widths:", widths
+    #        print "xs:", xs
+    #       print "widths:", widths
 
         e = events[i]
         endhour = e.end.hour
         if (e.end.day > e.start.day):
-            endhour = 24    
+            endhour = 24
         eID = e.id;
         creator0 = None
 
@@ -632,7 +632,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             eID = e.repeatID;
             creator0 = list(e.creators.values())
         elif (len(e.creators.all()) > 0):
-            creator0 = list(e.creators.all().values())     
+            creator0 = list(e.creators.all().values())
 
         d.append({
             'title': cgi.escape(e.title),
@@ -649,8 +649,8 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
             'notif': usr.notifications.filter(id=e.id).count() >= 1,
             'newComment':e.unseen.filter(people = usr).filter(commentID = eID).count() >= 1,
             })
-  #      print 'x:',  xs[i]
-   #     print 'width:', 1.0/float(widths[i])
+        #      print 'x:',  xs[i]
+        #     print 'width:', 1.0/float(widths[i])
 
     return d;
 
@@ -674,10 +674,10 @@ def populateMonthEvents(request):
 
     first = first.replace(tzinfo=tz.gettz('UTC'))
     last = last.replace(tzinfo=tz.gettz('UTC'))
-    
+
     if (not request.session.__contains__('fbid')):
-            d = []
-            return HttpResponse(simplejson.dumps(d))    
+        d = []
+        return HttpResponse(simplejson.dumps(d))
 
     usr = UserProfile.objects.get(user=request.session['fbid'])
     events = getAllEvents(usr, first, last, ['PR', 'PU', 'FL'])
@@ -695,7 +695,7 @@ def populateMonthEvents(request):
             eID = e.repeatID
             creator0 = list(e.creators.values())
         elif (len(e.creators.all()) > 0):
-            creator0 = list(e.creators.all().values())     
+            creator0 = list(e.creators.all().values())
 
         d.append({
             'title': cgi.escape(e.title),
@@ -709,7 +709,7 @@ def populateMonthEvents(request):
             'kind': e.kind,
             'notif': usr.notifications.filter(id=e.id).count() >= 1,
             'newComment':e.unseen.filter(people = usr).filter(commentID = eID).count() >= 1,
-        })
+            })
 
     return HttpResponse(simplejson.dumps(d))
 
@@ -744,9 +744,9 @@ def getEventData(request):
                 'canEdit': canEdit(UserProfile.objects.get(user=request.session['fbid']), event),
                 'kind': event.kind,
                 'notif': usr.notifications.filter(id=event.id).count() >= 1,
-                'coming':list(event.events.all().values()), 
-                'repeat':event.repeat,               
-            }
+                'coming':list(event.events.all().values()),
+                'repeat':event.repeat,
+                }
             return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
@@ -761,7 +761,7 @@ def deleteEvent(request):
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
 
         if event.events.filter(user = usr.user).count() > 0:
-            event.rejected.add(usr) 
+            event.rejected.add(usr)
 
         if canEdit(usr, event):
             if not event.repeat or request.POST['all'] == 'all':
@@ -789,7 +789,7 @@ def editEvent(request):
             return HttpResponse()
 
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
-        
+
         startDate = datetime.strptime(request.POST['startTime'],
                                       dateString)
         endDate = datetime.strptime(request.POST['endTime'],
@@ -798,8 +798,8 @@ def editEvent(request):
         endDate = endDate.replace(tzinfo=tz.gettz('UTC'))
         startDate = startDate.astimezone(tz.gettz('UTC'))
         endDate = endDate.astimezone(tz.gettz('UTC'))
-        if(startDate > endDate):    
-            return HttpResponse()            
+        if(startDate > endDate):
+            return HttpResponse()
         rrule = ""
         repeat = False
         if request.POST.has_key('RRULE'):
@@ -809,7 +809,7 @@ def editEvent(request):
         title = "No-Title"
 
         if(len(request.POST['title']) != 0):
-            title = request.POST['title'] 
+            title = request.POST['title']
 
         if(event.repeat and request.POST.has_key('all') and request.POST['all'] == 'this'):
             usr = UserProfile.objects.get(user=request.session['fbid'])
@@ -855,11 +855,11 @@ def changeStart(request):
                 start=start,
                 end=end,
                 kind = event.kind,
-            )
+                )
 
             e.save()
             e.notification.add(*list(event.notification.all()))
-            e.events.add(*list(event.events.all())) 
+            e.events.add(*list(event.events.all()))
             e.creators.add(*list(event.creators.all()))
             comments = Comment.objects.filter(commentID=eid)
             e.event.add(*list(comments))
@@ -868,7 +868,7 @@ def changeStart(request):
             for u in unseen:
                 u.commentID = e.id
                 u.save()
-            
+
             e.unseen.add(*list(unseen))
             comments.update(commentID=e.id)
             return HttpResponse()
@@ -902,18 +902,18 @@ def heatMap(request):
 
         first = first.replace(tzinfo=tz.gettz('UTC'))
         last = last.replace(tzinfo=tz.gettz('UTC'))
-        ratio = [[0 for x in xrange(48)] for x in xrange(7)]         
-        busy = [[[] for j in range(48)] for i in range(7)]       
+        ratio = [[0 for x in xrange(48)] for x in xrange(7)]
+        busy = [[[] for j in range(48)] for i in range(7)]
         total = 0.0;
 
 
-        usrs = UserProfile.objects.filter(user__in=friendIDs)    
+        usrs = UserProfile.objects.filter(user__in=friendIDs)
         for usr in usrs :
-            timeSlotConsider = [[0 for x in xrange(48)] for x in xrange(7)] 
+            timeSlotConsider = [[0 for x in xrange(48)] for x in xrange(7)]
 
             total = total+1.0;
             events = getAllEvents(usr, first, last, ['PU'])
-            
+
             for event in events:
                 start = event.start;
                 end = event.end;
@@ -926,13 +926,13 @@ def heatMap(request):
 
         days, hours, dates, weekHeader = getDays(request.session['whichweek'])
         d = []
-        if not total == 0:            
+        if not total == 0:
             for j in range(len(hours)*2):
                 for i in range(len(days)):
                     d.append({
                         'ratios': (1-ratio[i][j]/total),
                         'busy': busy[i][j],
-                    })
+                        })
 
         return HttpResponse(simplejson.dumps(d))
     else:
@@ -953,9 +953,9 @@ def gcal(request):
             if event.has_key('originalStartTime') and event.has_key('recurringEventId') :
                 ev = usr.events.filter(gid=event['recurringEventId'])
 
-                if len(ev) > 0 and ev[0].exceptions.filter(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC'))).count() == 0:                   
+                if len(ev) > 0 and ev[0].exceptions.filter(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC'))).count() == 0:
                     ex = ExceptionDate(exceptionTime=(datetime.strptime(event['originalStartTime']['dateTime'][:-6], googleDateString)).replace(tzinfo=tz.gettz('UTC')))
-                    ex.save()   
+                    ex.save()
                     ev[0].exceptions.add(ex)
                     if not event.has_key('start'):
                         continue
@@ -963,7 +963,7 @@ def gcal(request):
             if event.has_key('id'):
                 existentEvent = usr.events.filter(gid=event['id'])
                 if(len(existentEvent) != 0):
-                    continue    
+                    continue
             if not event.has_key('summary'):
                 event['summary'] = 'No-Title'
             if not event.has_key('description'):
@@ -987,11 +987,11 @@ def gcal(request):
 
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
                 recurring = True;
-                if not 'RRULE' in event['recurrence'][0] and len(event['recurrence']) > 1 and 'RRULE' in event['recurrence'][1]: 
+                if not 'RRULE' in event['recurrence'][0] and len(event['recurrence']) > 1 and 'RRULE' in event['recurrence'][1]:
                     until = re.match(".*UNTIL=........", event['recurrence'][1]);
                     if until is not None:
-                        recurrence = event['recurrence'][1].replace(until.group(0), until.group(0)+"T000000Z"); 
-                else:    
+                        recurrence = event['recurrence'][1].replace(until.group(0), until.group(0)+"T000000Z");
+                else:
                     recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
 
             e = Event(title=event['summary'],
@@ -1003,14 +1003,14 @@ def gcal(request):
                       repeat=recurring,
                       recurrence=recurrence,
                       kind = 'PU',
-                      ) 
+                      )
             e.save()
             usr.creators.add(e);
             usr.events.add(e)
     return HttpResponse()
 
 @csrf_protect
-def acceptNotification(request):    
+def acceptNotification(request):
     if(request.method == 'POST'):
         usr = UserProfile.objects.get(user=request.session['fbid'])
         event = Event.objects.get(id=findIdOfEvent(request.POST['eventID']))
@@ -1033,14 +1033,14 @@ def rejectNotification(request):
 
         return HttpResponse();
     else:
-        HttpResponseNotFound();    
+        HttpResponseNotFound();
 
 @csrf_protect
 def makeUser(request):
     if request.method == "GET":
         name = request.GET['name']
         fbid = request.GET['fbid']
-        
+
         d = [];
 
         if (request.session.__contains__('fbid') and not (request.session['fbid'] == fbid)):
@@ -1050,13 +1050,13 @@ def makeUser(request):
 
         if(len(usr) != 0):
             return HttpResponse(simplejson.dumps(d))
-        
-        prof = UserProfile(user=fbid,name=name) 
+
+        prof = UserProfile(user=fbid,name=name)
         prof.save()
 
         return HttpResponse()
     else :
-        return HttpResponseNotFound()        
+        return HttpResponseNotFound()
 
 @csrf_protect
 def deleteCookie(request):
@@ -1067,27 +1067,27 @@ def deleteCookie(request):
 def getWeeklyRecurringEvents(events, first, last):
     totalForWeek = []
     for event in events:
-        try:    
+        try:
             rule = rrulestr(event.recurrence, dtstart = event.start)
             times = rule.between(first, last, inc=True)
-        except:            
+        except:
             continue
         for time in times:
             if event.exceptions.filter(exceptionTime=time).count() > 0:
                 continue
 
             e = tempEvent(
-            title=event.title,
-            description=event.description,
-            location=event.location,
-            start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
-            end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
-            repeat = True,
-            repeatID = str(event.id) + '_' + time.strftime(idfeDateString),
-            eid = event.id,
-            creators = event.creators.all(), 
-            kind = event.kind,
-            unseen = event.unseen
+                title=event.title,
+                description=event.description,
+                location=event.location,
+                start=datetime(time.year ,time.month ,time.day , event.start.hour, event.start.minute).replace(tzinfo=tz.gettz('UTC')),
+                end=datetime(time.year, time.month, time.day, event.end.hour, event.end.minute).replace(tzinfo=tz.gettz('UTC')),
+                repeat = True,
+                repeatID = str(event.id) + '_' + time.strftime(idfeDateString),
+                eid = event.id,
+                creators = event.creators.all(),
+                kind = event.kind,
+                unseen = event.unseen
             )
             e.id = event.id
             totalForWeek.append(e)
@@ -1167,7 +1167,7 @@ def comment(request):
     if request.method == "POST":
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
         usr = None
-        
+
         name = "No-Name"
 
         if request.POST.has_key('name'):
@@ -1189,9 +1189,9 @@ def comment(request):
             u = Unseen(
                 people = user,
                 commentID = request.POST['id'],
-            )     
+                )
             u.save()
-            event.unseen.add(u)      
+            event.unseen.add(u)
         d.append({
             'commenter': name,
             'comment':cgi.escape(request.POST['comment']),
@@ -1215,9 +1215,9 @@ def getListOfComments(e, commentID = ''):
     for comment in comments:
         d.append({
             'name': cgi.escape(comment['name']),
-            'date': comment['date'].strftime(dateString),  
+            'date': comment['date'].strftime(dateString),
             'comment': cgi.escape(comment['comment']),
-        })
+            })
     return d
 
 def getListOfCommentsNotReverse(e, commentID =''):
@@ -1226,9 +1226,9 @@ def getListOfCommentsNotReverse(e, commentID =''):
     for comment in comments:
         d.append({
             'name': comment['name'],
-            'date': comment['date'].strftime(dateString),  
+            'date': comment['date'].strftime(dateString),
             'comment': comment['comment'],
-        })
+            })
     return d
 
 @csrf_protect
@@ -1241,7 +1241,7 @@ def getComments(request):
             u = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID = eid)
             for u0 in u:
                 event.unseen.remove(u0)
-        
+
         return HttpResponse(simplejson.dumps(getListOfComments(event, eid)))
     else:
         return HttpResponseNotFound()
@@ -1266,7 +1266,7 @@ def getComing(e):
 
 def getRejected(e):
     return list(e.rejected.all().values())
-    
+
 def getUnanswered(e):
     return list(e.unanswered.all().values())
 

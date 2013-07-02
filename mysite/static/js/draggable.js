@@ -48,23 +48,23 @@ var getNotifications = function() {
         url: 'getNotificationsRequest',
         async: false,
         success: function (data, status) {
-        $popover = $('#notificationButton');
+            $popover = $('#notificationButton');
 
-        $.each(data, function (index, dat) {
-            creators = ''
-            $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
-            var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
-                '<p>Title: '+dat.title+ '</br> From: ' + creators + '</p> '+
-                '<div class="row-fluid"> '+
-                '<div class="span6"> '+
-                '<button class="btn btn-block btn-success acceptRequest eventID'+dat.id+'" type="button">Accept</button> '+
-                '</div> '+
-                '<div class="span6"> '+
-                '<button class="btn btn-block btn-danger rejectRequest eventID'+dat.id+'" type="button">Reject</button>      '+
-                '</div> '+
-                '</div> '+
-                '</div>';
-            notifications += notify;
+            $.each(data, function (index, dat) {
+                creators = ''
+                $.each(dat.creators, function (index, c) {creators = creators + c.name + ' '});
+                var notify = '<div class="alert alert-info requestAlert eventID'+dat.id+'"> '+
+                    '<p>Title: '+dat.title+ '</br> From: ' + creators + '</p> '+
+                    '<div class="row-fluid"> '+
+                    '<div class="span6"> '+
+                    '<button class="btn btn-block btn-success acceptRequest eventID'+dat.id+'" type="button">Accept</button> '+
+                    '</div> '+
+                    '<div class="span6"> '+
+                    '<button class="btn btn-block btn-danger rejectRequest eventID'+dat.id+'" type="button">Reject</button>      '+
+                    '</div> '+
+                    '</div> '+
+                    '</div>';
+                notifications += notify;
 //            var $acceptButtons = $('.acceptRequest').last();
 //            var $rejectButtons = $('.rejectRequest').last();
 //            $($acceptButtons.get(index)).on('click', function(e) {
@@ -75,12 +75,12 @@ var getNotifications = function() {
 //                rejectNotification(dat.id);
 //                $notify.remove();
 //            });
-            
-        });
+
+            });
 
 
-    }, 
-    dataType: "json"});
+        },
+        dataType: "json"});
 };
 
 var latestNotification = function() {
@@ -133,7 +133,7 @@ var populateMonthEvents = function() {
             if ($entry.children().length >= 2) {
                 numEvents[parseInt(data[i].day)].push(data[i]);
             } else {
-                
+
 
                 $monthEvent = $('<div id="'+data[i].id+'" class="monthEvent '+getEventType(data[i])+'">'+data[i].title+'</div>');
                 $entry.append($monthEvent);
@@ -143,60 +143,60 @@ var populateMonthEvents = function() {
         }
 
         for (i = 0; i < $monthEntries.length; i++) {
-            
+
             if (numEvents[i].length > 0) {
-                    $popover = $('<a href="#" onclick="return false" class="popoverMonthlyEvent" rel="popover" data-title="More Events" data-toggle="popover" data-placement="right" title="">+ '+numEvents[i].length+' More</a>');
-                    $extra = $('<div class="monthExtra"></div>');
-                    $extra.html($popover);
-                    var $entry = $($monthEntries.get(i)).children();
-                    $entry.append($extra);
-                    monthEvents = "";
-                    for (var j = 0; j < numEvents[i].length; j++) {
+                $popover = $('<a href="#" onclick="return false" class="popoverMonthlyEvent" rel="popover" data-title="More Events" data-toggle="popover" data-placement="right" title="">+ '+numEvents[i].length+' More</a>');
+                $extra = $('<div class="monthExtra"></div>');
+                $extra.html($popover);
+                var $entry = $($monthEntries.get(i)).children();
+                $entry.append($extra);
+                monthEvents = "";
+                for (var j = 0; j < numEvents[i].length; j++) {
 
-                        monthEvents += '<div id="'+numEvents[i][j].id+'" class="monthEvent '+getEventType(numEvents[i][j])+'">'+numEvents[i][j].title+'</div>';
-                        //addCommentNotification($monthEvent, numEvents[i][j]);
-                    }
-                    $popover.popover({html: true, trigger: 'manual', content: monthEvents, position: 'on right'});
+                    monthEvents += '<div id="'+numEvents[i][j].id+'" class="monthEvent '+getEventType(numEvents[i][j])+'">'+numEvents[i][j].title+'</div>';
+                    //addCommentNotification($monthEvent, numEvents[i][j]);
+                }
+                $popover.popover({html: true, trigger: 'manual', content: monthEvents, position: 'on right'});
 
 
-                    var canClosePopover = true;
-                    var onPopoverLink = false;
+                var canClosePopover = true;
+                var onPopoverLink = false;
 
-                    $popover.on("mouseenter", function() {
-                        
-                        var over = this;
-                        $('.popoverMonthlyEvent').each(function(index, element){
-                            if (element != over)
-                                $(element).popover('hide');
-                        });
-                        onPopoverLink = true;
-                        $(this).popover('show');
-                        var $pop = $(this);
-                        canClosePopover = true;
+                $popover.on("mouseenter", function() {
 
-                        $(this).next().on("mouseenter", function() {
-                            canClosePopover = false;
-                        });
-                        $(this).next().on("mouseleave", function() {
-                            if (!onPopoverLink) {
-                                setTimeout(function() {
-                                    if (!onPopoverLink)
-                                        $pop.popover('hide');
+                    var over = this;
+                    $('.popoverMonthlyEvent').each(function(index, element){
+                        if (element != over)
+                            $(element).popover('hide');
+                    });
+                    onPopoverLink = true;
+                    $(this).popover('show');
+                    var $pop = $(this);
+                    canClosePopover = true;
+
+                    $(this).next().on("mouseenter", function() {
+                        canClosePopover = false;
+                    });
+                    $(this).next().on("mouseleave", function() {
+                        if (!onPopoverLink) {
+                            setTimeout(function() {
+                                if (!onPopoverLink)
+                                    $pop.popover('hide');
                                 canClosePopover = true;
-                                }, 250);
-                            }
-                        });
-
+                            }, 250);
+                        }
                     });
 
-                    $popover.on("mouseleave", function() {
-                        var $pop = $(this);
-                        onPopoverLink = false;
-                        setTimeout(function() {
-                            if (canClosePopover && !onPopoverLink)
-                                $pop.popover('hide');
-                        }, 250);
-                    });
+                });
+
+                $popover.on("mouseleave", function() {
+                    var $pop = $(this);
+                    onPopoverLink = false;
+                    setTimeout(function() {
+                        if (canClosePopover && !onPopoverLink)
+                            $pop.popover('hide');
+                    }, 250);
+                });
             }
         }
 
@@ -231,7 +231,7 @@ var populateWeekEvents = function() {
             $div = $('<div class="event '+getEventType(dat)+'" id="'+dat.id+'"><p>'+dat.title+'</p></div>');
             $div.height((height+cellBorderWidth)*Math.max(dat.end - dat.start, .4)*2-bufferWidth-eventBorderWidth);
             $div.width((widths[dat.day])*dat.width-eventBorderWidth-bufferWidth);
-            $div.offset({top: (height+cellBorderWidth)*dat.start*2, 
+            $div.offset({top: (height+cellBorderWidth)*dat.start*2,
                 left: cumWidths[dat.day]+widths[dat.day]*dat.x + 1});
             $div.css('z-index', index);
 
@@ -240,86 +240,86 @@ var populateWeekEvents = function() {
 
             $overview.prepend($div);
             addCommentNotification($div, dat);
-    });
-
-
-    $('.event').off('click');
-    $('.event').off('mousedown');
-    $('.event').off('mouseup');
-    $('.event').off('mousemove');
-    $('.event').on('mousedown', function(event){
-        event.preventDefault();
-        currentlyClicking = 1;
-
-        currentlyMoving = $(this).attr("id");
-        currentlyMovingID = $(this).attr("id")
-        $.post('getEventData', {"id": currentlyMovingID}, function (data, status) {
-            currentlyMovingEnd = new Date(data.endms);
-            currentlyMovingStart = new Date(data.startms);
-        }, 'json');
-        currentlyMovingY = event.pageY - $(this).offset().top;
-
-        if (-1 != $(this).attr("class").indexOf("canEdit")) {
-            canEdit = true;
-        } else {
-            canEdit = false;
-        }
-
-    });
-    $('.event').on('click', function (){
-        if (currentlyClicking == 1) {
-            openID($(this).attr('id'));
-        }
-        return false;
-    });
-    $('.event').on('mousemove', function (event){
-        var x = event.pageX;
-        var y = event.pageY-currentlyMovingY;
-
-        $cells.each(function(index) {
-            if (y >= $(this).offset().top && 
-                y <= $(this).offset().top + $(this).height() + borderWidth&&
-                x >= $(this).offset().left && 
-                x <= $(this).offset().left + $(this).width() + borderWidth) {
-                currentlyClicking = -1;
-                tableOver($(this), event);
-            }
         });
-        if (canEdit && currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
-            $(this).width($cells.width());
-            $(this).attr("class", "event movingEvent");
-        }
 
-    });
-    $('.event').on('mouseup', function (event){
-        var x = event.pageX;
-        var y = Math.max(event.pageY-currentlyMovingY, $cells.offset().top);
-        var called = false;
-        $cells.each(function(index) {
-            if (y >= $(this).offset().top && 
-                y <= $(this).offset().top + $(this).height() + borderWidth &&
-                x >= $(this).offset().left && 
-                x <= $(this).offset().left + $(this).width() + borderWidth) {
-                tableUp($(this), event);
-                called = true;
+
+        $('.event').off('click');
+        $('.event').off('mousedown');
+        $('.event').off('mouseup');
+        $('.event').off('mousemove');
+        $('.event').on('mousedown', function(event){
+            event.preventDefault();
+            currentlyClicking = 1;
+
+            currentlyMoving = $(this).attr("id");
+            currentlyMovingID = $(this).attr("id")
+            $.post('getEventData', {"id": currentlyMovingID}, function (data, status) {
+                currentlyMovingEnd = new Date(data.endms);
+                currentlyMovingStart = new Date(data.startms);
+            }, 'json');
+            currentlyMovingY = event.pageY - $(this).offset().top;
+
+            if (-1 != $(this).attr("class").indexOf("canEdit")) {
+                canEdit = true;
+            } else {
+                canEdit = false;
             }
+
         });
-        if (!called) {
-            currentlyMoving = -1;
-            populateEvents();
-            tableUp(null, event);
-        }
-        currentlyMovingY = 0
-        return false;
-    });
+        $('.event').on('click', function (){
+            if (currentlyClicking == 1) {
+                openID($(this).attr('id'));
+            }
+            return false;
+        });
+        $('.event').on('mousemove', function (event){
+            var x = event.pageX;
+            var y = event.pageY-currentlyMovingY;
+
+            $cells.each(function(index) {
+                if (y >= $(this).offset().top &&
+                    y <= $(this).offset().top + $(this).height() + borderWidth&&
+                    x >= $(this).offset().left &&
+                    x <= $(this).offset().left + $(this).width() + borderWidth) {
+                    currentlyClicking = -1;
+                    tableOver($(this), event);
+                }
+            });
+            if (canEdit && currentlyClicking == -1 && currentlyMoving == $(this).attr("id")) {
+                $(this).width($cells.width());
+                $(this).attr("class", "event movingEvent");
+            }
+
+        });
+        $('.event').on('mouseup', function (event){
+            var x = event.pageX;
+            var y = Math.max(event.pageY-currentlyMovingY, $cells.offset().top);
+            var called = false;
+            $cells.each(function(index) {
+                if (y >= $(this).offset().top &&
+                    y <= $(this).offset().top + $(this).height() + borderWidth &&
+                    x >= $(this).offset().left &&
+                    x <= $(this).offset().left + $(this).width() + borderWidth) {
+                    tableUp($(this), event);
+                    called = true;
+                }
+            });
+            if (!called) {
+                currentlyMoving = -1;
+                populateEvents();
+                tableUp(null, event);
+            }
+            currentlyMovingY = 0
+            return false;
+        });
     };
 
 
     $.get('populateEvents', function (data, status) {
         /*$.get('getNotificationsRequests', function (data2, status) {
-            data = data2.concat(data);
-            processEvents(data, status)
-        }, "json");*/
+         data = data2.concat(data);
+         processEvents(data, status)
+         }, "json");*/
         processEvents(data, status)
     }, "json");
 
@@ -334,10 +334,10 @@ $(document).on('click', '.requestAlert', function(e) {
     $.post('goToEvent', {"id": first}, function (data, status) {
         formatCalendar("weekly", data);
     }, "json").done(function() {
-        populateEvents();
-       // openID(first)
+            populateEvents();
+            // openID(first)
 
-    });
+        });
 });
 
 var acceptRequest = function($object) {
@@ -431,20 +431,20 @@ var openID = function(id) {
             }else{
                 $('#deleteEvent').show();
                 $('#deleteEventThis').hide();
-                $('#editEventThis').hide()                
+                $('#editEventThis').hide()
             }
-        } 
+        }
         $('#eventModal').modal();
         $('a[href=#eventInformationTab]').tab('show');
         $('a[href=#peopleTab]').show();
         $('a[href=#commentsTab]').show();
         $('#inviteFriends').show()
 
-        $('#eventModal').on('shown', function(){                    
+        $('#eventModal').on('shown', function(){
             $('#eventName').focus();
         });
         document.getElementById(data.kind).checked = true
-        
+
         currentlyViewing = id;
 
     }, "json");
@@ -474,16 +474,16 @@ $(document).ready(function(){
     $popover = $('#notificationButton');
     $popover.popover({title: "Notifications", placement: "bottom", html: true, content: function() {return latestNotification();}, trigger: 'manual'
     }).click(function(e) {
-        if (notificationIsVisible) {
-            $(this).popover('hide');
-            notificationClickedAway = false;
-            notificationIsVisible = false;
-        } else {
-            $(this).popover('show');
-            notificationClickedAway = false;
-            notificationIsVisible = true;
-        }
-        e.preventDefault();
+            if (notificationIsVisible) {
+                $(this).popover('hide');
+                notificationClickedAway = false;
+                notificationIsVisible = false;
+            } else {
+                $(this).popover('show');
+                notificationClickedAway = false;
+                notificationIsVisible = true;
+            }
+            e.preventDefault();
         });
 
     $('#modalComments').hide();
@@ -540,7 +540,7 @@ $(document).ready(function(){
         $('#eventModalBody').css("overflow","auto");
         refreshComments();
 
-        })
+    })
 
     $('a[href=#inviteTab]').on('shown', function (e) {
         $('#modalEventInformation').hide();
@@ -551,25 +551,25 @@ $(document).ready(function(){
         $('#InvitedNotif').hide()
         $("#InvitedNotifError").hide()
         $('.friendComplete').val('');
-        
+
         var $invited = $('.invitedFriends');
         $invited.html("");
         for (var i = 0; i < invitedFriendsID.length; i++) {
-           var index = friendIDs.indexOf(invitedFriendsID[i]);
-           $invited.append('<span class="invitedFriend" ><span>' + friendNames[index] + '</span><span class="friendCloseBox">X</span></span>');
+            var index = friendIDs.indexOf(invitedFriendsID[i]);
+            $invited.append('<span class="invitedFriend" ><span>' + friendNames[index] + '</span><span class="friendCloseBox">X</span></span>');
         }
-   
+
     })
 
 
     $('#postComment').on('click', function (e) {
         if($('#commentTextBox').val() != ""){
-        $.post('comment',{'id': currentlyViewing, 'comment': $('#commentTextBox').val()}, function(data, status) {
-            refreshComments();
-        }, "json");
+            $.post('comment',{'id': currentlyViewing, 'comment': $('#commentTextBox').val()}, function(data, status) {
+                refreshComments();
+            }, "json");
         }
         $('#commentTextBox').val("")
-        });
+    });
 
 });
 
@@ -578,14 +578,14 @@ var addFriendsToEvent = function(friends){
     if(invitedFriendsID.length === 0) {
         return;
     } else {
-    $.post('addFriendsToEvent', {'friendIDs': friends, 'id': currentlyViewing}, function (data, status){
-        if(data[0].notif){
-             $("#InvitedNotif").show()
-        } else {
-             $("#InvitedNotifError").show()            
-        }
-    }, "json");
-    clearFriends()
+        $.post('addFriendsToEvent', {'friendIDs': friends, 'id': currentlyViewing}, function (data, status){
+            if(data[0].notif){
+                $("#InvitedNotif").show()
+            } else {
+                $("#InvitedNotifError").show()
+            }
+        }, "json");
+        clearFriends()
     }
 }
 
@@ -597,14 +597,14 @@ var updateCalendar = function(amount) {
         $.post('changeMonth', {"amount": amount}, function (data, status) {
             formatCalendar("monthly", data);
         }, "json").done(function() {
-            populateMonthEvents();
-        });
+                populateMonthEvents();
+            });
     } else {
         $.post('changeWeek', {"amount": amount}, function (data, status) {
             formatCalendar("weekly", data);
         }, "json").done(function() {
-            populateEvents();
-        });
+                populateEvents();
+            });
     }
 };
 
@@ -614,21 +614,21 @@ var formatCalendar = function(format, data) {
         $month = $(".calendarMonthTable");
         html = ''
 
-            html += '<table><tbody>'; 
+        html += '<table><tbody>';
         for (var i = 0; i < data.weeks.length; i++) {
-            html += '<tr class="calendarRow">'; 
+            html += '<tr class="calendarRow">';
             for (var j = 0; j < data.weeks[i].length; j++) {
 
-                html += '<td class="calendarMonthEntry'; 
-                    if (data.weeks[i][j].today)
-                        html += ' calendarToday';
+                html += '<td class="calendarMonthEntry';
+                if (data.weeks[i][j].today)
+                    html += ' calendarToday';
                 if (!data.weeks[i][j].thisMonth)
                     html += ' otherMonth';
-                html += '" width="14.3%">'+data.weeks[i][j].date+'<div></div></td>'; 
+                html += '" width="14.3%">'+data.weeks[i][j].date+'<div></div></td>';
             }
-            html += '</tr>'; 
+            html += '</tr>';
         }
-        html += '</tbody></table>'; 
+        html += '</tbody></table>';
 
         $month.html(html);
 
@@ -663,11 +663,11 @@ var formatCalendar = function(format, data) {
         if (hasToday >= 0) {
             $cells1.each(function(index) {
                 if (index % 7 == hasToday)
-                $(this).addClass("calendarToday");
+                    $(this).addClass("calendarToday");
             });
             $cells2.each(function(index) {
                 if (index % 7 == hasToday)
-                $(this).addClass("calendarToday");
+                    $(this).addClass("calendarToday");
             });
         }
     }
@@ -786,29 +786,29 @@ var createEvent = function() {
             }
         }
     }
-    $.post('submitEvent', {"title": $("#eventName").val(), 
-        "description": $("#eventDescription").val(),
-        "location": $("#eventLocation").val(),
-        "startTime": $("#startTime").val(),
-        "endTime": $("#endTime").val(), 
-        "RRULE": rrule,
-        "friendIDs": JSON.stringify(d),
-        "kind" : kind},
+    $.post('submitEvent', {"title": $("#eventName").val(),
+            "description": $("#eventDescription").val(),
+            "location": $("#eventLocation").val(),
+            "startTime": $("#startTime").val(),
+            "endTime": $("#endTime").val(),
+            "RRULE": rrule,
+            "friendIDs": JSON.stringify(d),
+            "kind" : kind},
         "json").done(function (data, status) {
-        uncolorCells();
-        removeToolTips();
-        populateEvents();
-    });
+            uncolorCells();
+            removeToolTips();
+            populateEvents();
+        });
     $('#eventModal').modal('hide');
     clearFriends();
 }
 $("#createEvent").click(function() {createEvent()});
 
 var deleteEvent = function(deleteAll) {
-    $.post('deleteEvent', {"id": currentlyViewing, "all" : deleteAll}, 
-            "json").done(function (data, status) {
-        populateEvents();
-    });
+    $.post('deleteEvent', {"id": currentlyViewing, "all" : deleteAll},
+        "json").done(function (data, status) {
+            populateEvents();
+        });
     $('#eventModal').modal('hide');
 }
 
@@ -921,18 +921,18 @@ var editEvent = function(all) {
             }
         }
     }
-    $.post('editEvent', {"title": $("#eventName").val(), 
-        "description": $("#eventDescription").val(),
-        "location": $("#eventLocation").val(),
-        "startTime": $("#startTime").val(),
-        "endTime": $("#endTime").val(), 
-        "RRULE": rrule,
-        "id": currentlyViewing,
-        "all":all,
-        "kind" : kind},
+    $.post('editEvent', {"title": $("#eventName").val(),
+            "description": $("#eventDescription").val(),
+            "location": $("#eventLocation").val(),
+            "startTime": $("#startTime").val(),
+            "endTime": $("#endTime").val(),
+            "RRULE": rrule,
+            "id": currentlyViewing,
+            "all":all,
+            "kind" : kind},
         "json").done(function (data, status) {
-        populateEvents();
-    });
+            populateEvents();
+        });
     $('#eventModal').modal('hide');
 }
 
@@ -1022,12 +1022,12 @@ var tableOver = function(cell, eventObject) {
 
             if (height >= 0) {
                 $dragged.height(cell.offset().top+cell.height() +
-                        2*borderWidth - topY);
+                    2*borderWidth - topY);
                 $dragged.offset({top: topY});
 
                 startHour = starty;
                 endHour = (starty+1+height);
-            } 
+            }
             if (height < 0) {
                 $dragged.height(bottomY - cell.offset().top + 2*borderWidth);
                 $dragged.offset({top: cell.offset().top});
@@ -1038,7 +1038,7 @@ var tableOver = function(cell, eventObject) {
         }
     }
     if (currentlyMoving != -1) {
-        
+
         var index = $cells.index(cell);
         var hour = parseInt(index/7);
         var delta = hour/2.0 - (currentlyMovingStart.getHours() + currentlyMovingStart.getMinutes()/60.0);
@@ -1058,7 +1058,7 @@ var tableOver = function(cell, eventObject) {
 
 $cells.on("mouseover", function(eventObject) {
     var index = ($cells.index($(this))-Math.floor(currentlyMovingY/$cells.height())*7);
-    if (index < 0) { 
+    if (index < 0) {
         index = $cells.index($(this)) % 7;
     }
     var $cell = $($cells.get(index));
@@ -1123,7 +1123,7 @@ var tableUp = function($cell, eventObject) {
         $('#editEvent').hide();
         $('#eventURL').hide();
         $('#eventModal').modal();
-        $('#eventModal').on('shown', function(){                    
+        $('#eventModal').on('shown', function(){
             //$('#eventModalBody').css("overflow", "auto");
             $('#eventName').focus();
         });
@@ -1160,7 +1160,7 @@ var tableUp = function($cell, eventObject) {
 
 $cells.on("mouseup", function(eventObject) {
     var index = $cells.index($(this)) - Math.floor(currentlyMovingY/$cells.height())*7;
-    if (index < 0) { 
+    if (index < 0) {
         index = $cells.index($(this)) % 7;
     }
     var $cell = $($cells.get(index));
@@ -1191,7 +1191,7 @@ $(document).on("click", function(eventObject) {
         notificationClickedAway = true;
     }
 });
-     
+
 var acceptNotification = function(eventID) {
     $.post('acceptNotification', {"eventID": eventID}, "json").done(function (data, status) {
         setTimeout(function() { populateEvents();}, 300);
