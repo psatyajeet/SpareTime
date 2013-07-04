@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 {% block main %}
-<link href="{{ STATIC_URL}}css/event.css" rel="stylesheet" media="screen">
-<body>
+    <link href="{{ STATIC_URL}}css/event.css" rel="stylesheet" media="screen">
+    <body>
     <div class="row-fluid">
         <span class="span10">
             <h1 class = "heading1" style = "margin-left:160px"><center>{{title}}</center></h1>
@@ -11,7 +11,7 @@
         </div>
     </div>
     <br>
-    
+
     <div class="row-fluid">
         <span class="span6 sectionEvent">
             <h3 class = "heading2"> Details </h3>
@@ -37,7 +37,7 @@
     <br><br>
 
     <div class="row-fluid offset2">
-        <div class = "span6">        
+        <div class = "span6">
             <center><button class="btn btn-block btn-primary" type="button" id="share" style = "margin-left:70px">Share With Friends! <i class="icon-envelope" style = "margin-left:20px"> </i> </button></center>
         </div>
     </div>
@@ -56,13 +56,13 @@
             </form>
             <div id = "commentsPlace">
                 {% for p in comments %}
-                <div class = "comment alert alert-info">
-                    <span class="commentName"> {{p.name}} says:</span> 
-                    {% autoescape on %}
-                    {{p.comment}}
-                    {% endautoescape %}
-                    <div class="commentDate">{{p.date}}</div> 
-                </div>
+                    <div class = "comment alert alert-info">
+                        <span class="commentName"> {{p.name}} says:</span>
+                        {% autoescape on %}
+                            {{p.comment}}
+                        {% endautoescape %}
+                        <div class="commentDate">{{p.date}}</div>
+                    </div>
                 {% endfor %}
             </div>
         </span>
@@ -81,51 +81,51 @@
         </span>
     </div>
 
-<script>
-    $("#notificationButton").hide()
-    $("#dLabel").hide()
-    loggedIn = "{{loggedIn}}"
-    if(loggedIn == "1"){
-        $("#Name").hide()
-        $("#signIn").hide()
-    } else{
-        $("#signIn").show() 
-        $("#Name").show()        
-    }
-    eventPage = true
-    var id = "{{id}}"
-    function addName(){
-        var name = $("#inputBox").val()
-        $.get('addName',{'name' : $("#inputBox").val(), 'id': id}, function (data, status) {
-            if(data.length == 0){
-                return;
-            } else {
-                $("#coming").append('<li>'+data[0].person + '</li>')
-            }   
-        }, "json")
-        $("#inputBox").val("")
-    }
+    <script>
+        $("#notificationButton").hide()
+        $("#dLabel").hide()
+        loggedIn = "{{loggedIn}}"
+        if(loggedIn == "1"){
+            $("#Name").hide()
+            $("#signIn").hide()
+        } else{
+            $("#signIn").show()
+            $("#Name").show()
+        }
+        eventPage = true
+        var id = "{{id}}"
+        function addName(){
+            var name = $("#inputBox").val()
+            $.get('addName',{'name' : $("#inputBox").val(), 'id': id}, function (data, status) {
+                if(data.length == 0){
+                    return;
+                } else {
+                    $("#coming").append('<li>'+data[0].person + '</li>')
+                }
+            }, "json")
+            $("#inputBox").val("")
+        }
 
-    function addComment(){
-        var comment = $("#commentForm").val()
-        $.post('comment',{'name' : $("#Name").val(), 'id': id, 'comment': $('#commentForm').val()}, function (data, status) {
-            $("#commentsPlace").prepend('<div class = "comment alert alert-info"> <span class="commentName">'+ data[0].commenter + ' says:</span> '+ data[0].comment+ '<div class="commentDate">'+data[0].date+'</div> </div>');
-        }, "json")
-        $("#commentForm").val("")
-    }
-    function share(){
-        var url = document.URL
-        mail = "mailto:?subject=SpareTime&body=" +  encodeURIComponent("Hey, check out my event on SpareTime. And, join! It's easy, free, and fun!\n\n" + url + "\n \n Thanks!")
-        console.log(mail)
-        window.location.href = mail;
-    }
-    $("#comment").click(addComment)
-    $("#accept").click(addName)
-    $("#signIn").click(login)
-    $("#share").click(share)
+        function addComment(){
+            var comment = $("#commentForm").val()
+            $.post('comment',{'name' : $("#Name").val(), 'id': id, 'comment': $('#commentForm').val()}, function (data, status) {
+                $("#commentsPlace").prepend('<div class = "comment alert alert-info"> <span class="commentName">'+ data[0].commenter + ' says:</span> '+ data[0].comment+ '<div class="commentDate">'+data[0].date+'</div> </div>');
+            }, "json")
+            $("#commentForm").val("")
+        }
+        function share(){
+            var url = document.URL
+            mail = "mailto:?subject=SpareTime&body=" +  encodeURIComponent("Hey, check out my event on SpareTime. And, join! It's easy, free, and fun!\n\n" + url + "\n \n Thanks!")
+            console.log(mail)
+            window.location.href = mail;
+        }
+        $("#comment").click(addComment)
+        $("#accept").click(addName)
+        $("#signIn").click(login)
+        $("#share").click(share)
 
-</script>
+    </script>
 
-</body>
+    </body>
 
 {% endblock main %}
