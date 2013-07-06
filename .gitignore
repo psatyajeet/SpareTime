@@ -6,3 +6,5 @@ mysite/database/data
 *.swn
 *.pptx
 .idea/*
+
+git-subtree/
