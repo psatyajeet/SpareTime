@@ -389,7 +389,7 @@ var openID = function(id) {
 
         $('#createEvent').hide();
         $('#eventURL').show();
-        var url = 'http://sparetime.herokuapp.com/?id='+id;
+        var url = 'http://localhost:8000/?id='+id;
         if(data.kind == "AVPU" || data.kind == "BUPU"){
             $('#eventURL').html('<a href="'+url+'">'+url+'</a>');
         } else {
