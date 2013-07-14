@@ -9,7 +9,7 @@ $(document).ready(function(){
         $("#monthlyCalendar").hide();
     else
         $("#weeklyCalendar").hide();
-    if (hasNotification==true){
+    if (hasNotification=="true"){
         addExclamation($('#notificationButton').parent(), "notificationExclamation");
     }
 
