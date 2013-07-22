@@ -22,11 +22,11 @@ var scopes = 'https://www.googleapis.com/auth/calendar';
 // Use a button to handle authentication the first time.
 function handleClientLoad() {
     gapi.client.setApiKey(apiKey);
-    checkAuth()
+    window.setTimeout(checkAuth,1);
 }
 
 function checkAuth() {
-    gapi.auth.authorize({client_id: clientId, scope: scopes, authuser:""}, handleAuthResult);
+    gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false, authuser:""}, handleAuthResult);
 }
 
 
@@ -39,7 +39,7 @@ function handleAuthResult(authResult) {
 }
 
 function handleAuthClick(event) {
-    gapi.auth.authorize({client_id: clientId, scope: scopes, authuser:""}, handleAuthResult);
+    gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: false}, handleAuthResult);
     return false;
 }
 
