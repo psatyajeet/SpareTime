@@ -1051,7 +1051,7 @@ def makeUser(request):
         if(len(usr) != 0):
             return HttpResponse(simplejson.dumps(d))
 
-        prof = UserProfile(user=fbid,name=name)
+        prof = UserProfile(user=fbid, name=name)
         prof.save()
 
         return HttpResponse()

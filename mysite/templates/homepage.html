@@ -11,7 +11,8 @@
 <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
 <div id="fb-root"></div>
 
-<script type="text/javascript" src="{{ STATIC_URL }}/js/facebook.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/facebook.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/homepage.js"></script>
 <div id="wrapper">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
@@ -30,7 +31,7 @@
                         <!--<li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>-->
 
                         <li><a href="#" id="notificationButton"><i class="icon-exclamation-sign icon-white"></i>Notifications</a></li>
-                        <li><a href="#" id="loginButton">Log In</a></li>
+                        <li><a data-toggle="modal" href="#signinModal">Log In</a></li>
                     </ul>
                 </div>
             </div>
@@ -78,10 +79,12 @@
 
             <br>
 
-            <div class="pagination-centered">
-                <a class="btn btn-large homepage-button center" href="#" id="loginButton">Connect with Facebook</a>
+            <div class="centered-text">
+                <a class="btn btn-large homepage-fb-button center" href="#" id="loginButton">Connect with Facebook</a>
+                <div> OR </div>
+                <a data-toggle="modal" href="#signupModal" class="btn btn-large homepage-signup-button">Create Your Own Account</a>
             </div>
-            <br><br><br><br>
+
             <div class="row picture-row">
 
                 <div>
@@ -107,9 +110,6 @@
                 </div>
             </div>
 
-            <br><br><br><br><br><br>
-
-
             <hr />
         </div><!-- /container -->
     </div>
@@ -122,6 +122,7 @@
             <br>© 2013 Kabongle. All rights reserved. </p>
     </div>
 </div>
+
 <!-- Le javascript
    ================================================== -->
 <!-- Placed at the end of the document so the pages load faster
@@ -140,4 +141,58 @@
    <script src="/static/bootstrap/js/bootstrap-typeahead.js"></script>-->
 
 </body>
+
+<!-- Sign-up Modal -->
+<div id="signupModal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Sign Up for Kabongle</h3>
+    </div>
+    <div class="modal-body">
+        <p>Name:</p>
+        <input type="text" class="friendComplete" placeholder="Your Full Name">
+        <p>Email Address:</p>
+        <input type="text" class="friendComplete" placeholder="Make Sure It's Real">
+        <p>Password:</p>
+        <input type="text" class="friendComplete" placeholder="Must be at least 6 characters">
+        <p>Re-enter Password:</p>
+        <input type="text" class="friendComplete" placeholder="">
+        {#        <p>Username:</p>#}
+        {#        <input type="text" class="friendComplete" placeholder="Your Full Name">#}
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="signupCancel" class="btn">Cancel</a>
+        <a href="#" id="showFriendAvailability" class="btn btn-primary">Show Availability</a>
+    </div>
+</div>
+
+<!-- End Sign-up Modal -->
+<!-- Sign-in Modal -->
+<div id="signinModal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Welcome Back!</h3>
+    </div>
+    <div class="modal-body">
+        <div class="signin-modal centered-text">
+            <a class="btn btn-large homepage-fb-button center" href="#" id="loginButton">Connect with Facebook</a>
+            <hr />
+            <div>
+                <p>Email Address:</p>
+                <input type="text" class="friendComplete" placeholder="Make Sure It's Real">
+                <p>Password:</p>
+                <input type="text" class="friendComplete" placeholder="Must be at least 6 characters">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" id="signinCancel" class="btn">Cancel</a>
+        <a href="#" id="showFriendAvailability" class="btn btn-primary">Sign In</a>
+    </div>
+</div>
+
+<!-- End Sign-in Modal -->
 </html>
+
+
+
