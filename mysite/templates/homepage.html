@@ -7,121 +7,121 @@
     <link href="{{ STATIC_URL}}css/custom.css" rel="stylesheet" media="screen">
 </head>
 <body>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
-<div id="fb-root"></div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+    <div id="fb-root"></div>
 
-<script type="text/javascript" src="{{ STATIC_URL }}js/facebook.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/homepage.js"></script>
-<div id="wrapper">
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="/">Kabongle</a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li class="active"><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
-                    </ul>
-                    <ul class="nav pull-right">
-                        <!--<li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>-->
+    <script type="text/javascript" src="{{ STATIC_URL }}/js/facebook.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}/js/homepage.js"></script>
+    <div id="wrapper">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="/">Kabongle</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="active"><a href="/"><i class="icon-home icon-white"></i> Home</a></li>
+                        </ul>
+                        <ul class="nav pull-right">
+                            <!--<li><a href="/login"><i class="icon-user icon-white"></i> My Profile</a></li>-->
 
-                        <li><a href="#" id="notificationButton"><i class="icon-exclamation-sign icon-white"></i>Notifications</a></li>
-                        <li><a data-toggle="modal" href="#signinModal">Log In</a></li>
-                    </ul>
+                            <li><a href="#" id="notificationButton"><i class="icon-exclamation-sign icon-white"></i>Notifications</a></li>
+                            <li><a data-toggle="modal" href="#signinModal">Log In</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="homepage-body" id="mainContent">
-        <div class="row">
-            <div class="span12">
-                <p></p>
+        <div class="homepage-body" id="mainContent">
+            <div class="row">
+                <div class="span12">
+                    <p></p>
+                </div>
             </div>
-        </div>
 
-        <script>
+            <script>
             homepage = true;
             $("#notificationButton").hide()
             $("#dLabel").hide()
-        </script>
+            </script>
 
-        <link href="{{STATIC_URL}}css/homepage.css" rel="stylesheet" media="screen">
+            <link href="{{STATIC_URL}}css/homepage.css" rel="stylesheet" media="screen">
 
-        <div class="container homepage-body">
-            <br><br><br><br><br>
-
-
-            <div class = "row-fluid">
-                <div class = "span4">
-                </div>
-                <div class = "span4 logo">
-                    Kabongle
-                </div>
-                <div class = "span4">
-                </div>
-            </div>
+            <div class="container homepage-body">
+                <br><br><br><br><br>
 
 
-            <br><br><br>
-
-            <div class="main-info">
-                It's easy to see when all your friends are free.
-                <div>
-                    Just sign up and you'll be on your way!
-                </div>
-            </div>
-
-            <br>
-
-            <div class="centered-text">
-                <a class="btn btn-large homepage-fb-button center" href="#" id="loginButton">Connect with Facebook</a>
-                <div> OR </div>
-                <a data-toggle="modal" href="#signupModal" class="btn btn-large homepage-signup-button">Create Your Own Account</a>
-            </div>
-
-            <div class="row picture-row">
-
-                <div>
-                    <img class="clear span4" src="{{ STATIC_URL }}/img/homepagepics/homepage1.png" alt="some_text">
-                    <img class="clear span4" src="{{ STATIC_URL }}/img/homepagepics/homepage3.png" alt="some_text">
-                    <img class="clear span4" src="{{ STATIC_URL }}/img/homepagepics/homepage2.png" alt="some_text">
+                <div class = "row-fluid">
+                    <div class = "span4">
+                    </div>
+                    <div class = "span4 logo">
+                        Kabongle
+                    </div>
+                    <div class = "span4">
+                    </div>
                 </div>
 
-            </div>
 
+                <br><br><br>
 
-            <br> <br>
-
-            <div class="row picture-info">
-                <div class="span4">
-                    Manage your calendar just as you would anywhere else!
+                <div class="main-info">
+                    It's easy to see when all your friends are free.
+                    <div>
+                        Just sign up and you'll be on your way!
+                    </div>
                 </div>
-                <div class="span4">
-                    Add events, post comments, and see a list of who is coming!
-                </div>
-                <div class="span4">
-                    See a heat map for when all of your Facebook friends are free!
-                </div>
-            </div>
 
-            <hr />
-        </div><!-- /container -->
+                <br>
+
+                <div class="centered-text">
+                    <a class="btn btn-large homepage-fb-button center" href="#" id="loginButton">Connect with Facebook</a>
+                    <div> OR </div>
+                    <a data-toggle="modal" href="#signupModal" class="btn btn-large homepage-signup-button">Create Your Own Account</a>
+                </div>
+
+                <div class="row picture-row">
+
+                    <div>
+                        <img class="clear span4" src="{{ STATIC_URL }}/img/homepagepics/homepage1.png" alt="some_text">
+                        <img class="clear span4" src="{{ STATIC_URL }}/img/homepagepics/homepage3.png" alt="some_text">
+                        <img class="clear span4" src="{{ STATIC_URL }}/img/homepagepics/homepage2.png" alt="some_text">
+                    </div>
+
+                </div>
+
+
+                <br> <br>
+
+                <div class="row picture-info">
+                    <div class="span4">
+                        Manage your calendar just as you would anywhere else!
+                    </div>
+                    <div class="span4">
+                        Add events, post comments, and see a list of who is coming!
+                    </div>
+                    <div class="span4">
+                        See a heat map for when all of your Facebook friends are free!
+                    </div>
+                </div>
+
+                <hr />
+            </div><!-- /container -->
+        </div>
+        <div class="push"></div>
     </div>
-    <div class="push"></div>
-</div>
 
-<div id="footer">
-    <div class="container">
-        <p class="muted credit">
-            <br>© 2013 Kabongle. All rights reserved. </p>
-    </div>
-</div>
+    <div id="footer">
+        <div class="container">
+            <p class="muted credit">
+                <br>© 2013 Kabongle. All rights reserved. </p>
+            </div>
+        </div>
 
 <!-- Le javascript
    ================================================== -->
@@ -148,22 +148,27 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Sign Up for Kabongle</h3>
     </div>
-    <div class="modal-body">
-        <p>Name:</p>
-        <input type="text" class="friendComplete" placeholder="Your Full Name">
-        <p>Email Address:</p>
-        <input type="text" class="friendComplete" placeholder="Make Sure It's Real">
-        <p>Password:</p>
-        <input type="text" class="friendComplete" placeholder="Must be at least 6 characters">
-        <p>Re-enter Password:</p>
-        <input type="text" class="friendComplete" placeholder="">
-        {#        <p>Username:</p>#}
-        {#        <input type="text" class="friendComplete" placeholder="Your Full Name">#}
-    </div>
-    <div class="modal-footer">
-        <a href="#" id="signupCancel" class="btn">Cancel</a>
-        <a href="#" id="showFriendAvailability" class="btn btn-primary">Show Availability</a>
-    </div>
+    <form method="post" action="/makeNewUser">{% csrf_token %}
+
+        <div class="modal-body">
+            <p>Name:</p>
+            <input type="text" name="name" placeholder="Your Full Name">
+            <p>Email Address:</p>
+            <input type="text" name="email" placeholder="Make Sure It's Real">
+            <p>Username:</p>
+            <input type="text" name="username" placeholder="Make Sure It's Real">
+            <p>Password:</p>
+            <input type="password" name="password" placeholder="Must be at least 6 characters">
+            <p>Re-enter Password:</p>
+            <input type="password" name="passwordreenter" placeholder="">
+            {#        <p>Username:</p>#}
+            {#        <input type="text" class="friendComplete" placeholder="Your Full Name">#}
+        </div>
+        <div class="modal-footer">
+            <a href="#" id="signupCancel" class="btn">Cancel</a>
+            <input type="submit" value="Sign Up" class="btn btn-primary" />
+        </div>
+    </form>
 </div>
 
 <!-- End Sign-up Modal -->
@@ -178,8 +183,8 @@
             <a class="btn btn-large homepage-fb-button center" href="#" id="loginButton">Connect with Facebook</a>
             <hr />
             <div>
-                <p>Email Address:</p>
-                <input type="text" class="friendComplete" placeholder="Make Sure It's Real">
+                <p>Username:</p>
+                <input type="text" class="friendComplete" placeholder="">
                 <p>Password:</p>
                 <input type="text" class="friendComplete" placeholder="Must be at least 6 characters">
             </div>

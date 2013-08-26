@@ -28,6 +28,7 @@ urlpatterns = patterns(
     url(r'^deleteCookie', views.deleteCookie, name='deleteCookie'),
 
     url(r'^makeUser', views.makeUser, name='makeUser'),
+    url(r'^makeNewUser', views.makeNewUser, name='makeNewUser'),
     url(r'^getPeople', views.getPeople, name='getPeople'),
 
     url(r'^changeFormat', views.changeFormat, name='changeFormat'),
@@ -36,5 +37,5 @@ urlpatterns = patterns(
     url(r'^heatMap', views.heatMap, name='heatMap'),
     url(r'^addName', views.addName, name='addName'),
 
-    url(r'^getUsersWithAccount', views.getUsersWithAccount, name='getUsersWithAccount'),
+    url(r'^getUsersWithAccount', views.getUsersWithAccount, name='getUsersWithAccount')
 )

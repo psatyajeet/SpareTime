@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 import calendar
@@ -13,6 +14,7 @@ from dateutil.parser import *
 from dateutil import tz
 from django.utils import simplejson
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth.models import User
 from socialcalendar.models import Event
 from socialcalendar.models import UserProfile
 from socialcalendar.models import ExceptionDate
@@ -172,7 +174,7 @@ def index(request):
             if request.session.has_key('fbid'):
                 i = 1
             eid = request.GET['id']
-            location = e.location;
+            location = e.location
             if location == "":
                 location = "No-Location"
             context = {
@@ -371,22 +373,22 @@ def createEvent(start, end, recurrence, usr = None, title = "No-Title", descript
     return e
 
 def getrrule(rrule):
-    rule = str(rrule);
-    until = re.findall(r"../../.............", str(rrule));
+    rule = str(rrule)
+    until = re.findall(r"../../.............", str(rrule))
     if len(until) > 0:
         date = datetime.strptime(until[0], dateString)
         rule = str(rule).replace(until[0], date.strftime(untilString))
     return rule
 
 def getNotifications(user):
-    events = user.notifications.all();
+    events = user.notifications.all()
     d = []
     for event in events:
         d.append({
             'id':event.id,
             'creators':getCreators(event),
             'title':event.title
-        });
+        })
     return d
 
 
@@ -399,7 +401,7 @@ def storeNotificationForFriends(friendIDs, e):
     return len(usr) > 0
 
 def removeNotification(user, e) :
-    user.notifications.remove(e);
+    user.notifications.remove(e)
 
 
 @csrf_protect
@@ -410,7 +412,7 @@ def addFriendsToEvent(request):
         notif = storeNotificationForFriends(friendIDs, event)
         d = []
         d.append({"notif": notif})
-        return HttpResponse(simplejson.dumps(d));
+        return HttpResponse(simplejson.dumps(d))
     else :
         return HttpResponseNotFound()
 
@@ -418,8 +420,8 @@ def addFriendsToEvent(request):
 def getNotificationsRequest(request):
     if request.method == "GET":
         usr = UserProfile.objects.get(user=request.session['fbid'])
-        notifs = getNotifications(usr);
-        return HttpResponse(simplejson.dumps(notifs));
+        notifs = getNotifications(usr)
+        return HttpResponse(simplejson.dumps(notifs))
     else :
         return HttpResponseNotFound()
 
@@ -486,7 +488,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
     # get the date of the first event
     currDate = events[0].start.date() # initialized to date of first event
 
-    # keep track of i; initialize i to 0
+    # keep track of i initialize i to 0
     i = 0
 
     # while i < len(events) (if this is true, then events[i] is a valid event)
@@ -625,11 +627,11 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
         endhour = e.end.hour
         if (e.end.day > e.start.day):
             endhour = 24
-        eID = e.id;
+        eID = e.id
         creator0 = None
 
         if e.repeat:
-            eID = e.repeatID;
+            eID = e.repeatID
             creator0 = list(e.creators.values())
         elif (len(e.creators.all()) > 0):
             creator0 = list(e.creators.all().values())
@@ -652,7 +654,7 @@ def getArrayofWeeklyEvents(events, usr, notif = False): # events given to method
         #      print 'x:',  xs[i]
         #     print 'width:', 1.0/float(widths[i])
 
-    return d;
+    return d
 
 
 
@@ -946,8 +948,8 @@ def gcal(request):
     usr = UserProfile.objects.get(user=request.session['fbid'])
     if events.has_key('items') and events['items']:
         for event in events['items']:
-            recurring = False;
-            recurrence = '';
+            recurring = False
+            recurrence = ''
 
 
             if event.has_key('originalStartTime') and event.has_key('recurringEventId') :
@@ -986,13 +988,13 @@ def gcal(request):
 
 
             if event.has_key('recurrence') and len(event['recurrence']) > 0:
-                recurring = True;
+                recurring = True
                 if not 'RRULE' in event['recurrence'][0] and len(event['recurrence']) > 1 and 'RRULE' in event['recurrence'][1]:
-                    until = re.match(".*UNTIL=........", event['recurrence'][1]);
+                    until = re.match(".*UNTIL=........", event['recurrence'][1])
                     if until is not None:
-                        recurrence = event['recurrence'][1].replace(until.group(0), until.group(0)+"T000000Z");
+                        recurrence = event['recurrence'][1].replace(until.group(0), until.group(0)+"T000000Z")
                 else:
-                    recurrence = event['recurrence'][0].replace("035959", "000000"); #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
+                    recurrence = event['recurrence'][0].replace("035959", "000000") #.replace('u\'', '\'').replace("[\'", "").replace('\']', '')
 
             e = Event(title=event['summary'],
                       description=event['description'],
@@ -1005,7 +1007,7 @@ def gcal(request):
                       kind = 'BUPU',
                       )
             e.save()
-            usr.creators.add(e);
+            usr.creators.add(e)
             usr.events.add(e)
     return HttpResponse()
 
@@ -1017,9 +1019,9 @@ def acceptNotification(request):
         event.unanswered.remove(usr)
         removeNotification(usr, event)
         usr.events.add(event)
-        return HttpResponse();
+        return HttpResponse()
     else:
-        HttpResponseNotFound();
+        HttpResponseNotFound()
 
 @csrf_protect
 def rejectNotification(request):
@@ -1031,9 +1033,9 @@ def rejectNotification(request):
         usr.rejected.add(event)
         removeNotification(usr, event)
 
-        return HttpResponse();
+        return HttpResponse()
     else:
-        HttpResponseNotFound();
+        HttpResponseNotFound()
 
 @csrf_protect
 def makeUser(request):
@@ -1041,7 +1043,7 @@ def makeUser(request):
         name = request.GET['name']
         fbid = request.GET['fbid']
 
-        d = [];
+        d = []
 
         if (request.session.__contains__('fbid') and not (request.session['fbid'] == fbid)):
             d.append({'changed': True, })
@@ -1054,8 +1056,26 @@ def makeUser(request):
         prof = UserProfile(user=fbid, name=name)
         prof.save()
 
-        return HttpResponse()
-    else :
+        return HttpResponse()  
+    else:
+        return HttpResponseNotFound()
+
+@csrf_protect
+def makeNewUser(request):
+    if request.method == "POST":
+        name = request.POST['name']
+        email = request.POST['email']
+        username=request.POST['username']
+        if request.POST['password']==request.POST['passwordreenter']:
+            password=request.POST['password']
+
+        user=User.objects.create_user(username, email, password)
+
+        prof = UserProfile(user="", actualUser=user, name=name)
+        prof.save()
+
+        return HttpResponse()   
+    else:
         return HttpResponseNotFound()
 
 @csrf_protect
@@ -1122,7 +1142,7 @@ def addCreatorsToEvent(request):
         event = Event.objects.get(id=findIdOfEvent(request.POST['id']))
         friendIDs = json.loads(request.POST['friendIDs'])
         addCreators(event, friendIDs)
-        return HttpResponse();
+        return HttpResponse()
     else:
         return HttpResponseNotFound()
 
@@ -1156,7 +1176,7 @@ def addName(request):
         n = Name(name = request.GET['name'], linkedEvent=e)
         n.save()
         d = []
-        d.append({"person": cgi.escape(request.GET['name'])});
+        d.append({"person": cgi.escape(request.GET['name'])})
         return HttpResponse(simplejson.dumps(d))
     else:
         return HttpResponseNotFound()
@@ -1204,9 +1224,9 @@ def comment(request):
 
 def addComment(commenter, name, date, event, comment, commentID):
     if commenter == None:
-        c = Comment(event=event, comment = comment, name = name, date = date, commentID=commentID);
+        c = Comment(event=event, comment = comment, name = name, date = date, commentID=commentID)
     else :
-        c = Comment(commenter = commenter, event=event, comment = comment, name = name, date = date, commentID=commentID);
+        c = Comment(commenter = commenter, event=event, comment = comment, name = name, date = date, commentID=commentID)
     c.save()
 
 def getListOfComments(e, commentID = ''):
@@ -1234,8 +1254,8 @@ def getListOfCommentsNotReverse(e, commentID =''):
 @csrf_protect
 def getComments(request):
     if request.method == "GET":
-        eid = request.GET['id'];
-        event = Event.objects.get(id=findIdOfEvent(eid));
+        eid = request.GET['id']
+        event = Event.objects.get(id=findIdOfEvent(eid))
 
         if(request.session.has_key('fbid')):
             u = Unseen.objects.filter(people = UserProfile.objects.get(user=request.session['fbid'])).filter(commentID = eid)
@@ -1249,7 +1269,7 @@ def getComments(request):
 @csrf_protect
 def getPeople(request):
     if request.method == "GET":
-        event = Event.objects.get(id=findIdOfEvent(request.GET['id']));
+        event = Event.objects.get(id=findIdOfEvent(request.GET['id']))
         d = {'creators': getCreators(event),
              'coming': getComing(event),
              'rejected': getRejected(event),

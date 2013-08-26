@@ -39,7 +39,9 @@ class Event(models.Model):
 
 class UserProfile(models.Model):
     #home_address = models.TextField()
-    user = models.CharField(max_length=100, unique=True) #models.ForeignKey(User, unique=True)
+    #user = models.CharField(max_length=100, unique=True)
+    user = models.CharField(max_length=100, blank=True)
+    actualUser=models.ForeignKey(User)
     events = models.ManyToManyField(Event, related_name = 'events')
     name = models.CharField(max_length=30)
     notifications = models.ManyToManyField(Event, related_name = 'notification')
@@ -47,7 +49,7 @@ class UserProfile(models.Model):
     accepted = models.ManyToManyField(Event, related_name='accepted')
     rejected = models.ManyToManyField(Event, related_name ='rejected')
     unanswered = models.ManyToManyField(Event, related_name='unanswered')
-
+ 
 
     def __unicode__(self):
         return self.name

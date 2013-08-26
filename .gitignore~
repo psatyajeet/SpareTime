@@ -8,5 +8,3 @@ mysite/database/data
 .idea/*
 
 git-subtree/
-
-*.sublime*
